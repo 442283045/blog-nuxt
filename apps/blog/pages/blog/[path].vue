@@ -17,15 +17,6 @@
 
 <script setup lang="ts">
 import '../../styles/markdown.css'
-const { data: navigation } = await useAsyncData('navigation', () =>
-    fetchContentNavigation()
-)
-console.log(navigation)
-const articles = await queryContent().limit(10).find()
-console.log(articles)
-// import '../../styles/markdown.css'
-const route = useRoute()
-console.log(route.params.path)
 </script>
 
 <style></style>
