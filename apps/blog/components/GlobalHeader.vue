@@ -1,5 +1,6 @@
 <template>
     <MaskLayer z-20></MaskLayer>
+
     <header
         h-16
         bg-white
@@ -25,11 +26,20 @@
             </div>
             <nav hidden flex gap-8 items-center>
                 <NuxtLink hover:text-sky-500 to="/">Home</NuxtLink>
-
+                <NuxtLink hover:text-sky-500 to="/test">Home</NuxtLink>
                 <!-- <NuxtLink to="/blog">Blog</NuxtLink> -->
             </nav>
 
-            <div flex items-center class="settings" pr-4>Sign in</div>
+            <div
+                @click="page.toggleSignUp"
+                flex
+                items-center
+                class="settings"
+                pr-4
+                cursor-pointer
+            >
+                <NuxtLink to="/register">Sign up</NuxtLink>
+            </div>
         </div>
     </header>
 </template>
@@ -37,7 +47,4 @@
 import usePage from '../stores/page'
 import MaskLayer from './MaskLayer.vue'
 const page = usePage()
-const sayHello = () => {
-    console.log('hello')
-}
 </script>

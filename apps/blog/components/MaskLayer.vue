@@ -8,11 +8,11 @@
             bg-black
             :style="{ '--un-bg-opacity': '0.5' }"
             flex
-            v-show="page.isMaskOpen"
+            v-show="page.isMenuOpen"
         >
             <Transition name="translate">
                 <div
-                    v-show="page.isMaskOpen"
+                    v-show="page.isMenuOpen"
                     w-80
                     bg-white
                     h-screen
@@ -30,24 +30,42 @@
                         ></div>
                     </div>
                     <div flex gap-4 flex-col>
-                        <div
-                            hover:hover:text-sky-5
-                            bg-gray-200
-                            rounded-2
-                            h-8
-                            leading-8
-                            cursor-pointer
-                            v-for="i in 10"
-                            :key="i"
-                            text-center
-                            text-gray-6
-                            flex
-                            items-center
-                            justify-center
-                        >
-                            <div i-mdi-home></div>
-                            Home
-                        </div>
+                        <NuxtLink to="/">
+                            <div
+                                hover:hover:text-sky-5
+                                bg-gray-200
+                                rounded-2
+                                h-8
+                                leading-8
+                                cursor-pointer
+                                text-center
+                                text-gray-6
+                                flex
+                                items-center
+                                justify-center
+                            >
+                                <div i-mdi-home></div>
+                                Home
+                            </div>
+                        </NuxtLink>
+                        <NuxtLink to="/test">
+                            <div
+                                hover:hover:text-sky-5
+                                bg-gray-200
+                                rounded-2
+                                h-8
+                                leading-8
+                                cursor-pointer
+                                text-center
+                                text-gray-6
+                                flex
+                                items-center
+                                justify-center
+                            >
+                                <div i-mdi-home></div>
+                                Test
+                            </div>
+                        </NuxtLink>
                     </div>
                 </div>
             </Transition>

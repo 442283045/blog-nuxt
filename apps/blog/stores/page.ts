@@ -1,11 +1,14 @@
 const usePage = defineStore('page', {
     state: () => ({
-        isMaskOpen: false
+        isMenuOpen: false,
+        isSignUpOpen: false
     }),
     actions: {
         toggleMask() {
-            this.isMaskOpen = !this.isMaskOpen
-            console.log(this.isMaskOpen)
+            this.isMenuOpen = !this.isMenuOpen
+        },
+        toggleSignUp() {
+            this.isSignUpOpen = !this.isSignUpOpen
         }
     }
 })

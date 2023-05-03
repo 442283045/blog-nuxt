@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify'
 
 import sendMail from './nodemailer.mjs'
 import { MySQLPromisePool } from '@fastify/mysql'
-
+import bcrypt from 'bcrypt'
 declare module 'fastify' {
     interface FastifyInstance {
         mysql: MySQLPromisePool
@@ -101,62 +101,79 @@ export default function (
     instance.post('/register', async (request, reply) => {
         try {
             // console.log(request.body)
-            const { email, password } = request.body as {
+            const { email, password, verificationCode } = request.body as {
                 [key: string]: string
             }
-            if (email) {
-                let emailRegex =
-                    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-                if (!emailRegex.test(email)) {
-                    reply.code(400).send('The email is illegal')
-                }
-                email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
-
-                const rawEmail = await instance.mysql.query(
-                    `select email from users where email=\"${email}\"`
-                )
-                if (
-                    Array.isArray(rawEmail) &&
-                    rawEmail[0] &&
-                    Array.isArray(rawEmail[0]) &&
-                    rawEmail[0].length === 1
-                ) {
-                    reply.code(400).send('The email already exists')
-                } else {
-                    let code = Math.random().toString().substring(2, 8)
-                    sendMail(email, reply, code)
-                    return { msg: 'register success' }
-                }
-            } else {
+            if (!email || !password || !verificationCode) {
                 return reply
                     .code(400)
-                    .send('The email is empty, please provide the email')
+                    .send('the verification information is invalid')
+            }
+            let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+            if (!emailRegex.test(email)) {
+                reply.code(400).send('The email is illegal')
             }
 
-            return { ok: 'yes' }
+            let passwordRegex =
+                /^[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,20}$/
+            if (!passwordRegex.test(password)) {
+                reply
+                    .code(400)
+                    .send('The password does not meet the requirements')
+                return
+            }
+
+            let verificationCodeRegex = /^\d{6}$/
+            if (!verificationCodeRegex.test(verificationCode)) {
+                reply
+                    .code(400)
+                    .send('The verification code should consist of 6 digits')
+                return
+            }
+
+            if (
+                !emailAndCodeMessages.has(email) ||
+                emailAndCodeMessages.get(email)?.code != verificationCode
+            ) {
+                return reply.code(400).send({
+                    status: 'no',
+                    msg: 'the verification code is invalid'
+                })
+            }
+            const hashedPassword = await bcrypt
+                .hash(password, 5)
+                .catch((err) => {
+                    console.log(err)
+                    return reply
+                        .code(500)
+                        .send({ msg: 'Internal Server Error' })
+                })
+
+            await new Promise((resolve, reject) => {
+                instance.mysql
+                    .query(
+                        `INSERT INTO users (username, email, password, avatar_path) VALUES ("${email}", "${email}", "${hashedPassword}",'/default_path'); `
+                    )
+                    .then(() => {
+                        resolve('success')
+                        reply.code(201).send({
+                            status: 'ok',
+                            msg: 'registered successfully'
+                        })
+                    })
+                    .catch((err) => {
+                        console.log('database insertion error')
+                        console.log(err)
+                        reply.code(500).send({ msg: 'Internal Server Error' })
+                    })
+            })
+
+            // return { ok: 'yes' }
         } catch (err) {
             console.log(err)
         }
         // console.log(userEmail)
     })
-    // // 注册路由
-    // fastify.post('/register', async (request, reply) => {
-    //     const { username, password } = request.body as { [key: string]: string }
-
-    //     // 检查用户名是否已被使用
-    //     if (users.has(username)) {
-    //         reply.code(400).send({ error: 'Username already registered' })
-    //         return
-    //     }
-
-    //     // 哈希密码
-    //     const passwordHash = await bcrypt.hash(password, 10)
-
-    //     // 保存用户数据
-    //     users.set(username, { passwordHash })
-
-    //     reply.send({ success: true })
-    // })
 
     instance.get('/', async (request, reply) => {
         return { hello: 'world' }

@@ -14,9 +14,10 @@
                 >
                     <div h-full flex items-center>
                         <NuxtImg
-                            src="/article-image.jpg"
+                            :src="`https://picsum.photos/200?r=${Math.random()}`"
                             alt="Discover Nuxt 3"
                             height="128"
+                            width="128"
                             rounded-2
                         />
                     </div>
@@ -26,18 +27,7 @@
                                 {{ title }}
                             </NuxtLink>
                         </div>
-                        <div
-                            !hidden
-                            :style="{
-                                '-webkit-line-clamp': 3,
-                                display: '-webkit-box',
-                                '-webkit-box-orient':
-                                    'vertical' /* Required for -webkit-line-clamp */,
-                                overflow: 'hidden',
-                                'text-overflow': 'ellipsis',
-                                height: '4.5rem'
-                            }"
-                        >
+                        <div h-18 ref="description">
                             {{ description }}
                         </div>
                         <div
@@ -55,6 +45,20 @@
                                 ></div>
                                 <div i-mdi-comment-outline></div>
                                 <div i-mdi-eye-circle-outline></div>
+                                <ClientOnly
+                                    fallback-tag="span"
+                                    fallback="Loading comments..."
+                                >
+                                    <lottie-player
+                                        autoplay
+                                        controls
+                                        loop
+                                        style="width: 400px"
+                                        src="https://assets3.lottiefiles.com/packages/lf20_RItkEz.json"
+                                        speed="1"
+                                        debug
+                                    />
+                                </ClientOnly>
                             </div>
                         </div>
                     </div>
@@ -67,5 +71,55 @@
 const articles = await queryContent()
     .only(['_path', 'title', 'description', 'date', 'id'])
     .find()
-console.log(articles)
+    .catch((err) => {
+        console.log(err)
+    })
+
+const description = ref(null)
+interface CustomCSSStyleDeclaration extends CSSStyleDeclaration {
+    ['-webkit-line-clamp']?: string
+    ['-webkit-box-orient']?: string
+    ['text-overflow']?: string
+}
+
+// const lottie_player = ref()
+// onMounted(() => {
+//     if (lottie_player.value) {
+//         console.log(lottie_player.value[0])
+//         // lottie_player.value.togglePlayPause()
+//     }
+// })
+// function play() {
+//     if (lottie_player.value[0]) {
+//         lottie_player.value[0].togglePlayPause()
+//     }
+// }
+onMounted(() => {
+    if (description.value) {
+        ;(description.value as Array<HTMLElement>).forEach((element) => {
+            const mediaQuery = window.matchMedia('(min-width: 768px)')
+            mediaQuery.addEventListener('change', styleChange)
+            function styleChange() {
+                const styleDeclaration =
+                    element.style as CustomCSSStyleDeclaration
+                if (mediaQuery.matches) {
+                    styleDeclaration['-webkit-line-clamp'] = '3'
+                    styleDeclaration.display = '-webkit-box'
+                    styleDeclaration['-webkit-box-orient'] = 'vertical'
+                    styleDeclaration.overflow = 'hidden'
+                    styleDeclaration['text-overflow'] = 'ellipsis'
+                    styleDeclaration.display = 'block'
+                } else {
+                    styleDeclaration['-webkit-line-clamp'] = 'unset'
+                    styleDeclaration.display = 'unset'
+                    styleDeclaration['-webkit-box-orient'] = 'unset'
+                    styleDeclaration.overflow = 'unset'
+                    styleDeclaration['text-overflow'] = 'unset'
+                    styleDeclaration.display = 'none'
+                }
+            }
+            styleChange()
+        })
+    }
+})
 </script>

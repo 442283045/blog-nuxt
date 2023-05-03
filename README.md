@@ -4,6 +4,6 @@
 
 Nuxt + TypeScript + Unocss
 
-## back-end
+## server-end
 
 Fastify + TypeScript + Mysql

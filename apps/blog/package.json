@@ -13,16 +13,20 @@
     "@iconify-json/mdi": "^1.1.50",
     "@nuxt/content": "^2.6.0",
     "@nuxt/image-edge": "1.0.0-28020728.5df24eb",
-    "@types/node": "^18.16.0",
+    "@nuxt/test-utils": "^3.4.3",
+    "@types/node": "^18.16.3",
     "@unocss/nuxt": "^0.51.8",
     "@unocss/preset-attributify": "^0.51.8",
-    "nuxt": "^3.4.2",
-    "nuxt-vitest": "^0.6.10"
+    "nuxt": "^3.4.3",
+    "nuxt-vitest": "^0.6.11",
+    "vitest": "^0.30.1"
   },
   "dependencies": {
-    "@iconify-json/material-symbols": "^1.1.40",
+    "@iconify-json/material-symbols": "^1.1.41",
+    "@lottiefiles/lottie-player": "^1.7.1",
     "@pinia/nuxt": "^0.4.9",
     "@unocss/reset": "^0.51.8",
-    "pinia": "^2.0.35"
+    "pinia": "^2.0.35",
+    "vee-validate": "^4.8.6"
   }
 }
