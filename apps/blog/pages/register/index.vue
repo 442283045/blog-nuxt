@@ -25,37 +25,51 @@
                     gap-8
                 >
                     <div relative>
-                        <label for="email-address" class="sr-only">
-                            Email address
-                        </label>
-                        <input
-                            id="email-address"
-                            name="email"
-                            type="email"
-                            v-model="email"
-                            required
-                            class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                            placeholder="Email address"
-                        />
-                        <button
-                            text-white
-                            bg-indigo-600
-                            hover:bg-indigo-700
-                            focus:outline-none
-                            focus:ring-2
-                            focus:ring-offset-2
-                            focus:ring-indigo-500
-                            absolute
-                            top-0
-                            right-0
-                            rounded-md
-                            px-3
-                            py-2
-                            translate-y-px
-                            z-10
-                        >
-                            Send Code
-                        </button>
+                        <div flex gap-4>
+                            <label for="email-address" class="sr-only">
+                                Email address
+                            </label>
+                            <input
+                                flex-1
+                                id="email-address"
+                                name="email"
+                                type="email"
+                                v-model="email"
+                                required
+                                appearance-none
+                                rounded-md
+                                relative
+                                block
+                                px-3
+                                py-2
+                                border
+                                border-gray-300
+                                placeholder-gray-500
+                                text-gray-900
+                                rounded-t-md
+                                focus:outline-none
+                                focus:ring-indigo-500
+                                focus:border-indigo-500
+                                focus:z-10
+                                placeholder="Email address"
+                            />
+                            <button
+                                text-white
+                                bg-indigo-600
+                                hover:bg-indigo-700
+                                focus:outline-none
+                                focus:ring-2
+                                focus:ring-offset-2
+                                focus:ring-indigo-500
+                                rounded-md
+                                px-3
+                                py-2
+                                translate-y-px
+                                h-full
+                            >
+                                Send Code
+                            </button>
+                        </div>
                         <div
                             pl-2
                             v-show="emailErrorMessage"
@@ -76,7 +90,7 @@
                             v-model="veriCode"
                             type="text"
                             required
-                            class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                            class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
                             placeholder="verification code"
                         />
                         <div
@@ -96,7 +110,7 @@
                             type="password"
                             v-model="password"
                             required
-                            class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                            class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
                             placeholder="Password"
                         />
                         <div

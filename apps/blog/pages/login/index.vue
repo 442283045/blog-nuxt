@@ -10,8 +10,8 @@
                     Log in
                 </h2>
             </div>
-            <form class="mt-8 space-y-6">
-                <div class="rounded-md shadow-sm -space-y-px">
+            <form @submit.prevent="LogIn" novalidate class="mt-8 space-y-6">
+                <div flex flex-col gap-8 rounded-md shadow-sm -space-y-px>
                     <div>
                         <label for="email-address" class="sr-only">
                             Email address
@@ -20,10 +20,19 @@
                             id="email-address"
                             name="email"
                             type="email"
+                            v-model="email"
                             required
-                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                            class="rounded-md appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                             placeholder="Email address"
                         />
+                        <div
+                            pl-2
+                            v-show="emailErrorMessage"
+                            text-red-500
+                            absolute
+                        >
+                            {{ emailErrorMessage }}
+                        </div>
                     </div>
                     <div>
                         <label for="password" class="sr-only">Password</label>
@@ -31,10 +40,19 @@
                             id="password"
                             name="password"
                             type="password"
+                            v-model="password"
                             required
-                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                            class="rounded-md appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                             placeholder="Password"
                         />
+                        <div
+                            pl-2
+                            v-show="passwordErrorMessage"
+                            text-red-500
+                            absolute
+                        >
+                            {{ passwordErrorMessage }}
+                        </div>
                     </div>
                 </div>
 
@@ -76,4 +94,44 @@
 definePageMeta({
     layout: false
 })
+import { useField } from 'vee-validate'
+
+function emailValidateField(value: string) {
+    if (!value) {
+        return 'email is required'
+    }
+    let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    if (!emailPattern.test(value)) {
+        return 'this email is invalid'
+    }
+
+    return true
+}
+const { value: email, errorMessage: emailErrorMessage } = useField(
+    'email',
+    emailValidateField
+)
+
+function passwordValidateField(value: string) {
+    if (!value) {
+        return 'Password is required'
+    }
+
+    if (value.length < 6) {
+        return 'Password must contain at least 6 characters'
+    }
+    if (value.length > 20) {
+        return 'Password must contain at most 20 characters'
+    }
+    if (!/^[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,20}$/.test(value)) {
+        return 'Password is invalid'
+    }
+    return true
+}
+
+const { value: password, errorMessage: passwordErrorMessage } = useField(
+    'fullName',
+    passwordValidateField
+)
+function LogIn() {}
 </script>

@@ -6,6 +6,7 @@
                     v-for="{ id, title, description, date, _path } in articles"
                     :key="id"
                     h-36
+                    md:h-42
                     flex
                     bg-white
                     shadow-lg
@@ -16,9 +17,10 @@
                         <NuxtImg
                             :src="`https://picsum.photos/200?r=${Math.random()}`"
                             alt="Discover Nuxt 3"
-                            height="128"
                             width="128"
+                            height="128"
                             rounded-2
+                            class="nuxt_img"
                         />
                     </div>
                     <div flex-1 grid px-4 py-1>
@@ -38,27 +40,17 @@
                             w-full
                         >
                             <div text-sm text-gray-500>{{ date }}</div>
-                            <div flex gap-4>
+                            <div flex gap-4 items-center>
+                                <Lottie translate-x-10px />
                                 <div
-                                    cursor-pointer
-                                    i-material-symbols-favorite-outline
+                                    translate-y-1px
+                                    flex
+                                    i-mdi-comment-outline
                                 ></div>
-                                <div i-mdi-comment-outline></div>
-                                <div i-mdi-eye-circle-outline></div>
-                                <ClientOnly
-                                    fallback-tag="span"
-                                    fallback="Loading comments..."
-                                >
-                                    <lottie-player
-                                        autoplay
-                                        controls
-                                        loop
-                                        style="width: 400px"
-                                        src="https://assets3.lottiefiles.com/packages/lf20_RItkEz.json"
-                                        speed="1"
-                                        debug
-                                    />
-                                </ClientOnly>
+                                <div
+                                    translate-y-1px
+                                    i-mdi-eye-circle-outline
+                                ></div>
                             </div>
                         </div>
                     </div>
@@ -67,6 +59,14 @@
         </div>
     </main>
 </template>
+<style scoped>
+@media (min-width: 768px) {
+    .nuxt_img {
+        width: 152px;
+        height: 152px;
+    }
+}
+</style>
 <script setup lang="ts">
 const articles = await queryContent()
     .only(['_path', 'title', 'description', 'date', 'id'])
@@ -82,18 +82,6 @@ interface CustomCSSStyleDeclaration extends CSSStyleDeclaration {
     ['text-overflow']?: string
 }
 
-// const lottie_player = ref()
-// onMounted(() => {
-//     if (lottie_player.value) {
-//         console.log(lottie_player.value[0])
-//         // lottie_player.value.togglePlayPause()
-//     }
-// })
-// function play() {
-//     if (lottie_player.value[0]) {
-//         lottie_player.value[0].togglePlayPause()
-//     }
-// }
 onMounted(() => {
     if (description.value) {
         ;(description.value as Array<HTMLElement>).forEach((element) => {

@@ -38,7 +38,8 @@
                 pr-4
                 cursor-pointer
             >
-                <NuxtLink to="/register">Sign up</NuxtLink>
+                <div v-if="isLogin"><NuxtLink to="/user">User</NuxtLink></div>
+                <NuxtLink v-else to="/register">Sign up</NuxtLink>
             </div>
         </div>
     </header>
@@ -47,4 +48,5 @@
 import usePage from '../stores/page'
 import MaskLayer from './MaskLayer.vue'
 const page = usePage()
+const isLogin = ref(true)
 </script>
