@@ -48,5 +48,5 @@
 import usePage from '../stores/page'
 import MaskLayer from './MaskLayer.vue'
 const page = usePage()
-const isLogin = ref(true)
+const isLogin = ref(false)
 </script>

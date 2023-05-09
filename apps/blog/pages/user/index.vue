@@ -103,6 +103,8 @@
                 <li>history</li>
                 <li>history</li>
             </ul>
+            <LottieLoading></LottieLoading>
+            <Lottie></Lottie>
         </div>
     </main>
 </template>

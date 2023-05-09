@@ -66,10 +66,23 @@
                                 py-2
                                 translate-y-px
                                 h-full
+                                flex
+                                items-center
                             >
-                                Send Code
+                                <div v-if="messageState === sendState.sendCode">
+                                    Send Code
+                                </div>
+                                <div v-if="messageState === sendState.sending">
+                                    <LottieLoading w-6 h-6></LottieLoading>
+                                </div>
+                                <div
+                                    v-if="messageState === sendState.haveSended"
+                                >
+                                    haveSended 60
+                                </div>
                             </button>
                         </div>
+
                         <div
                             pl-2
                             v-show="emailErrorMessage"
@@ -158,7 +171,12 @@
 definePageMeta({
     layout: false
 })
-
+enum sendState {
+    sendCode = 'sendCode',
+    sending = 'sending',
+    haveSended = 'have sended'
+}
+const messageState = ref<sendState>(sendState.sendCode)
 const { toastMessage, toastType, showToast, toast } = useToast()
 import { useField } from 'vee-validate'
 
