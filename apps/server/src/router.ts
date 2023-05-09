@@ -1,5 +1,5 @@
-import { FastifyInstance } from 'fastify'
-
+import fastify, { FastifyInstance } from 'fastify'
+import { RowDataPacket } from 'mysql2'
 import sendMail from './nodemailer.mjs'
 import { MySQLPromisePool } from '@fastify/mysql'
 import bcrypt from 'bcrypt'
@@ -20,10 +20,15 @@ export default function (
     }
 
     const getEmailFromDB = async (instance: FastifyInstance, email: string) => {
-        const [rawEmail] = await instance.mysql.query(
-            `SELECT email FROM users WHERE email=?`,
-            [email]
-        )
+        const [rawEmail] = await instance.mysql
+            .query(`SELECT email FROM users WHERE email=?`, [email])
+            .catch((err) => {
+                console.log(err)
+                instance.log.error(`database error: ${err}`)
+                return [[]] // Return an empty array
+            })
+        // console.log(rawEmail)
+        instance.log.info(`getEmailFromDB: ${email}`)
         return rawEmail
     }
 
@@ -47,99 +52,27 @@ export default function (
         string,
         { code: string; sendTime: number }
     >()
-    // instance.post('/sendEmail', async (request, reply) => {
-    //     try {
-    //         // console.log(request.body)
-    //         const { email } = request.body as {
-    //             [key: string]: string
-    //         }
-    //         if (!email) {
-    //             return reply
-    //                 .code(400)
-    //                 .send('The email is empty, please provide the email')
-    //         }
-    //         let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-    //         if (!emailRegex.test(email)) {
-    //             return reply.code(400).send('The email is illegal')
-    //         }
 
-    //         const rawEmail = await instance.mysql.query(
-    //             `select email from users where email=\"${email}\"`
-    //         )
-    //         if (
-    //             Array.isArray(rawEmail) &&
-    //             rawEmail[0] &&
-    //             Array.isArray(rawEmail[0]) &&
-    //             rawEmail[0].length === 1
-    //         ) {
-    //             return reply.code(400).send('The email already exists')
-    //         }
-    //         if (emailAndCodeMessages && emailAndCodeMessages.has(email)) {
-    //             const nowMilliseconds =
-    //                 Date.now() -
-    //                 (
-    //                     emailAndCodeMessages.get(email) as {
-    //                         code: string
-    //                         sendTime: number
-    //                     }
-    //                 ).sendTime
-    //             const waitSeconds =
-    //                 nowMilliseconds > 0 ? Math.floor(nowMilliseconds / 1000) : 0
-
-    //             return reply.code(400).send({
-    //                 status: 'no',
-    //                 msg: `Email has been sended, if want to resend, please wait ${waitSeconds} seconds`
-    //             })
-    //         }
-    //         let code = Math.random().toString().substring(2, 8)
-
-    //         await new Promise((resolve, reject) => {
-    //             sendMail(email, code, function (error: any, info: any) {
-    //                 if (error) {
-    //                     console.log(error)
-
-    //                     resolve('')
-    //                     return reply.code(400).send('Email sending failed')
-    //                 }
-
-    //                 emailAndCodeMessages.set(email, {
-    //                     code,
-    //                     sendTime: Date.now()
-    //                 })
-    //                 setTimeout(() => {
-    //                     emailAndCodeMessages.delete(email)
-    //                 }, 120000)
-    //                 console.log('mail sent:', info.response)
-
-    //                 resolve('')
-    //                 return reply.code(200).send({
-    //                     status: 'ok',
-    //                     msg: 'Email sending successful'
-    //                 })
-    //             })
-    //         })
-    //     } catch (err) {
-    //         console.log(err)
-
-    //         reply.code(500).send('Internal server error')
-    //     }
-    // })
     instance.post('/sendEmail', async (request, reply) => {
         try {
             const { email } = request.body as { [key: string]: string }
 
             if (!email) {
+                request.log.info('The email is empty, please provide the email')
                 return reply
                     .status(400)
                     .send('The email is empty, please provide the email')
             }
 
             if (!isValidEmail(email)) {
+                request.log.info(`email`)
+                request.log.info('The email is illegal')
                 return reply.status(400).send('The email is illegal')
             }
 
             const rawEmail = await getEmailFromDB(instance, email)
             if (rawEmail && Array.isArray(rawEmail) && rawEmail.length === 1) {
+                request.log.info('The email already exists')
                 return reply.status(400).send('The email already exists')
             }
 
@@ -161,21 +94,26 @@ export default function (
                 await new Promise((resolve, reject) => {
                     sendMail(email, code, function (error: any, info: any) {
                         if (error) {
-                            console.log(error)
+                            request.log.error(error)
 
+                            request.log.error('email sending failed')
                             resolve('')
                             return reply.code(400).send('Email sending failed')
                         }
-
+                        console.log('email:', email, code)
                         emailAndCodeMessages.set(email, {
                             code,
                             sendTime: Date.now()
                         })
+                        console.log('add it to emailMessage')
+                        console.log(emailAndCodeMessages)
                         setTimeout(() => {
                             emailAndCodeMessages.delete(email)
+                            request.log.info('email has expired：', email)
                         }, 120000)
                         console.log('mail sent:', info.response)
-
+                        request.log.info('email sending successful')
+                        request.log.info(`the code is ${code}`)
                         resolve('')
                         return reply.code(200).send({
                             status: 'ok',
@@ -196,10 +134,12 @@ export default function (
     instance.post('/register', async (request, reply) => {
         try {
             // console.log(request.body)
-            const { email, password, verificationCode } = request.body as {
+            const { email, password, code } = request.body as {
                 [key: string]: string
             }
-            if (!email || !password || !verificationCode) {
+            if (!email || !password || !code) {
+                request.log.error('the verification information is invalid')
+                request.log.info({ email, password, code })
                 return reply
                     .code(400)
                     .send('the verification information is invalid')
@@ -218,8 +158,8 @@ export default function (
                 return
             }
 
-            let verificationCodeRegex = /^\d{6}$/
-            if (!verificationCodeRegex.test(verificationCode)) {
+            let codeRegex = /^\d{6}$/
+            if (!codeRegex.test(code)) {
                 reply
                     .code(400)
                     .send('The verification code should consist of 6 digits')
@@ -228,8 +168,13 @@ export default function (
 
             if (
                 !emailAndCodeMessages.has(email) ||
-                emailAndCodeMessages.get(email)?.code != verificationCode
+                emailAndCodeMessages.get(email)?.code != code
             ) {
+                request.log.error('the verification code is invalid')
+                request.log.info({
+                    right: emailAndCodeMessages.get(email),
+                    error: code
+                })
                 return reply.code(400).send({
                     status: 'no',
                     msg: 'the verification code is invalid'
@@ -244,28 +189,54 @@ export default function (
                         .send({ msg: 'Internal Server Error' })
                 })
 
-            await new Promise((resolve, reject) => {
-                instance.mysql
+            await new Promise(async (resolve, reject) => {
+                await instance.mysql
                     .query(
                         `INSERT INTO users (username, email, password, avatar_path) VALUES ("${email}", "${email}", "${hashedPassword}",'/default_path'); `
                     )
-                    .then(() => {
-                        resolve('success')
-                        reply.code(201).send({
-                            status: 'ok',
-                            msg: 'registered successfully'
-                        })
-                    })
+
                     .catch((err) => {
                         console.log('database insertion error')
                         console.log(err)
                         reply.code(500).send({ msg: 'Internal Server Error' })
                     })
+                interface QueryResult {
+                    id: number
+                }
+                let rows: RowDataPacket[]
+                try {
+                    const result = await instance.mysql.query<RowDataPacket[]>(
+                        `select id from users where email = "${email}"`
+                    )
+                    rows = result[0]
+                } catch (err) {
+                    console.log('database insertion error')
+                    console.log(err)
+                    reply.code(500).send({ msg: 'Internal Server Error' })
+                    return // This is important to prevent further execution in case of an error
+                }
+                request.log.info(rows)
+                console.log(rows)
+
+                request.log.info({ userId: rows[0].id })
+                let userId: number = rows[0].id
+
+                const token = instance.jwt.sign({
+                    payload: userId
+                })
+                if (!token) {
+                    return
+                }
+                request.log.info({ token })
+                resolve('success')
+                return reply.send({ token })
             })
 
             // return { ok: 'yes' }
         } catch (err) {
-            console.log(err)
+            reply.code(500).send({
+                msg: 'Internal Server Error'
+            })
         }
         // console.log(userEmail)
     })
@@ -278,6 +249,11 @@ export default function (
         const users = await instance.mysql.query('select * from users')
         console.log(users)
         return { hello: 'ok' }
+    })
+    instance.get('/query', async (request, reply) => {
+        console.log('message:', emailAndCodeMessages)
+        request.log.info(emailAndCodeMessages)
+        return reply.code(200).send('ok')
     })
     done()
 }

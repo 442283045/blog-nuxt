@@ -5,7 +5,15 @@ import auth from '@fastify/auth'
 import router from './router.js'
 import dbConnector from './database.js'
 const server = fastify({
-    logger: true
+    logger: {
+        transport: {
+            target: 'pino-pretty',
+            options: {
+                translateTime: 'HH:MM:ss Z',
+                ignore: 'pid,hostname'
+            }
+        }
+    }
 })
 
 server.register(jwt, { secret: 'supersecret' })
@@ -27,5 +35,5 @@ server.listen({ port: 3001 }, function (err, address) {
         server.log.error(err)
         process.exit(1)
     }
-    // Server is now listening on ${address}
+    console.log(`Server is now listening on ${address}`)
 })
