@@ -12,10 +12,6 @@
         b-b-1
         b-gray-200
         z-10
-        :style="{
-            '--un-bg-opacity': '0.8',
-            '--un-backdrop-blur': 'blur(0.75rem)'
-        }"
     >
         <div w-full items-center justify-between h-full flex max-w-7xl>
             <div @click="page.toggleMask">
@@ -38,7 +34,20 @@
                 pr-4
                 cursor-pointer
             >
-                <div v-if="isLogin"><NuxtLink to="/user">User</NuxtLink></div>
+                <div v-if="user.isLogin">
+                    <NuxtLink to="/user">
+                        <!-- <NuxtImg
+                            :src="`${appConfig.baseUrl}${user.avatar_path}`"
+                        ></NuxtImg> -->
+                        <img
+                            w-10
+                            h-10
+                            rounded-5
+                            :src="`${appConfig.backend_url}${user.avatar_path}`"
+                            alt=""
+                        />
+                    </NuxtLink>
+                </div>
                 <NuxtLink v-else to="/register">Sign up</NuxtLink>
             </div>
         </div>
@@ -46,7 +55,16 @@
 </template>
 <script setup lang="ts">
 import usePage from '../stores/page'
+import useUser from '../stores/user'
 import MaskLayer from './MaskLayer.vue'
 const page = usePage()
-const isLogin = ref(false)
+const user = useUser()
+const appConfig = useAppConfig()
+console.log(`${appConfig.backend_url}${user.avatar_path}`)
 </script>
+<style scoped>
+header {
+    --un-bg-opacity: 0.8;
+    --un-backdrop-blur: blur(0.75rem);
+}
+</style>

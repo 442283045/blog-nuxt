@@ -1,12 +1,12 @@
 <template>
     <Transition name="fade">
         <div
+            class="mask"
             fixed
             w-screen
             h-screen
             top-0
             bg-black
-            :style="{ '--un-bg-opacity': '0.5' }"
             flex
             v-show="page.isMenuOpen"
         >
@@ -79,6 +79,9 @@ import usePage from '../stores/page'
 const page = usePage()
 </script>
 <style scoped>
+.mask {
+    --un-bg-opacity: 0.5;
+}
 /* .v-enter-active,
 .v-leave-active {
     transition: all 0.3s ease-out;

@@ -22,14 +22,16 @@
             h-60
             justify-center
         >
-            <NuxtImg
+            <img
+                bg-center
                 bg-cover
                 h-20
                 w-20
                 rounded-10
-                :src="`https://picsum.photos/200?r=${Math.random()}`"
-                bg-center
-            ></NuxtImg>
+                :src="`${appConfig.backend_url}${user.avatar_path}`"
+                alt="user avatar"
+            />
+
             <div text-gray-5>一只大青蛙</div>
             <div
                 absolute
@@ -103,8 +105,6 @@
                 <li>history</li>
                 <li>history</li>
             </ul>
-            <LottieLoading></LottieLoading>
-            <Lottie></Lottie>
         </div>
     </main>
 </template>
@@ -114,5 +114,9 @@ input[type='radio']:checked + label div {
 }
 </style>
 <script lang="ts" setup>
+import useUser from '~/stores/user'
+
 const page = ref('')
+const appConfig = useAppConfig()
+const user = useUser()
 </script>

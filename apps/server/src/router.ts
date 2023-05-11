@@ -53,7 +53,7 @@ export default function (
         { code: string; sendTime: number }
     >()
 
-    instance.post('/sendEmail', async (request, reply) => {
+    instance.post('/api/send_code', async (request, reply) => {
         try {
             const { email } = request.body as { [key: string]: string }
 
@@ -65,15 +65,18 @@ export default function (
             }
 
             if (!isValidEmail(email)) {
-                request.log.info(`email`)
+                console.log({ email })
+                request.log.info({ email })
                 request.log.info('The email is illegal')
-                return reply.status(400).send('The email is illegal')
+                return reply.status(400).send({ msg: 'The email is illegal' })
             }
 
             const rawEmail = await getEmailFromDB(instance, email)
             if (rawEmail && Array.isArray(rawEmail) && rawEmail.length === 1) {
                 request.log.info('The email already exists')
-                return reply.status(400).send('The email already exists')
+                return reply
+                    .status(400)
+                    .send({ msg: 'The email already exists' })
             }
 
             const emailData = emailAndCodeMessages.get(email)
@@ -84,7 +87,9 @@ export default function (
                 if (cooldownActive) {
                     return reply.status(400).send({
                         status: 'no',
-                        msg: `Email has been sent, if you want to resend, please wait ${waitSeconds} seconds`
+                        msg: `Email has been sent, if you want to resend, please wait ${
+                            120 - waitSeconds
+                        } seconds`
                     })
                 }
             }
@@ -133,12 +138,17 @@ export default function (
 
     instance.post('/register', async (request, reply) => {
         try {
+            // Am I execute?
+            console.log('-----executed')
             // console.log(request.body)
             const { email, password, code } = request.body as {
                 [key: string]: string
             }
+            console.log('-----')
+            console.log({ email, password, code })
             if (!email || !password || !code) {
                 request.log.error('the verification information is invalid')
+                console.log({ email, password, code })
                 request.log.info({ email, password, code })
                 return reply
                     .code(400)
@@ -192,7 +202,7 @@ export default function (
             await new Promise(async (resolve, reject) => {
                 await instance.mysql
                     .query(
-                        `INSERT INTO users (username, email, password, avatar_path) VALUES ("${email}", "${email}", "${hashedPassword}",'/default_path'); `
+                        `INSERT INTO users (username, email, password, avatar_path) VALUES ("${email}", "${email}", "${hashedPassword}",'/public/avatar/default.png'); `
                     )
 
                     .catch((err) => {
@@ -200,9 +210,7 @@ export default function (
                         console.log(err)
                         reply.code(500).send({ msg: 'Internal Server Error' })
                     })
-                interface QueryResult {
-                    id: number
-                }
+
                 let rows: RowDataPacket[]
                 try {
                     const result = await instance.mysql.query<RowDataPacket[]>(
@@ -216,7 +224,6 @@ export default function (
                     return // This is important to prevent further execution in case of an error
                 }
                 request.log.info(rows)
-                console.log(rows)
 
                 request.log.info({ userId: rows[0].id })
                 let userId: number = rows[0].id
@@ -229,16 +236,30 @@ export default function (
                 }
                 request.log.info({ token })
                 resolve('success')
-                return reply.send({ token })
+                reply.setCookie('token', token, {
+                    httpOnly: true,
+                    // secure: true, // Set to true if using HTTPS
+                    // domain: 'your-domain.com', // Uncomment and set to your domain if needed
+                    // sameSite: 'strict', // Uncomment and set to 'strict' or 'lax' if needed
+                    path: '/',
+                    maxAge: 60 * 60 * 24 * 7, // 7 days in seconds
+                    sameSite: 'none',
+                    secure: true
+                })
+                return reply.send({
+                    message: 'Logged in successfully',
+                    user: {
+                        email,
+                        avatar_path: '/public/avatar/default.png',
+                        username: email
+                    }
+                })
             })
-
-            // return { ok: 'yes' }
         } catch (err) {
             reply.code(500).send({
                 msg: 'Internal Server Error'
             })
         }
-        // console.log(userEmail)
     })
 
     instance.get('/', async (request, reply) => {
@@ -254,6 +275,73 @@ export default function (
         console.log('message:', emailAndCodeMessages)
         request.log.info(emailAndCodeMessages)
         return reply.code(200).send('ok')
+    })
+    instance.get('/api/check_login', async (request, reply) => {
+        console.log(request.cookies.token)
+        const token = request.cookies.token
+        if (!token) {
+            return reply
+                .code(200)
+                .send({ msg: 'user is not logged in', login: false })
+        }
+        interface VerifyPayloadType {
+            payload: string
+        }
+        let rows: RowDataPacket[]
+        interface UserRow extends RowDataPacket {
+            username: string
+            // Add other properties as needed
+        }
+        try {
+            const decode = instance.jwt.verify(token) as VerifyPayloadType
+            console.log(decode) // { foo: 'bar' }
+            const [rows] = await instance.mysql.query<UserRow[]>(
+                `select username, email, avatar_path from users where id = "${decode.payload}"`
+            )
+            if (rows.length === 0) {
+                reply.setCookie('token', '', {
+                    httpOnly: true,
+                    // secure: true, // Set to true if using HTTPS
+                    // domain: 'your-domain.com', // Uncomment and set to your domain if needed
+                    // sameSite: 'strict', // Uncomment and set to 'strict' or 'lax' if needed
+                    path: '/',
+                    maxAge: 0, // 7 days in seconds
+                    sameSite: 'none',
+                    secure: true
+                })
+                return reply
+                    .code(200)
+                    .send({ msg: 'user is not logged in', login: false })
+            }
+            const { username, email, avatar_path } = rows[0]
+            return reply.send({
+                message: 'Logged in',
+                login: true,
+                user: {
+                    email,
+                    avatar_path,
+                    username
+                }
+            })
+        } catch (err) {
+            request.log.error(err)
+            reply.setCookie('token', '', {
+                httpOnly: true,
+                // secure: true, // Set to true if using HTTPS
+                // domain: 'your-domain.com', // Uncomment and set to your domain if needed
+                // sameSite: 'strict', // Uncomment and set to 'strict' or 'lax' if needed
+                path: '/',
+                maxAge: 0, // 7 days in seconds
+                sameSite: 'none',
+                secure: true
+            })
+            return reply
+                .code(200)
+                .send({ msg: 'user is not logged in', login: false })
+            //
+            // reply.code(500).send({ msg: 'Internal Server Error' })
+            // console.log(err) // an error occurred
+        }
     })
     done()
 }

@@ -18,12 +18,7 @@
                 </h2>
             </div>
             <form novalidate class="mt-8 space-y-6" @submit.prevent="singUp">
-                <div
-                    class="rounded-md shadow-sm -space-y-px"
-                    flex
-                    flex-col
-                    gap-8
-                >
+                <div class="rounded-md shadow-sm" flex flex-col gap-8>
                     <div relative>
                         <div flex gap-4>
                             <label for="email-address" class="sr-only">
@@ -53,7 +48,7 @@
                                 focus:z-10
                                 placeholder="Email address"
                             />
-                            <button
+                            <div
                                 text-white
                                 bg-indigo-600
                                 hover:bg-indigo-700
@@ -69,18 +64,21 @@
                                 flex
                                 items-center
                             >
-                                <div v-if="messageState === sendState.sendCode">
+                                <button
+                                    type="button"
+                                    bg-transparent
+                                    v-if="messageState === sendState.sendCode"
+                                    @click="sendCode"
+                                >
                                     Send Code
-                                </div>
+                                </button>
                                 <div v-if="messageState === sendState.sending">
                                     <LottieLoading w-6 h-6></LottieLoading>
                                 </div>
-                                <div
-                                    v-if="messageState === sendState.haveSended"
-                                >
-                                    haveSended 60
+                                <div v-if="messageState === sendState.resend">
+                                    Resend {{ resendTime }}
                                 </div>
-                            </button>
+                            </div>
                         </div>
 
                         <div
@@ -168,18 +166,66 @@
 
 <script setup lang="ts">
 // import Toast from '../../components/Toast.vue'
+import usePage from '../../stores/page'
+import useUser from '../../stores/user'
+const page = usePage()
+const user = useUser()
 definePageMeta({
     layout: false
 })
 enum sendState {
-    sendCode = 'sendCode',
-    sending = 'sending',
-    haveSended = 'have sended'
+    sendCode = 'Send code',
+    sending = 'Sending',
+    resend = 'Resend'
 }
 const messageState = ref<sendState>(sendState.sendCode)
+const resendTime = ref(120)
+watch(messageState, () => {
+    if (messageState.value === sendState.resend) {
+        let interval = setInterval(() => {
+            resendTime.value--
+            if (resendTime.value === 0) {
+                clearInterval(interval)
+                messageState.value = sendState.sendCode
+            }
+        }, 1000)
+    } else if (messageState.value === sendState.sendCode) {
+        resendTime.value = 120
+    }
+})
 const { toastMessage, toastType, showToast, toast } = useToast()
 import { useField } from 'vee-validate'
+const appConfig = useAppConfig()
+async function sendCode() {
+    await emailValidate()
 
+    if (emailErrorMessage.value) {
+        return
+    }
+    fetch(`${appConfig.backend_url}/api/send_code`, {
+        method: 'POST', // or 'GET'
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: email.value })
+    })
+        .then(async (response) => {
+            console.log(response)
+            if (!response.ok) {
+                const { msg: errorMessage } = await response.json()
+                messageState.value = sendState.sendCode
+                return toast.trigger({ message: errorMessage, type: 'error' })
+            }
+            response.json().then((data) => {
+                messageState.value = sendState.resend
+                console.log('Success:', data)
+            })
+        })
+        .catch((error) => {
+            console.error('Error:', error)
+        })
+    messageState.value = sendState.sending
+}
 function emailValidateField(value: string) {
     if (!value) {
         return 'email is required'
@@ -191,10 +237,11 @@ function emailValidateField(value: string) {
 
     return true
 }
-const { value: email, errorMessage: emailErrorMessage } = useField(
-    'email',
-    emailValidateField
-)
+const {
+    value: email,
+    errorMessage: emailErrorMessage,
+    validate: emailValidate
+} = useField('email', emailValidateField)
 
 function veriCodeValidateField(value: string) {
     if (!value) {
@@ -232,11 +279,11 @@ function passwordValidateField(value: string) {
 }
 
 const { value: password, errorMessage: passwordErrorMessage } = useField(
-    'fullName',
+    'password',
     passwordValidateField
 )
-
-function singUp() {
+const router = useRouter()
+async function singUp() {
     if (!email.value || !veriCode.value || !password.value) {
         return toast.trigger({ message: 'email is empty', type: 'error' })
     }
@@ -247,7 +294,44 @@ function singUp() {
     ) {
         return
     }
-    fetch('http://127.0.0.1:3001/sendCode').then()
+    // await signUp({ username: email.value, password: password.value, code: veriCode.value })
+    fetch(`${appConfig.backend_url}/register`, {
+        method: 'POST', // or 'GET'
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email: email.value,
+            password: password.value,
+            code: veriCode.value
+        }),
+        credentials: 'include'
+    })
+        .then(async (response) => {
+            console.log(response)
+            if (!response.ok) {
+                const { msg: errorMessage } = await response.json()
+
+                return toast.trigger({ message: errorMessage, type: 'error' })
+            }
+            interface userData {
+                email: string
+                username: string
+                avatar_path: string
+            }
+            response.json().then((data) => {
+                toast.trigger({ message: 'Sign Success', type: 'success' })
+                user.isLogin = true
+                router.push('/')
+                user.email = data.user.email
+                user.username = data.user.username
+                user.avatar_path = data.user.avatar_path
+                console.log('Sign Success:', data)
+            })
+        })
+        .catch((error) => {
+            console.error('Error:', error)
+        })
 }
 </script>
 <style scoped>

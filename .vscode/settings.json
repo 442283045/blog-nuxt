@@ -4,6 +4,7 @@
         "callsite",
         "Cooldown",
         "lottiefiles",
-        "pino"
+        "pino",
+        "sidebase"
     ]
 }

@@ -11,7 +11,7 @@
                 </h2>
             </div>
             <form @submit.prevent="LogIn" novalidate class="mt-8 space-y-6">
-                <div flex flex-col gap-8 rounded-md shadow-sm -space-y-px>
+                <div flex flex-col gap-8 rounded-md shadow-sm>
                     <div>
                         <label for="email-address" class="sr-only">
                             Email address
