@@ -26,6 +26,7 @@ fetch(`${apiConfig.backend_url}/api/check_login`, {
             user.avatar_path = res.user.avatar_path
             user.email = res.user.email
             user.username = res.user.username
+            console.log(user)
         } else {
             console.log(res)
         }

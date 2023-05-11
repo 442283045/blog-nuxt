@@ -34,21 +34,22 @@
                 pr-4
                 cursor-pointer
             >
-                <div v-if="user.isLogin">
-                    <NuxtLink to="/user">
-                        <!-- <NuxtImg
-                            :src="`${appConfig.baseUrl}${user.avatar_path}`"
-                        ></NuxtImg> -->
-                        <img
-                            w-10
-                            h-10
-                            rounded-5
-                            :src="`${appConfig.backend_url}${user.avatar_path}`"
-                            alt=""
-                        />
-                    </NuxtLink>
+                <div>
+                    <div v-show="user.isLogin">
+                        <NuxtLink to="/user">
+                            <img
+                                w-10
+                                h-10
+                                rounded-5
+                                alt="user avatar"
+                                ref="avatar_url"
+                            />
+                        </NuxtLink>
+                    </div>
+                    <div v-show="!user.isLogin">
+                        <NuxtLink to="/register">Sign up</NuxtLink>
+                    </div>
                 </div>
-                <NuxtLink v-else to="/register">Sign up</NuxtLink>
             </div>
         </div>
     </header>
@@ -60,7 +61,18 @@ import MaskLayer from './MaskLayer.vue'
 const page = usePage()
 const user = useUser()
 const appConfig = useAppConfig()
-console.log(`${appConfig.backend_url}${user.avatar_path}`)
+let avatar_url = ref<HTMLImageElement>()
+onMounted(() => {
+    if (avatar_url.value) {
+        avatar_url.value.src = `${appConfig.backend_url}${user.avatar_path}`
+    }
+})
+
+// const avatar_url = computed(() => {
+//     if (!user.avatar_path) return
+//     console.log(`${appConfig.backend_url}${user.avatar_path}`)
+//     return `${appConfig.backend_url}${user.avatar_path}`
+// })
 </script>
 <style scoped>
 header {
