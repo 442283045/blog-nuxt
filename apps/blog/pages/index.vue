@@ -1,6 +1,6 @@
 <template>
     <main w-full flex justify-center bg-gray-200>
-        <div flex-col w-full justify-between h-full flex max-w-7xl>
+        <div flex-col w-full justify-between h-full flex max-w-5xl>
             <ul m-4 flex-col flex gap-4>
                 <li
                     v-for="{ id, title, description, date, _path } in articles"
@@ -15,7 +15,7 @@
                 >
                     <div h-full flex items-center>
                         <NuxtImg
-                            :src="`https://picsum.photos/200?r=${Math.random()}`"
+                            src="/linux.png"
                             alt="Discover Nuxt 3"
                             width="128"
                             height="128"

@@ -1,15 +1,17 @@
 <template>
-    <main class="markdown" w-full bg-gray-200 pt-4>
+    <main class="markdown" w-full bg-gray-200 pt-4 flex justify-center>
         <article
             flex
             flex-col
             justify-center
-            max-w-7xl
+            max-w-5xl
+            min-w-0
             p-4
             mx-4
             md:p-16
             bg-white
             rounded-4
+            m-auto
         >
             <ContentDoc :path="`/${path}`">
                 <template v-slot="{ doc }">

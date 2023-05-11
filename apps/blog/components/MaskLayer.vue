@@ -27,10 +27,12 @@
                             hover:rotate-180
                             text-8
                             i-mdi-close
+                            @click="page.isMenuOpen = false"
+                            cursor-pointer
                         ></div>
                     </div>
                     <div flex gap-4 flex-col>
-                        <NuxtLink to="/">
+                        <NuxtLink @click="page.isMenuOpen = false" to="/">
                             <div
                                 hover:hover:text-sky-5
                                 bg-gray-200
@@ -46,24 +48,6 @@
                             >
                                 <div i-mdi-home></div>
                                 Home
-                            </div>
-                        </NuxtLink>
-                        <NuxtLink to="/test">
-                            <div
-                                hover:hover:text-sky-5
-                                bg-gray-200
-                                rounded-2
-                                h-8
-                                leading-8
-                                cursor-pointer
-                                text-center
-                                text-gray-6
-                                flex
-                                items-center
-                                justify-center
-                            >
-                                <div i-mdi-home></div>
-                                Test
                             </div>
                         </NuxtLink>
                     </div>
