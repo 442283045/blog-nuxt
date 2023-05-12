@@ -6,9 +6,6 @@ const usePage = defineStore('page', {
     actions: {
         toggleMask() {
             this.isMenuOpen = !this.isMenuOpen
-        },
-        toggleSignUp() {
-            this.isSignUpOpen = !this.isSignUpOpen
         }
     }
 })

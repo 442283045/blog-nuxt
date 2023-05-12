@@ -1,7 +1,7 @@
 ---
-title: 'Title of the page'
+title: 'CSS property'
 description: 'meta description of the page'
-date: '4/27/2023'
+article_id: 2
 ---
 Learn how to use @nuxt/content.
 <!--more-->

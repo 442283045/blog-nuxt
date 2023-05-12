@@ -262,15 +262,6 @@ export default function (
         }
     })
 
-    instance.get('/', async (request, reply) => {
-        return { hello: 'world' }
-    })
-
-    instance.get('/users', async (request, reply) => {
-        const users = await instance.mysql.query('select * from users')
-        console.log(users)
-        return { hello: 'ok' }
-    })
     instance.get('/query', async (request, reply) => {
         console.log('message:', emailAndCodeMessages)
         request.log.info(emailAndCodeMessages)

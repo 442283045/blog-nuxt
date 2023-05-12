@@ -5,6 +5,7 @@ import jwt from '@fastify/jwt'
 import type { FastifyCookieOptions } from '@fastify/cookie'
 import cookie from '@fastify/cookie'
 import router from './router.js'
+import articlesApi from './api/articles.js'
 import dbConnector from './database.js'
 import cors from '@fastify/cors'
 import fileServer from '@fastify/static'
@@ -36,6 +37,7 @@ server.register(jwt, { secret: 'supersecret' })
 // server.register(auth)
 server.register(dbConnector)
 server.register(router)
+server.register(articlesApi)
 
 // type Server = typeof server & {
 //     mysql: {

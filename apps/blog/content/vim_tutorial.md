@@ -1,7 +1,7 @@
 ---
 title: 'Vim tutorial'
 description: 'meta description of the page'
-date: '4/27/2023'
+article_id: 4
 ---
 
 
@@ -492,7 +492,7 @@ value 对应的是 `I#<ESC>`,表示按下快捷键以后执行的相应操作，
 :ab email kickcodeman@gmail.com
 ```
 
-`:` 后面的 ab 是关键字 ,该命令执行后，然后切换到编辑模式下,输入 email 会把输入的 email 自动替换成 kickcodeman@gmail.com。
+`:` 后面的 ab 是关键字 ,该命令执行后，然后切换到编辑模式下,输入 email 会把输入的 email 自动替换成 <kickcodeman@gmail.com>。
 
 这个命令主要是处理频繁输入同样的长串字符串。
 

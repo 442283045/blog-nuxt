@@ -1,7 +1,7 @@
 ---
 title: 'service management'
 description: 'Linux 服务管理笔记'
-date: '4/27/2023'
+article_id: 1
 ---
 
 

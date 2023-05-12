@@ -1,7 +1,7 @@
 ---
 title: 'Linux commands'
 description: 'meta description of the page'
-date: '4/27/2023'
+article_id: 3
 ---
 
 ### 命令行快捷键

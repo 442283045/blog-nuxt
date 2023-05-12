@@ -3,7 +3,18 @@
         <div flex-col w-full justify-between h-full flex max-w-5xl>
             <ul m-4 flex-col flex gap-4>
                 <li
-                    v-for="{ id, title, description, date, _path } in articles"
+                    v-for="{
+                        id,
+                        title,
+                        description,
+                        _path,
+                        published_date,
+                        thumbs_up,
+                        comments,
+                        author_id,
+                        favorites,
+                        view_count
+                    } in combinedInfo"
                     :key="id"
                     h-36
                     md:h-42
@@ -38,19 +49,31 @@
                             text-gray-500
                             justify-between
                             w-full
+                            text-xs
                         >
-                            <div text-sm text-gray-500>{{ date }}</div>
-                            <div flex gap-4 items-center>
-                                <Lottie translate-x-10px />
-                                <div
-                                    translate-y-1px
-                                    flex
-                                    i-mdi-comment-outline
-                                ></div>
-                                <div
-                                    translate-y-1px
-                                    i-mdi-eye-circle-outline
-                                ></div>
+                            <div text-gray-500>
+                                {{ published_date }}
+                            </div>
+                            <div flex gap-4 items-end>
+                                <div translate-y-12px gap-1 flex items-center>
+                                    <Lottie translate-x-10px />
+                                    <div z-30>{{ favorites }}</div>
+                                </div>
+                                <div gap-1 flex items-center>
+                                    <div
+                                        translate-y-1px
+                                        flex
+                                        i-mdi-comment-outline
+                                    ></div>
+                                    <div>{{ comments }}</div>
+                                </div>
+                                <div gap-1 flex items-center>
+                                    <div
+                                        translate-y-1px
+                                        i-mdi-eye-circle-outline
+                                    ></div>
+                                    <div>{{ view_count }}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -68,13 +91,46 @@
 }
 </style>
 <script setup lang="ts">
+const appConfig = useAppConfig()
 const articles = await queryContent()
-    .only(['_path', 'title', 'description', 'date', 'id'])
+    .only(['article_id', 'title', 'description', '_path'])
+    .sort({ article_id: 1 })
     .find()
     .catch((err) => {
         console.log(err)
     })
+console.log(articles)
+const articlesInfo = await fetch(`${appConfig.backend_url}/articles`, {
+    method: 'GET'
+})
+    .then((res) => {
+        return res.json()
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+interface Article {
+    _path: string
+    title: string
+    description: string
+    article_id: number
+    id: number
+    author_id: string
+    published_date: string
+    thumbs_up: number
+    favorites: number
+    updated_date: string | null
+    comments: number
+    view_count: number
+}
 
+const combinedInfo: Array<Article> = []
+if (articles) {
+    for (let i = 0; i < articles.length; i++) {
+        combinedInfo.push({ ...articles[i], ...articlesInfo[i] })
+    }
+}
+console.log(combinedInfo)
 const description = ref(null)
 interface CustomCSSStyleDeclaration extends CSSStyleDeclaration {
     ['-webkit-line-clamp']?: string

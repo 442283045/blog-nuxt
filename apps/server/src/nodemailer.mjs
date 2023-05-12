@@ -18,7 +18,7 @@ export default function sendMail(userMail, code, fn) {
 
     const mail = {
         // 发件人 邮箱  '昵称<发件人邮箱>'
-        from: `"web"<442283045@qq.com>`,
+        from: `"Blog website"<442283045@qq.com>`,
         // 主题
         subject: '激活验证码',
         // 收件人 的邮箱 可以是其他邮箱 不一定是qq邮箱

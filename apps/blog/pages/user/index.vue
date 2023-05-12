@@ -7,7 +7,7 @@
             h-60
             blur-sm
             opacity-30
-            :src="`https://picsum.photos/200?r=${Math.random()}`"
+            src="/article-image.jpg"
             bg-center
             overflow-hidden
         ></NuxtImg>

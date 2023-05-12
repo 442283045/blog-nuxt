@@ -29,13 +29,72 @@
             </div>
 
             <div
-                @click="page.toggleSignUp"
+                relative
                 flex
                 items-center
                 class="settings"
                 pr-4
                 cursor-pointer
             >
+                <div>
+                    <div
+                        @click.stop="themePanel = !themePanel"
+                        rounded-5
+                        p-2
+                        mr-20
+                        hover:bg-gray-200
+                    >
+                        <div
+                            cursor-pointer
+                            text-6.5
+                            text-gray-6
+                            class="i-mdi-weather-sunny"
+                        ></div>
+                    </div>
+                    <div
+                        v-show="themePanel"
+                        border-1
+                        absolute
+                        rounded-md
+                        bg-white
+                        flex
+                        top-12
+                        flex-col
+                        text-sm
+                        text-gray-6
+                    >
+                        <div p-2 hover:bg-gray-100 flex items-center>
+                            <div
+                                cursor-pointer
+                                pr-10
+                                text-6.5
+                                text-gray-6
+                                class="i-mdi-weather-sunny"
+                            ></div>
+                            Light
+                        </div>
+                        <div p-2 hover:bg-gray-100 flex items-center>
+                            <div
+                                cursor-pointer
+                                pr-10
+                                text-6.5
+                                text-gray-6
+                                class="i-mdi-weather-night"
+                            ></div>
+                            Dark
+                        </div>
+                        <div p-2 hover:bg-gray-100 flex items-center>
+                            <div
+                                cursor-pointer
+                                pr-10
+                                text-6.5
+                                text-gray-6
+                                class="i-mdi-theme-light-dark"
+                            ></div>
+                            System
+                        </div>
+                    </div>
+                </div>
                 <div>
                     <div v-show="user.isLogin">
                         <NuxtLink to="/user" flex items-center gap-5>
@@ -55,7 +114,7 @@
                                 class="<lg:hidden"
                                 lg:block
                             >
-                                {{ user.username }}
+                                {{ username }}
                             </div>
                         </NuxtLink>
                     </div>
@@ -75,10 +134,22 @@ const page = usePage()
 const user = useUser()
 const appConfig = useAppConfig()
 let avatar_url = ref<HTMLImageElement>()
+
+const themePanel = ref(false)
+const username = ref('username')
 onMounted(() => {
-    if (avatar_url.value) {
+    if (avatar_url.value && user.avatar_path) {
         avatar_url.value.src = `${appConfig.backend_url}${user.avatar_path}`
     }
+    document.documentElement.addEventListener('click', () => {
+        if (themePanel.value) {
+            themePanel.value = false
+        }
+    })
+})
+
+setTimeout(() => {
+    username.value = user.username
 })
 </script>
 <style scoped>
