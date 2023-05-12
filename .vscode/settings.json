@@ -6,5 +6,8 @@
         "lottiefiles",
         "pino",
         "sidebase"
+    ],
+    "unocss.root": [
+        "apps/blog"
     ]
 }
