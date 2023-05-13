@@ -287,7 +287,7 @@ export default function (
             const decode = instance.jwt.verify(token) as VerifyPayloadType
             console.log(decode) // { foo: 'bar' }
             const [rows] = await instance.mysql.query<UserRow[]>(
-                `select username, email, avatar_path from users where id = "${decode.payload}"`
+                `select id, username, email, avatar_path from users where id = "${decode.payload}"`
             )
             if (rows.length === 0) {
                 reply.setCookie('token', '', {
@@ -304,14 +304,16 @@ export default function (
                     .code(200)
                     .send({ msg: 'user is not logged in', login: false })
             }
-            const { username, email, avatar_path } = rows[0]
+            console.log(rows[0])
+            const { id, username, email, avatar_path } = rows[0]
             return reply.send({
                 message: 'Logged in',
                 login: true,
                 user: {
                     email,
                     avatar_path,
-                    username
+                    username,
+                    id
                 }
             })
         } catch (err) {

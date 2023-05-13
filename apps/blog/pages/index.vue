@@ -9,9 +9,7 @@
                         description,
                         _path,
                         published_date,
-                        thumbs_up,
                         comments,
-                        author_id,
                         favorites,
                         view_count
                     } in combinedInfo"
@@ -36,7 +34,10 @@
                     </div>
                     <div flex-1 grid px-4 py-1>
                         <div truncate text-xl>
-                            <NuxtLink :to="`/blog${_path}`" hover:text-sky-500>
+                            <NuxtLink
+                                :to="`/blog${_path}?id=${id}`"
+                                hover:text-sky-500
+                            >
                                 {{ title }}
                             </NuxtLink>
                         </div>

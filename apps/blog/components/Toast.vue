@@ -31,24 +31,3 @@ switch (props.type) {
         break
 }
 </script>
-
-<!-- <style scoped>
-.v-enter-active,
-.v-leave-active {
-    transition: all 0.5s;
-}
-.v-enter,
-.v-leave-to {
-    transform: translateX(120px);
-}
-.fade-enter-active,
-.fade-leave-active {
-    transition: all 0.5s;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-    transform: translateX(120px);
-    background-color: aqua;
-}
-</style> -->

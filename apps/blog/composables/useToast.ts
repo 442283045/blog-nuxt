@@ -5,12 +5,6 @@ export default function useToast() {
     const toastType = ref('success')
     const showToast = ref(false)
 
-    // const triggerToast = (message, type = 'success') => {
-    //     toastMessage.value = message
-    //     toastType.value = type
-    //     showToast.value = true
-    //     setTimeout(() => (showToast.value = false), 3000)
-    // }
     const toast = {
         trigger({
             message,

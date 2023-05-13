@@ -26,10 +26,14 @@ fetch(`${apiConfig.backend_url}/api/check_login`, {
             user.avatar_path = res.user.avatar_path
             user.email = res.user.email
             user.username = res.user.username
+            user.id = res.user.id
             console.log(user)
         } else {
             console.log(res)
         }
         console.log('success')
+    })
+    .catch((err) => {
+        console.log(err)
     })
 </script>

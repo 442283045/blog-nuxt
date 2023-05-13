@@ -3,7 +3,8 @@ const useUser = defineStore('user', {
         isLogin: false,
         avatar_path: '',
         email: '',
-        username: ''
+        username: '',
+        id: 0
     }),
     actions: {}
 })

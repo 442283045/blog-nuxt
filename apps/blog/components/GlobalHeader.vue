@@ -111,31 +111,13 @@
                             items-center
                             cursor-pointer
                         >
-                            <!-- <img
-                                w-10
-                                h-10
-                                rounded-5
-                                alt="user avatar"
-                                ref="avatar_url"
-                                hover:shadow-lg
-                            /> -->
                             <UserAvatar
                                 w-10
                                 hover:shadow-lg
                                 h-10
                                 rounded-5
                             ></UserAvatar>
-                            <!-- <div
-                                :title="user.username"
-                                hover:hover:text-sky-5
-                                w-20
-                                truncate
-                                class="<lg:hidden"
-                                lg:block
-                                cursor-pointer
-                            >
-                                {{ username }}
-                            </div> -->
+
                             <UserName
                                 :title="user.username"
                                 hover:hover:text-sky-5
@@ -168,11 +150,19 @@
                                     hover:bg-gray-100
                                     flex
                                     items-center
+                                    cursor-pointer
                                 >
                                     Profile
                                 </div>
                             </NuxtLink>
-                            <div py-2 px-4 hover:bg-gray-100 flex items-center>
+                            <div
+                                cursor-pointer
+                                py-2
+                                px-4
+                                hover:bg-gray-100
+                                flex
+                                items-center
+                            >
                                 Log out
                             </div>
                         </div>

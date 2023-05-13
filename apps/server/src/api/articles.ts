@@ -1,4 +1,4 @@
-import fastify, { FastifyInstance } from 'fastify'
+import fastify, { FastifyInstance, FastifyRequest } from 'fastify'
 import { RowDataPacket } from 'mysql2'
 
 import { MySQLPromisePool } from '@fastify/mysql'
@@ -33,5 +33,32 @@ export default function (
     instance.get('/', async (request, reply) => {
         reply.send({ msg: 'ok' })
     })
+    interface CommentRequest {
+        author_id: string
+        article_id: string
+        content: string
+    }
+    instance.post(
+        '/add_comment',
+        async (request: FastifyRequest<{ Body: CommentRequest }>, reply) => {
+            try {
+                const { author_id, article_id, content } = request.body
+                if (author_id && article_id && content) {
+                    reply.log.info({ author_id, article_id, content })
+                    // todo: prevent the sql injection
+                    const [rows] = await instance.mysql.query(`
+                    INSERT INTO comments (author_id, article_id, content) 
+                    VALUES (${author_id}, ${article_id}, '${content}');
+                    `)
+                    console.log(rows)
+                    return reply.code(201).send({ msg: 'ok' })
+                }
+                reply.code(400).send({ msg: 'no' })
+            } catch (err) {
+                request.log.error({ address: '/articles', err })
+                return reply.code(500).send({ msg: 'Internal server error' })
+            }
+        }
+    )
     done()
 }

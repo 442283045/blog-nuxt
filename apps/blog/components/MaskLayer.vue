@@ -66,15 +66,7 @@ const page = usePage()
 .mask {
     --un-bg-opacity: 0.5;
 }
-/* .v-enter-active,
-.v-leave-active {
-    transition: all 0.3s ease-out;
-}
 
-.v-enter-from,
-.v-leave-to {
-    transition: translateX(-80rem);
-} */
 .translate-enter-active,
 .translate-leave-active {
     transition: transform 0.5s ease-in-out;

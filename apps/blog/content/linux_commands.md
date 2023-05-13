@@ -35,39 +35,39 @@ Ctrl+Shift+V 粘贴
 
 ## apt
 
-- 列出所有可更新的软件清单命令：**sudo apt update**
+-   列出所有可更新的软件清单命令：**sudo apt update**
 
-- 升级软件包：**sudo apt upgrade**
-
-    列出可更新的软件包及版本信息：**apt list --upgradeable**
-
-    升级软件包，升级前先删除需要更新软件包：**sudo apt full-upgrade**
-
-- 安装指定的软件命令：**sudo apt install <package_name>**
+-   升级软件包：**sudo apt upgrade**
 
     列出可更新的软件包及版本信息：**apt list --upgradeable**
 
     升级软件包，升级前先删除需要更新软件包：**sudo apt full-upgrade**
 
-- 安装指定的软件命令：**sudo apt install <package_name>**
+-   安装指定的软件命令：**sudo apt install &lt;package_name&gt;**
 
-- 安装多个软件包：**sudo apt install <package_1> <package_2> <package_3>**
+    列出可更新的软件包及版本信息：**apt list --upgradeable**
 
-- 更新指定的软件命令：**sudo apt update <package_name>**
+    升级软件包，升级前先删除需要更新软件包：**sudo apt full-upgrade**
 
-- 显示软件包具体信息,例如：版本号，安装大小，依赖关系等等：**sudo apt show <package_name>**
+-   安装指定的软件命令：**sudo apt install &lt;package_name&gt;**
 
-- 删除软件包命令：**sudo apt remove <package_name>**
+-   安装多个软件包：**sudo apt install &lt;package_1&gt; &lt;package_2&gt; &lt;package_3&gt;**
 
-- 清理不再使用的依赖和库文件: **sudo apt autoremove**
+-   更新指定的软件命令：**sudo apt update &lt;package_name&gt;**
 
-- 移除软件包及配置文件: **sudo apt purge <package_name>**
+-   显示软件包具体信息,例如：版本号，安装大小，依赖关系等等：**sudo apt show &lt;package_name&gt;**
 
-- 查找软件包命令： **sudo apt search <keyword>**
+-   删除软件包命令：**sudo apt remove &lt;package_name&gt;**
 
-- 列出所有已安装的包：**apt list --installed**
+-   清理不再使用的依赖和库文件: **sudo apt autoremove**
 
-- 列出所有已安装的包的版本信息：**apt list --all-versions**
+-   移除软件包及配置文件: **sudo apt purge &lt;package_name&gt;**
+
+-   查找软件包命令： **sudo apt search &lt;keyword&gt;**
+
+-   列出所有已安装的包：**apt list --installed**
+
+-   列出所有已安装的包的版本信息：**apt list --all-versions**
 
 ## ls
 
@@ -121,9 +121,9 @@ source filename \[arguments\]
 
 主要用途
 
-- 执行文件并从文件中加载变量及函数到执行环境
+-   执行文件并从文件中加载变量及函数到执行环境
 
-- 执行文件并从文件中加载变量及函数到执行环境
+-   执行文件并从文件中加载变量及函数到执行环境
 
 参数
 
@@ -139,8 +139,8 @@ source 返回文件最后一个命令的返回值，如果文件不能读取则�
 
 建立硬链接或软连接
 
-- -s 建立软链接,不加-s 选项,则建立硬链接文件
-- -f 强制,如果目标文件已经存在,则删除目标文件后再建立链接文件
+-   -s 建立软链接,不加-s 选项,则建立硬链接文件
+-   -f 强制,如果目标文件已经存在,则删除目标文件后再建立链接文件
 
 ```bash
 ln /root/cangls /tmp/      #如果没有写文件名,会和原名一致.建立硬链接
@@ -151,33 +151,33 @@ ln /root/cangls /tmp/ -s   #建立软链接
 
 rm 是强大的删除命令
 
-- -f 强制删除
-- -i 交互删除
-- -r 递归删除,可以删除目录
+-   -f 强制删除
+-   -i 交互删除
+-   -r 递归删除,可以删除目录
 
 ## cp
 
 cp 是用于复制的命令
 
-- -a 相当于-dpr 选项的合集
-- -d 如果源文件为软连接,则复制出的目标文件也为软连接
-- -i 询问,如果目标文件已经存在,则会询问是否覆盖
-- -p 复制后目标文件保留源文件属性(包括所有者,所属组,权限和时间)
-- -r 递归复制,用于复制目录
+-   -a 相当于-dpr 选项的合集
+-   -d 如果源文件为软连接,则复制出的目标文件也为软连接
+-   -i 询问,如果目标文件已经存在,则会询问是否覆盖
+-   -p 复制后目标文件保留源文件属性(包括所有者,所属组,权限和时间)
+-   -r 递归复制,用于复制目录
 
 ## mv
 
 mv 是用来移动文件(剪切)或者改名的命令
 
-- -f 强制覆盖,若果目标文件已经存在,则不询问,直接强制覆盖
-- -i 交互移动,如果目标文件已经存在,则询问用户是否覆盖(默认选项)
-- -v 显示详细信息
+-   -f 强制覆盖,若果目标文件已经存在,则不询问,直接强制覆盖
+-   -i 交互移动,如果目标文件已经存在,则询问用户是否覆盖(默认选项)
+-   -v 显示详细信息
 
 ## tee
 
 从标准输入读取文件并重定向到标准输出和文件，可以是多个文件。
 
-- -a: 采用追加到文件而不是覆盖
+-   -a: 采用追加到文件而不是覆盖
 
 ```bash
 cat hello.txt | tee 123.txt 123.txt # 将 hello.txt 的内容复制到 123.txt 并输出到标准输出
@@ -460,7 +460,7 @@ bzip2 \[选项\] 源文件
 
 \-c 或--create：建立新的备份文件；
 
-\-C <目录>：这个选项用在解压缩，若要在特定目录解压缩，可以使用这个选项。 -d：记录文件的差别；
+\-C &lt;目录&gt;：这个选项用在解压缩，若要在特定目录解压缩，可以使用这个选项。 -d：记录文件的差别；
 
 \-x 或--extract 或--get：从备份文件中还原文件；
 
@@ -470,7 +470,7 @@ bzip2 \[选项\] 源文件
 
 \-Z 或--compress 或--uncompress：通过 compress 指令处理备份文件；
 
-\-f<备份文件>或--file=<备份文件>：指定备份文件；
+\-f&lt;备份文件&gt;或--file=&lt;备份文件&gt;：指定备份文件；
 
 \-v 或--verbose：显示指令执行过程；
 
@@ -494,9 +494,9 @@ bzip2 \[选项\] 源文件
 
 \-P 或--absolute-names：文件名使用绝对名称，不移除文件名称前的“/”号；
 
-\-N <日期格式> 或 --newer=<日期时间>：只将较指定日期更新的文件保存到备份文件里；
+\-N &lt;日期格式&gt; 或 --newer=&lt;日期时间&gt;：只将较指定日期更新的文件保存到备份文件里；
 
-\--exclude=<范本样式>：排除符合范本样式的文件。
+\--exclude=&lt;范本样式&gt;：排除符合范本样式的文件。
 
 参数
 
@@ -697,16 +697,16 @@ curl --data-urlencode 'comment=hello world' https://google.com/login
 
 使用`-e`选项时，若字符串中出现以下字符，则特别加以处理，而不会将它当成一般文字输出：
 
-- `\a` 发出警告声；
-- `\b` 删除前一个字符；
-- `\c` 不产生进一步输出 (\\c 后面的字符不会输出)；
-- `\f` 换行但光标仍旧停留在原来的位置；
-- `\n` 换行且光标移至行首；
-- `\r` 光标移至行首，但不换行；
-- `\t` 插入 tab；
-- `\v` 与\\f 相同；
-- `\\` 插入\\字符；
-- `\nnn` 插入 `nnn`（八进制）所代表的 ASCII 字符；
+-   `\a` 发出警告声；
+-   `\b` 删除前一个字符；
+-   `\c` 不产生进一步输出 (\\c 后面的字符不会输出)；
+-   `\f` 换行但光标仍旧停留在原来的位置；
+-   `\n` 换行且光标移至行首；
+-   `\r` 光标移至行首，但不换行；
+-   `\t` 插入 tab；
+-   `\v` 与\\f 相同；
+-   `\\` 插入\\字符；
+-   `\nnn` 插入 `nnn`（八进制）所代表的 ASCII 字符；
 
 # 关机和重启命令
 

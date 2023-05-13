@@ -24,7 +24,7 @@
                     outline-1
                     rows="3"
                     rounded-md
-                    v-model="comment"
+                    v-model.trim="comment"
                     p-3
                     w-full
                     appearance-none
@@ -92,11 +92,38 @@
     </div>
 </template>
 <script lang="ts" setup>
+import useUser from '~/stores/user'
+
 const comment = ref('')
 const showComment = ref(false)
 const button = ref()
+const apiConfig = useAppConfig()
+const route = useRoute()
+const user = useUser()
 function submitComment() {
-    console.log(comment)
+    if (comment.value !== '' && user.id && route.query.id) {
+        fetch(`${apiConfig.backend_url}/add_comment`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                author_id: user.id,
+                article_id: route.query.id,
+                content: comment.value
+            })
+        })
+            .then((res) => {
+                console.log(res)
+                return res.json()
+            })
+            .then((res) => {
+                console.log(res)
+            })
+    } else {
+        console.log('error')
+    }
 }
 function isDisableButton() {
     if (comment.value.trim() === '') {
@@ -104,7 +131,6 @@ function isDisableButton() {
     } else {
         button.value.disabled = false
     }
-    console.log('disable')
 }
 onMounted(() => {
     document.documentElement.addEventListener('click', () => {

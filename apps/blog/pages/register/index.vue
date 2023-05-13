@@ -37,7 +37,7 @@
                                 block
                                 px-3
                                 py-2
-                                border
+                                border-1
                                 border-gray-300
                                 placeholder-gray-500
                                 text-gray-900
