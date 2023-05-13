@@ -12,10 +12,104 @@
         bg-white
         lg:rounded-4
     >
-        <div text-xl font-bold>评论</div>
+        <div text-xl font-bold>Comments</div>
 
-        <div>
-            <div></div>
+        <div @click.stop="" flex mt-4>
+            <UserAvatar w-10 h-10 rounded-5></UserAvatar>
+            <div ml-10 w-full>
+                <textarea
+                    resize-none
+                    placeholder="Add a comment..."
+                    border-1
+                    outline-1
+                    rows="3"
+                    rounded-md
+                    v-model="comment"
+                    p-3
+                    w-full
+                    appearance-none
+                    focus:outline-blue-500
+                    bg-neutral-100
+                    focus:bg-white
+                    placeholder:text-gray-400
+                    @click="
+                        () => {
+                            showComment = true
+                            isDisableButton()
+                        }
+                    "
+                    @input="isDisableButton"
+                ></textarea>
+                <div v-show="showComment">
+                    <button
+                        px-6
+                        py-2
+                        text-white
+                        bg-blue-500
+                        border-0
+                        rounded-full
+                        hover:bg-blue-700
+                        active:bg-blue-800
+                        focus:outline-none
+                        focus:border-blue-900
+                        focus:ring-2
+                        focus:ring-blue-300
+                        transition-all
+                        duration-150
+                        float-right
+                        @click="submitComment"
+                        disabled:opacity-50
+                        ref="button"
+                    >
+                        comment
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div b-b-1 flex my-5 v-for="i in 10" :key="i">
+            <UserAvatar rounded-5 w-10 h-10></UserAvatar>
+            <div ml-10 w-full flex items-center flex-col>
+                <div
+                    items-center
+                    text-gray-5
+                    text-sm
+                    w-full
+                    flex
+                    justify-between
+                    leading-10
+                >
+                    <UserName truncate w-30></UserName>
+                    <div>one month ago</div>
+                </div>
+                <div my-4 w-full text-sm text-neutral-600>
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                    Eveniet placeat molestiae blanditiis dolorem quos autimpedit
+                    consequuntur, magni saepe fugit omnis, repudiandae magnam
+                    officia alias aperiam perspiciatis iure expedita minima.
+                </div>
+            </div>
         </div>
     </div>
 </template>
+<script lang="ts" setup>
+const comment = ref('')
+const showComment = ref(false)
+const button = ref()
+function submitComment() {
+    console.log(comment)
+}
+function isDisableButton() {
+    if (comment.value.trim() === '') {
+        button.value.disabled = true
+    } else {
+        button.value.disabled = false
+    }
+    console.log('disable')
+}
+onMounted(() => {
+    document.documentElement.addEventListener('click', () => {
+        showComment.value = false
+    })
+})
+</script>
+<style scoped></style>
