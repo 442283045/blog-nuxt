@@ -51,9 +51,6 @@ const route = useRoute()
 const router = useRouter()
 const path = route.params.path
 
-// window.addEventListener('locationchange', function () {
-//     console.log('location changed!')
-// })
 if (route.path === '/') {
     router.push('/')
 }

@@ -30,5 +30,8 @@ export default function (
             return reply.code(500).send({ msg: 'Internal server error' })
         }
     })
+    instance.get('/', async (request, reply) => {
+        reply.send({ msg: 'ok' })
+    })
     done()
 }

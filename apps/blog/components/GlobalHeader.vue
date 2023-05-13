@@ -17,7 +17,7 @@
             <div @click="page.toggleMask" lg:hidden>
                 <div text-gray-700 cursor-pointer ml-4 text-8 i-mdi-menu></div>
             </div>
-            <div class="logo" flex justify-center items-center h-full>
+            <div class="logo" flex justify-center items-center h-full font-500>
                 <NuxtLink to="/">
                     <NuxtImg w-16 src="/logo.png"></NuxtImg>
                 </NuxtLink>
@@ -28,18 +28,12 @@
                 </nav>
             </div>
 
-            <div
-                relative
-                flex
-                items-center
-                class="settings"
-                pr-4
-                cursor-pointer
-            >
+            <div relative flex items-center class="settings" pr-4>
                 <div>
                     <div
-                        @click.stop="themePanel = !themePanel"
+                        @click.stop="toggleThemePanel"
                         rounded-5
+                        cursor-pointer
                         p-2
                         mr-20
                         hover:bg-gray-200
@@ -56,16 +50,24 @@
                         border-1
                         absolute
                         rounded-md
-                        bg-white
+                        bg-gray-50
                         flex
                         top-12
                         flex-col
                         text-sm
                         text-gray-6
+                        cursor-pointer
+                        z-100
                     >
-                        <div p-2 hover:bg-gray-100 flex items-center>
+                        <div
+                            b-b-1
+                            b-white
+                            p-2
+                            hover:bg-gray-100
+                            flex
+                            items-center
+                        >
                             <div
-                                cursor-pointer
                                 pr-10
                                 text-6.5
                                 text-gray-6
@@ -73,9 +75,15 @@
                             ></div>
                             Light
                         </div>
-                        <div p-2 hover:bg-gray-100 flex items-center>
+                        <div
+                            b-b-1
+                            b-white
+                            p-2
+                            hover:bg-gray-100
+                            flex
+                            items-center
+                        >
                             <div
-                                cursor-pointer
                                 pr-10
                                 text-6.5
                                 text-gray-6
@@ -85,7 +93,6 @@
                         </div>
                         <div p-2 hover:bg-gray-100 flex items-center>
                             <div
-                                cursor-pointer
                                 pr-10
                                 text-6.5
                                 text-gray-6
@@ -96,27 +103,79 @@
                     </div>
                 </div>
                 <div>
-                    <div v-show="user.isLogin">
-                        <NuxtLink to="/user" flex items-center gap-5>
-                            <img
+                    <div relative v-show="user.isLogin">
+                        <div
+                            @click.stop="togglePersonPanel"
+                            flex
+                            gap-5
+                            items-center
+                            cursor-pointer
+                        >
+                            <!-- <img
                                 w-10
                                 h-10
                                 rounded-5
                                 alt="user avatar"
                                 ref="avatar_url"
                                 hover:shadow-lg
-                            />
-                            <div
+                            /> -->
+                            <UserAvatar
+                                w-10
+                                hover:shadow-lg
+                                h-10
+                                rounded-5
+                            ></UserAvatar>
+                            <!-- <div
                                 :title="user.username"
                                 hover:hover:text-sky-5
                                 w-20
                                 truncate
                                 class="<lg:hidden"
                                 lg:block
+                                cursor-pointer
                             >
                                 {{ username }}
+                            </div> -->
+                            <UserName
+                                :title="user.username"
+                                hover:hover:text-sky-5
+                                w-20
+                                truncate
+                                class="<lg:hidden"
+                                lg:block
+                                cursor-pointer
+                            ></UserName>
+                        </div>
+
+                        <div
+                            absolute
+                            rounded-md
+                            bg-gray-50
+                            flex
+                            top-12
+                            flex-col
+                            text-sm
+                            text-gray-6
+                            border-1
+                            v-show="personPanel"
+                        >
+                            <NuxtLink to="/user">
+                                <div
+                                    b-b-1
+                                    b-white
+                                    py-2
+                                    px-4
+                                    hover:bg-gray-100
+                                    flex
+                                    items-center
+                                >
+                                    Profile
+                                </div>
+                            </NuxtLink>
+                            <div py-2 px-4 hover:bg-gray-100 flex items-center>
+                                Log out
                             </div>
-                        </NuxtLink>
+                        </div>
                     </div>
                     <div v-show="!user.isLogin">
                         <NuxtLink to="/register">Sign up</NuxtLink>
@@ -136,7 +195,20 @@ const appConfig = useAppConfig()
 let avatar_url = ref<HTMLImageElement>()
 
 const themePanel = ref(false)
+const personPanel = ref(false)
 const username = ref('username')
+function toggleThemePanel() {
+    themePanel.value = !themePanel.value
+    if (personPanel.value) {
+        personPanel.value = false
+    }
+}
+function togglePersonPanel() {
+    personPanel.value = !personPanel.value
+    if (themePanel.value) {
+        themePanel.value = false
+    }
+}
 onMounted(() => {
     if (avatar_url.value && user.avatar_path) {
         avatar_url.value.src = `${appConfig.backend_url}${user.avatar_path}`
@@ -144,6 +216,9 @@ onMounted(() => {
     document.documentElement.addEventListener('click', () => {
         if (themePanel.value) {
             themePanel.value = false
+        }
+        if (personPanel.value) {
+            personPanel.value = false
         }
     })
 })

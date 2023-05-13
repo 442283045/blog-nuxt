@@ -21,6 +21,7 @@ const server = fastify({
         }
     }
 })
+
 server.register(cors, {
     origin: ['http://localhost:3000'], // The origins that are allowed access
     credentials: true

@@ -1,38 +1,18 @@
 <template>
     <main relative>
-        <NuxtImg
-            absolute
-            w-full
-            bg-cover
-            h-60
-            blur-sm
-            opacity-30
-            src="/article-image.jpg"
-            bg-center
-            overflow-hidden
-        ></NuxtImg>
-
         <div
             flex
             flex-col
             items-center
-            z-10
-            relative
+            top-0
             w-full
             h-60
             justify-center
+            style="background-image: url(/article-image.jpg)"
         >
-            <img
-                bg-center
-                bg-cover
-                h-20
-                w-20
-                rounded-10
-                :src="`${appConfig.backend_url}${user.avatar_path}`"
-                alt="user avatar"
-            />
+            <UserAvatar rounded-10 h-20 w-20></UserAvatar>
 
-            <div text-gray-5>一只大青蛙</div>
+            <UserName></UserName>
             <div
                 absolute
                 right-1
