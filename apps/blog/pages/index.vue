@@ -1,5 +1,5 @@
 <template>
-    <main w-full flex justify-center bg-gray-200>
+    <main w-full flex justify-center bg-gray-200 class="dark:bg-[#25282a]">
         <div flex-col w-full justify-between h-full flex max-w-5xl>
             <ul m-4 flex-col flex gap-4>
                 <li
@@ -18,6 +18,7 @@
                     md:h-42
                     flex
                     bg-white
+                    class="dark:bg-[#181a1b]"
                     shadow-lg
                     rounded-2
                     p-2
@@ -32,7 +33,7 @@
                             class="nuxt_img"
                         />
                     </div>
-                    <div flex-1 grid px-4 py-1>
+                    <div class="dark:text-neutral-200" flex-1 grid px-4 py-1>
                         <div truncate text-xl>
                             <NuxtLink
                                 :to="`/blog${_path}?id=${id}`"
@@ -41,7 +42,7 @@
                                 {{ title }}
                             </NuxtLink>
                         </div>
-                        <div h-18 ref="description">
+                        <div text-sm h-18 ref="description">
                             {{ description }}
                         </div>
                         <div
@@ -57,7 +58,7 @@
                             </div>
                             <div flex gap-4 items-end>
                                 <div translate-y-12px gap-1 flex items-center>
-                                    <Lottie translate-x-10px />
+                                    <Lottie dark:bg-black translate-x-10px />
                                     <div z-30>{{ favorites }}</div>
                                 </div>
                                 <div gap-1 flex items-center>

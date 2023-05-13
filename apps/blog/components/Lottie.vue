@@ -6,6 +6,7 @@
         h-10
         @click="playAnimation"
         ref="lottie_canvas"
+        fill-black
     ></div>
 </template>
 
@@ -16,6 +17,7 @@ import type { AnimationItem } from 'lottie-web'
 const lottie_canvas = ref()
 let flag = 0
 let animation: AnimationItem
+
 function playAnimation() {
     // console.log(animation.totalFrames)
     // console.log(animation.currentFrame)
@@ -68,3 +70,8 @@ onUnmounted(() => {
     animation.destroy()
 })
 </script>
+<style scoped>
+.dark div :deep(rect) {
+    fill: #181a1b;
+}
+</style>

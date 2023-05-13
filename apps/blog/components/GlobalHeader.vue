@@ -4,20 +4,28 @@
     <header
         h-16
         bg-white
+        class="dark:bg-[#18191a] dark:b-[#363b3d]"
         flex
         justify-center
         sticky
         top-0
         backdrop-filter
         b-b-1
-        b-gray-200
         z-10
     >
         <div w-full items-center justify-between h-full max-w-7xl flex>
             <div @click="page.toggleMask" lg:hidden>
                 <div text-gray-700 cursor-pointer ml-4 text-8 i-mdi-menu></div>
             </div>
-            <div class="logo" flex justify-center items-center h-full font-500>
+            <div
+                dark:text-white
+                class="logo"
+                flex
+                justify-center
+                items-center
+                h-full
+                font-500
+            >
                 <NuxtLink to="/">
                     <NuxtImg w-16 src="/logo.png"></NuxtImg>
                 </NuxtLink>
@@ -41,6 +49,7 @@
                         <div
                             cursor-pointer
                             text-6.5
+                            ref="theme"
                             text-gray-6
                             class="i-mdi-weather-sunny"
                         ></div>
@@ -66,6 +75,7 @@
                             hover:bg-gray-100
                             flex
                             items-center
+                            @click="lightTheme"
                         >
                             <div
                                 pr-10
@@ -82,6 +92,7 @@
                             hover:bg-gray-100
                             flex
                             items-center
+                            @click="darkTheme"
                         >
                             <div
                                 pr-10
@@ -91,7 +102,13 @@
                             ></div>
                             Dark
                         </div>
-                        <div p-2 hover:bg-gray-100 flex items-center>
+                        <div
+                            @click="systemTheme"
+                            p-2
+                            hover:bg-gray-100
+                            flex
+                            items-center
+                        >
                             <div
                                 pr-10
                                 text-6.5
@@ -211,11 +228,58 @@ onMounted(() => {
             personPanel.value = false
         }
     })
+    changeTheme()
+    switchIcon()
 })
-
+function changeTheme() {
+    if (
+        localStorage.theme === 'dark' ||
+        (!('theme' in localStorage) &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+        document.documentElement.classList.add('dark')
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
+}
+function switchIcon() {
+    if (localStorage.theme === 'dark') {
+        darkTheme()
+    }
+}
 setTimeout(() => {
     username.value = user.username
 })
+const theme = ref()
+// On page load or when changing themes, best to add inline in `head` to avoid FOUC
+
+function lightTheme() {
+    // Whenever the user explicitly chooses light mode
+    localStorage.theme = 'light'
+    if (!theme.value.classList.contains('i-mdi-weather-sunny')) {
+        theme.value.className = ''
+        theme.value.classList.add('i-mdi-weather-sunny')
+    }
+    changeTheme()
+}
+function darkTheme() {
+    // Whenever the user explicitly chooses dark mode
+    localStorage.theme = 'dark'
+    if (!theme.value.classList.contains('i-mdi-weather-night')) {
+        theme.value.className = ''
+        theme.value.classList.add('i-mdi-weather-night')
+    }
+    changeTheme()
+}
+function systemTheme() {
+    // Whenever the user explicitly chooses to respect the OS preference
+    localStorage.removeItem('theme')
+    if (!theme.value.classList.contains('i-mdi-theme-light-dark')) {
+        theme.value.className = ''
+        theme.value.classList.add('i-mdi-theme-light-dark')
+    }
+    changeTheme()
+}
 </script>
 <style scoped>
 header {
