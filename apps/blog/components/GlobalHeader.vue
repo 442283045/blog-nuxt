@@ -31,8 +31,6 @@
                 </NuxtLink>
                 <nav class="<lg:hidden" lg:flex gap-8 items-center>
                     <NuxtLink ml-30 hover:text-sky-500 to="/">Home</NuxtLink>
-
-                    <!-- <NuxtLink to="/blog">Blog</NuxtLink> -->
                 </nav>
             </div>
 
@@ -51,7 +49,7 @@
                             text-6.5
                             ref="theme"
                             text-gray-6
-                            class="i-mdi-weather-sunny"
+                            class="i-mdi-white-balance-sunny"
                         ></div>
                     </div>
                     <div
@@ -81,7 +79,7 @@
                                 pr-10
                                 text-6.5
                                 text-gray-6
-                                class="i-mdi-weather-sunny"
+                                class="i-mdi-white-balance-sunny"
                             ></div>
                             Light
                         </div>
@@ -228,57 +226,86 @@ onMounted(() => {
             personPanel.value = false
         }
     })
-    changeTheme()
-    switchIcon()
+    loadTheme()
 })
-function changeTheme() {
+function loadTheme() {
     if (
         localStorage.theme === 'dark' ||
-        (!('theme' in localStorage) &&
-            window.matchMedia('(prefers-color-scheme: dark)').matches)
+        localStorage.theme === 'light' ||
+        localStorage.theme === 'system'
     ) {
-        document.documentElement.classList.add('dark')
+        if (localStorage.theme === 'dark') {
+            theme.value.className = ''
+            theme.value.classList.add('i-mdi-weather-night')
+            theme.value.style.color = '#3b82f6'
+            document.documentElement.classList.add('dark')
+        } else if (
+            localStorage.theme === 'system' &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches
+        ) {
+            theme.value.className = ''
+            theme.value.classList.add('i-mdi-weather-night')
+            document.documentElement.classList.add('dark')
+        } else {
+            theme.value.className = ''
+            theme.value.classList.add('i-mdi-white-balance-sunny')
+        }
+        if (localStorage.theme === 'light') {
+            theme.value.style.color = '#3b82f6'
+        }
+        if (localStorage.theme === 'theme') {
+            theme.value.style.color = 'rgba(75,85,99,var(--un-text-opacity))'
+        }
     } else {
-        document.documentElement.classList.remove('dark')
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            theme.value.className = ''
+            theme.value.classList.add('i-mdi-weather-night')
+            localStorage.theme === 'dark'
+            document.documentElement.classList.add('dark')
+        } else {
+            theme.value.className = ''
+            theme.value.classList.add('i-mdi-white-balance-sunny')
+            localStorage.theme === 'light'
+        }
     }
 }
-function switchIcon() {
-    if (localStorage.theme === 'dark') {
-        darkTheme()
-    }
-}
+
 setTimeout(() => {
     username.value = user.username
 })
 const theme = ref()
-// On page load or when changing themes, best to add inline in `head` to avoid FOUC
 
 function lightTheme() {
-    // Whenever the user explicitly chooses light mode
     localStorage.theme = 'light'
-    if (!theme.value.classList.contains('i-mdi-weather-sunny')) {
+    theme.value.style.color = '#3b82f6'
+    document.documentElement.className = ''
+    if (!theme.value.classList.contains('i-mdi-white-balance-sunny')) {
         theme.value.className = ''
-        theme.value.classList.add('i-mdi-weather-sunny')
+        theme.value.classList.add('i-mdi-white-balance-sunny')
     }
-    changeTheme()
 }
 function darkTheme() {
-    // Whenever the user explicitly chooses dark mode
     localStorage.theme = 'dark'
+    theme.value.style.color = '#3b82f6'
+    document.documentElement.className = ''
+    document.documentElement.classList.add('dark')
     if (!theme.value.classList.contains('i-mdi-weather-night')) {
         theme.value.className = ''
         theme.value.classList.add('i-mdi-weather-night')
     }
-    changeTheme()
 }
 function systemTheme() {
-    // Whenever the user explicitly chooses to respect the OS preference
-    localStorage.removeItem('theme')
-    if (!theme.value.classList.contains('i-mdi-theme-light-dark')) {
+    theme.value.style.color = 'rgba(75,85,99,var(--un-text-opacity))'
+    localStorage.theme = 'system'
+    document.documentElement.className = ''
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark')
         theme.value.className = ''
-        theme.value.classList.add('i-mdi-theme-light-dark')
+        theme.value.classList.add('i-mdi-weather-night')
+    } else {
+        theme.value.className = ''
+        theme.value.classList.add('i-mdi-white-balance-sunny')
     }
-    changeTheme()
 }
 </script>
 <style scoped>
