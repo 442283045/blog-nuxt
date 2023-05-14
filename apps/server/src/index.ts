@@ -1,5 +1,4 @@
 import fastify from 'fastify'
-import pino from 'pino'
 import jwt from '@fastify/jwt'
 // import auth from '@fastify/auth'
 import type { FastifyCookieOptions } from '@fastify/cookie'
@@ -11,6 +10,8 @@ import cors from '@fastify/cors'
 import fileServer from '@fastify/static'
 import path from 'node:path'
 import logger from './log/index.js'
+import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config()
 const server = fastify({})
 
 server.register(cors, {
@@ -36,5 +37,6 @@ server.listen({ port: 3001 }, function (err, address) {
         server.log.error(err)
         process.exit(1)
     }
+
     logger.info(`Server listening on ${address}`)
 })

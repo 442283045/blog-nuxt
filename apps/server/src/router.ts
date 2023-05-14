@@ -332,9 +332,6 @@ export default function (
             return reply
                 .code(200)
                 .send({ msg: 'user is not logged in', login: false })
-            //
-            // reply.code(500).send({ msg: 'Internal Server Error' })
-            // console.log(err) // an error occurred
         }
     })
     done()

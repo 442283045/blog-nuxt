@@ -10,12 +10,6 @@ declare module 'fastify' {
 }
 const emailAndCodeMessages = new Map()
 
-const sendMail = (email: string, code: string, callback: any) => {
-    // Code for sending mock email
-}
-// interface MyAxiosInstance extends AxiosInstance {
-//     mysql: any // replace 'any' with the correct type definitions
-// }
 const instance = axios.create({
     baseURL: 'http://localhost:3000'
 })
