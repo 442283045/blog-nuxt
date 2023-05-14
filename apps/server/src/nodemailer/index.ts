@@ -12,7 +12,7 @@ const config = {
     }
 }
 
-export default function sendMail(userMail, code, fn) {
+export default function sendMail(userMail: string, code: string, fn: any) {
     const transporter = nodemailer.createTransport(config)
     // 验证码随机数
 
@@ -27,15 +27,6 @@ export default function sendMail(userMail, code, fn) {
         html: `<b>您的激活验证码为：${code}, 24小时内有效，请谨慎保管。</b>`
     }
     console.log(mail)
-    // transporter.sendMail(mail, function (error, info) {
-    //     if (error) {
-    //         notice()
-    //         return console.log(error)
-    //     }
-    //     notice()
-    //     transporter.close()
-    //     console.log('mail sent:', info.response)
-    // })
 
     transporter.sendMail(mail, fn)
 }

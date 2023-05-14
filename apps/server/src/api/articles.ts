@@ -1,6 +1,6 @@
 import fastify, { FastifyInstance, FastifyRequest } from 'fastify'
 import { RowDataPacket } from 'mysql2'
-
+import logger from '../log/index.js'
 import { MySQLPromisePool } from '@fastify/mysql'
 
 declare module 'fastify' {
@@ -60,5 +60,9 @@ export default function (
             }
         }
     )
+    instance.get('/health_check', () => {
+        logger.info('health_check')
+        return 'ok'
+    })
     done()
 }

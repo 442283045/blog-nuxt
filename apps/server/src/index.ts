@@ -1,5 +1,5 @@
 import fastify from 'fastify'
-
+import pino from 'pino'
 import jwt from '@fastify/jwt'
 // import auth from '@fastify/auth'
 import type { FastifyCookieOptions } from '@fastify/cookie'
@@ -10,17 +10,8 @@ import dbConnector from './database.js'
 import cors from '@fastify/cors'
 import fileServer from '@fastify/static'
 import path from 'node:path'
-const server = fastify({
-    logger: {
-        transport: {
-            target: 'pino-pretty',
-            options: {
-                translateTime: 'HH:MM:ss Z',
-                ignore: 'pid,hostname'
-            }
-        }
-    }
-})
+import logger from './log/index.js'
+const server = fastify({})
 
 server.register(cors, {
     origin: ['http://localhost:3000'], // The origins that are allowed access
@@ -40,19 +31,10 @@ server.register(dbConnector)
 server.register(router)
 server.register(articlesApi)
 
-// type Server = typeof server & {
-//     mysql: {
-//         query: (
-//             sql: string
-//         ) => Promise<Array<Array<{ [key: string]: string | number }>>>
-//     }
-// }
-
-// Run the server!
 server.listen({ port: 3001 }, function (err, address) {
     if (err) {
         server.log.error(err)
         process.exit(1)
     }
-    console.log(`Server is now listening on ${address}`)
+    logger.info(`Server listening on ${address}`)
 })

@@ -3,3 +3,4 @@
 //         mysql: MySQLPromisePool
 //     }
 // }
+// declare module 'nodemailer'
