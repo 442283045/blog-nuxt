@@ -10,7 +10,6 @@ import cors from '@fastify/cors'
 import fileServer from '@fastify/static'
 import path from 'node:path'
 import logger from './log/index.js'
-import api from './api/index.js'
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 dotenv.config()
 const server = fastify({})
@@ -32,15 +31,5 @@ server.register(jwt, { secret: 'supersecret' })
 server.register(dbConnector)
 server.register(router)
 server.register(articlesApi)
-// server.register(api)
-
-server.listen({ port: 3001 }, function (err, address) {
-    if (err) {
-        server.log.error(err)
-        process.exit(1)
-    }
-
-    logger.info(`Server listening on ${address}`)
-})
 
 export default server

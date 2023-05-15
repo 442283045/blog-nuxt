@@ -177,6 +177,7 @@
                                 hover:bg-gray-100
                                 flex
                                 items-center
+                                @click="logout"
                             >
                                 Log out
                             </div>
@@ -306,6 +307,22 @@ function systemTheme() {
         theme.value.className = ''
         theme.value.classList.add('i-mdi-white-balance-sunny')
     }
+}
+function logout() {
+    fetch(`${appConfig.backend_url}/api/logout`, {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'include'
+    })
+        .then((res) => res.json())
+        .then((res) => {
+            console.log(res)
+            user.logout()
+        })
+        .catch((err) => {
+            console.log(err)
+            console.log('logout failed')
+        })
 }
 </script>
 <style scoped>

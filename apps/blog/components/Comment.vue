@@ -12,14 +12,15 @@
         bg-white
         lg:rounded-4
     >
-        <div text-xl font-bold>Comments</div>
+        <div class="dark:text-[#E8E6E3]" text-xl font-bold>Comments</div>
 
         <div @click.stop="" flex mt-4>
             <UserAvatar w-10 h-10 rounded-5></UserAvatar>
             <div ml-10 w-full>
                 <textarea
+                    class="dark:bg-[#1e2021] dark:caret-white dark:focus:outline-none dark:focus:bg-[#1e2021]"
                     resize-none
-                    placeholder="Add a comment..."
+                    placeholder=" Add a comment..."
                     border-1
                     outline-1
                     rows="3"
@@ -66,11 +67,19 @@
                 </div>
             </div>
         </div>
-        <div b-b-1 flex my-5 v-for="i in 10" :key="i">
+        <div
+            class="dark:text-[#B4AEA4]"
+            b-b-1
+            flex
+            my-5
+            v-for="i in 10"
+            :key="i"
+        >
             <UserAvatar rounded-5 w-10 h-10></UserAvatar>
             <div ml-10 w-full flex items-center flex-col>
                 <div
                     items-center
+                    class="dark:text-[#B4AEA4]"
                     text-gray-5
                     text-sm
                     w-full
@@ -81,7 +90,13 @@
                     <UserName truncate w-30></UserName>
                     <div>one month ago</div>
                 </div>
-                <div my-4 w-full text-sm text-neutral-600>
+                <div
+                    class="dark:text-[#B4AEA4]"
+                    my-4
+                    w-full
+                    text-sm
+                    text-neutral-600
+                >
                     Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                     Eveniet placeat molestiae blanditiis dolorem quos autimpedit
                     consequuntur, magni saepe fugit omnis, repudiandae magnam

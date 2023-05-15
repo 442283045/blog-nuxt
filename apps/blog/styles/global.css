@@ -1,3 +1,7 @@
 :root {
     --un-backdrop-blur: blur(3rem);
 }
+.dark pre,
+.dark pre * {
+    background-color: rgb(30, 32, 33) !important;
+}

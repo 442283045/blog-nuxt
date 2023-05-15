@@ -1,6 +1,6 @@
 <template>
     <main
-        class="markdown"
+        class="markdown dark:bg-[#25282a]"
         w-full
         bg-gray-200
         lg:pt-4
@@ -9,6 +9,7 @@
         items-center
     >
         <article
+            class="dark:text-[#E8E6E3] dark:bg-[#181a1b] dark:text-[rgb(232, 230, 227)]"
             flex
             flex-col
             justify-center
@@ -29,6 +30,7 @@
             </ContentDoc>
         </article>
         <Comment
+            class="dark:bg-[#181a1b] dark:text-[rgb(232, 230, 227)]"
             lg:mt-4
             flex
             flex-col
@@ -55,5 +57,3 @@ if (route.path === '/') {
     router.push('/')
 }
 </script>
-
-<style></style>

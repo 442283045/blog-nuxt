@@ -6,7 +6,15 @@ const useUser = defineStore('user', {
         username: '',
         id: 0
     }),
-    actions: {}
+    actions: {
+        logout() {
+            this.isLogin = false
+            this.avatar_path = ''
+            this.email = ''
+            this.username = ''
+            this.id = 0
+        }
+    }
 })
 
 export default useUser
