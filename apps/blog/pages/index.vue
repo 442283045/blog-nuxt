@@ -57,23 +57,20 @@
                                 {{ published_date }}
                             </div>
                             <div flex gap-4 items-end>
-                                <div translate-y-12px gap-1 flex items-center>
+                                <!-- <div translate-y-12px gap-1 flex items-center>
                                     <Lottie dark:bg-black translate-x-10px />
                                     <div z-30>{{ favorites }}</div>
+                                </div> -->
+                                <div gap-1 flex items-center>
+                                    <div flex i-mdi-cards-heart-outline></div>
+                                    <div>{{ favorites }}</div>
                                 </div>
                                 <div gap-1 flex items-center>
-                                    <div
-                                        translate-y-1px
-                                        flex
-                                        i-mdi-comment-outline
-                                    ></div>
+                                    <div flex i-mdi-comment-outline></div>
                                     <div>{{ comments }}</div>
                                 </div>
                                 <div gap-1 flex items-center>
-                                    <div
-                                        translate-y-1px
-                                        i-mdi-eye-circle-outline
-                                    ></div>
+                                    <div i-mdi-eye-circle-outline></div>
                                     <div>{{ view_count }}</div>
                                 </div>
                             </div>

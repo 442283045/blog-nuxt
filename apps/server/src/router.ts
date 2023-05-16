@@ -1,20 +1,11 @@
-import fastify, { FastifyInstance } from 'fastify'
+import { FastifyInstance, FastifyPluginCallback } from 'fastify'
 import { RowDataPacket } from 'mysql2'
 import sendMail from './nodemailer/index.js'
-import { MySQLPromisePool } from '@fastify/mysql'
+
 import bcrypt from 'bcrypt'
 import logger from './log/index.js'
-declare module 'fastify' {
-    interface FastifyInstance {
-        mysql: MySQLPromisePool
-    }
-}
 
-export default function (
-    instance: FastifyInstance,
-    options: unknown,
-    done: Function
-) {
+const plugin: FastifyPluginCallback<{}> = function (instance, options, done) {
     const isValidEmail = (email: string) => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
         return emailRegex.test(email)
@@ -336,3 +327,4 @@ export default function (
     })
     done()
 }
+export default plugin

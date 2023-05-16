@@ -15,7 +15,8 @@ const user = useUser()
 const apiConfig = useAppConfig()
 
 fetch(`${apiConfig.backend_url}/api/check_login`, {
-    credentials: 'include'
+    credentials: 'include',
+    mode: 'cors'
 })
     .then((res) => res.json())
     .then((res) => {

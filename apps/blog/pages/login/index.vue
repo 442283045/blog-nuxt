@@ -10,7 +10,7 @@
                     Log in
                 </h2>
             </div>
-            <form @submit.prevent="LogIn" novalidate class="mt-8 space-y-6">
+            <form @submit.prevent="" novalidate class="mt-8 space-y-6">
                 <div flex flex-col gap-8 rounded-md shadow-sm>
                     <div>
                         <label for="email-address" class="sr-only">
@@ -59,6 +59,7 @@
                 <div>
                     <button
                         type="submit"
+                        @click="signIn"
                         class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
                         Sign in
@@ -94,8 +95,9 @@
 definePageMeta({
     layout: false
 })
+const { toastMessage, showToast } = useToast()
 import { useField } from 'vee-validate'
-
+const appConfig = useAppConfig()
 function emailValidateField(value: string) {
     if (!value) {
         return 'email is required'
@@ -107,10 +109,11 @@ function emailValidateField(value: string) {
 
     return true
 }
-const { value: email, errorMessage: emailErrorMessage } = useField(
-    'email',
-    emailValidateField
-)
+const {
+    value: email,
+    errorMessage: emailErrorMessage,
+    validate: emailValidate
+} = useField('email', emailValidateField)
 
 function passwordValidateField(value: string) {
     if (!value) {
@@ -129,9 +132,64 @@ function passwordValidateField(value: string) {
     return true
 }
 
-const { value: password, errorMessage: passwordErrorMessage } = useField(
-    'fullName',
-    passwordValidateField
-)
-function LogIn() {}
+import useUser from '../../stores/user'
+
+const user = useUser()
+const router = useRouter()
+const {
+    value: password,
+    errorMessage: passwordErrorMessage,
+    validate: passwordValidate
+} = useField('fullName', passwordValidateField)
+async function signIn() {
+    await Promise.all([emailValidate(), passwordValidate()]).catch((err) => {
+        console.log(err)
+    })
+    if (!email.value || !password.value) {
+        return showToast({ message: 'email is empty', type: ToastType.Error })
+    }
+    if (emailErrorMessage.value || passwordErrorMessage.value) {
+        return
+    }
+    // await signUp({ username: email.value, password: password.value, code: veriCode.value })
+    fetch(`${appConfig.backend_url}/login`, {
+        method: 'POST', // or 'GET'
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email: email.value,
+            password: password.value
+        }),
+        credentials: 'include'
+    })
+        .then(async (response) => {
+            console.log(response)
+            if (!response.ok) {
+                const { msg: errorMessage } = await response.json()
+
+                return showToast({
+                    message: errorMessage,
+                    type: ToastType.Error
+                })
+            }
+            interface userData {
+                email: string
+                username: string
+                avatar_path: string
+            }
+            response.json().then((data) => {
+                showToast({ message: 'Sign Success', type: ToastType.Success })
+                user.isLogin = true
+                router.push('/')
+                user.email = data.user.email
+                user.username = data.user.username
+                user.avatar_path = data.user.avatar_path
+                console.log('Sign Success:', data)
+            })
+        })
+        .catch((error) => {
+            console.error('Error:', error)
+        })
+}
 </script>

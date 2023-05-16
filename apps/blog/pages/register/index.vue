@@ -2,13 +2,7 @@
     <div
         class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
     >
-        <transition name="fade">
-            <Toast
-                v-if="showToast"
-                :message="toastMessage"
-                :type="toastType"
-            ></Toast>
-        </transition>
+        <Toast></Toast>
         <div class="max-w-md w-full space-y-8">
             <div>
                 <h2
@@ -193,13 +187,18 @@ watch(messageState, () => {
         resendTime.value = 120
     }
 })
-const { toastMessage, toastType, showToast, toast } = useToast()
+const { showToast, ToastType } = useToast()
 import { useField } from 'vee-validate'
 const appConfig = useAppConfig()
 async function sendCode() {
     await emailValidate()
 
     if (emailErrorMessage.value) {
+        showToast({
+            message: 'Please enter a valid email address',
+            type: ToastType.Warning
+        })
+        console.log('hello toast')
         return
     }
     fetch(`${appConfig.backend_url}/api/send_code`, {
@@ -214,7 +213,10 @@ async function sendCode() {
             if (!response.ok) {
                 const { msg: errorMessage } = await response.json()
                 messageState.value = sendState.sendCode
-                return toast.trigger({ message: errorMessage, type: 'error' })
+                return showToast({
+                    message: errorMessage,
+                    type: ToastType.Error
+                })
             }
             response.json().then((data) => {
                 messageState.value = sendState.resend
@@ -285,7 +287,7 @@ const { value: password, errorMessage: passwordErrorMessage } = useField(
 const router = useRouter()
 async function singUp() {
     if (!email.value || !veriCode.value || !password.value) {
-        return toast.trigger({ message: 'email is empty', type: 'error' })
+        return showToast({ message: 'email is empty', type: ToastType.Warning })
     }
     if (
         emailErrorMessage.value ||
@@ -312,7 +314,10 @@ async function singUp() {
             if (!response.ok) {
                 const { msg: errorMessage } = await response.json()
 
-                return toast.trigger({ message: errorMessage, type: 'error' })
+                return showToast({
+                    message: errorMessage,
+                    type: ToastType.Error
+                })
             }
             interface userData {
                 email: string
@@ -320,7 +325,7 @@ async function singUp() {
                 avatar_path: string
             }
             response.json().then((data) => {
-                toast.trigger({ message: 'Sign Success', type: 'success' })
+                showToast({ message: 'Sign Success', type: ToastType.Success })
                 user.isLogin = true
                 router.push('/')
                 user.email = data.user.email

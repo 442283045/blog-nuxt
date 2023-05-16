@@ -1,33 +1,44 @@
 <template>
-    <div class="fixed bottom-0 right-0 m-6" :class="toastType" rounded-md>
-        <div class="flex items-center p-4 rounded-lg shadow-lg">
-            <span font-extrabold text-white text-sm class="font-medium">
-                {{ message }}
-            </span>
+    <Transition>
+        <div v-if="toastVisible" z-10 fixed bottom-5 right-5 role="alert">
+            <div
+                flex
+                items-center
+                w-full
+                max-w-xs
+                p-4
+                text-gray-500
+                bg-white
+                divide-gray-200
+                rounded-lg
+                shadow
+                dark:text-gray-400
+                dark:bg-gray-800
+            >
+                <Success v-if="toastType === ToastType.Success">
+                    {{ toastMessage }}
+                </Success>
+                <Warning v-else-if="toastType === ToastType.Warning">
+                    {{ toastMessage }}
+                </Warning>
+                <Info v-else>{{ toastMessage }}</Info>
+            </div>
         </div>
-    </div>
+    </Transition>
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
-    message: String,
-    type: {
-        type: String,
-        default: 'success'
-    }
-})
-
-const toastType = ref('bg-green-500')
-
-switch (props.type) {
-    case 'error':
-        toastType.value = 'bg-red-500'
-        break
-    case 'warning':
-        toastType.value = 'bg-yellow-500'
-        break
-    default:
-        toastType.value = 'bg-green-500'
-        break
-}
+const { toastMessage, toastVisible, toastType, ToastType } = useToast()
 </script>
+<style scoped>
+/* we will explain what these classes do next! */
+.v-enter-active,
+.v-leave-active {
+    transition: transform 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+    transform: translateX(500px);
+}
+</style>

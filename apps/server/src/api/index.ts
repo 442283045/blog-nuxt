@@ -1,19 +1,12 @@
-import { FastifyInstance, FastifyRequest } from 'fastify'
-
-import logger from '../log/index.js'
-import { MySQLPromisePool } from '@fastify/mysql'
 import logout from './logout.js'
-declare module 'fastify' {
-    interface FastifyInstance {
-        mysql: MySQLPromisePool
+
+import { FastifyPluginAsync, FastifyPluginCallback } from 'fastify'
+
+const plugin: FastifyPluginAsync = async function (instance, options) {
+    try {
+        instance.register(logout)
+    } catch (err) {
+        console.log(err)
     }
 }
-
-export default function (
-    instance: FastifyInstance,
-    options: unknown,
-    done: Function
-) {
-    instance.register(logout, {})
-    done()
-}
+export default plugin

@@ -1,23 +1,35 @@
-import { ref } from 'vue'
-
+enum ToastType {
+    Info = 'info',
+    Success = 'success',
+    Warning = 'warning',
+    Error = 'error'
+}
 export default function useToast() {
-    const toastMessage = ref('')
-    const toastType = ref('success')
-    const showToast = ref(false)
+    const toastMessage = useState<string>('toastMessage', () => 'Hello World')
+    const toastType = useState<ToastType>('toastType', () => ToastType.Info)
+    const toastVisible = useState<boolean>('toastVisible', () => false)
 
-    const toast = {
-        trigger({
-            message,
-            type
-        }: {
-            message: string
-            type: 'success' | 'warning' | 'error'
-        }) {
-            toastMessage.value = message
-            toastType.value = type
-            showToast.value = true
-            setTimeout(() => (showToast.value = false), 3000)
-        }
+    function showToast({
+        message,
+        type = ToastType.Info
+    }: {
+        message: string
+        type: ToastType
+    }) {
+        if (toastVisible.value === true) return
+        toastMessage.value = message
+        toastType.value = type
+        toastVisible.value = true
+
+        setTimeout(() => {
+            toastVisible.value = false
+        }, 3000) // Hide the toast after 3 seconds
     }
-    return { toast, toastMessage, toastType, showToast }
+    return {
+        toastMessage,
+        toastType,
+        toastVisible,
+        showToast,
+        ToastType // Export the ToastType enum so it can be used in components
+    }
 }
