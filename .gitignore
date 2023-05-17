@@ -35,4 +35,5 @@ yarn-error.log*
 # vercel
 .vercel
 
-**/log/*.log
+apps/server/log/*.log
+apps/server/log/combined.log
