@@ -57,12 +57,13 @@
                                 h-full
                                 flex
                                 items-center
+                                @click="sendCode"
+                                cursor-pointer
                             >
                                 <button
                                     type="button"
                                     bg-transparent
                                     v-if="messageState === sendState.sendCode"
-                                    @click="sendCode"
                                 >
                                     Send Code
                                 </button>

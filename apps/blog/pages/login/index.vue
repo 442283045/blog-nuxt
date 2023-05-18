@@ -2,6 +2,7 @@
     <div
         class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
     >
+        <Toast></Toast>
         <div class="max-w-md w-full space-y-8">
             <div>
                 <h2
@@ -95,7 +96,7 @@
 definePageMeta({
     layout: false
 })
-const { toastMessage, showToast } = useToast()
+const { ToastType, showToast } = useToast()
 import { useField } from 'vee-validate'
 const appConfig = useAppConfig()
 function emailValidateField(value: string) {
@@ -136,21 +137,47 @@ import useUser from '../../stores/user'
 
 const user = useUser()
 const router = useRouter()
+// const { fetchData } = useFetchData()
 const {
     value: password,
     errorMessage: passwordErrorMessage,
     validate: passwordValidate
 } = useField('fullName', passwordValidateField)
+
 async function signIn() {
     await Promise.all([emailValidate(), passwordValidate()]).catch((err) => {
         console.log(err)
     })
     if (!email.value || !password.value) {
-        return showToast({ message: 'email is empty', type: ToastType.Error })
+        return showToast({ message: 'email is empty', type: ToastType.Warning })
     }
     if (emailErrorMessage.value || passwordErrorMessage.value) {
         return
     }
+    // let data = await fetchData('/login', {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //         email: email.value,
+    //         password: password.value
+    //     })
+    // })
+    // interface userData {
+    //     email: string
+    //     username: string
+    //     avatar_path: string
+    // }
+    // if (data) {
+    //     showToast({ message: 'Sign Success', type: ToastType.Success })
+    //     user.isLogin = true
+    //     router.push('/')
+    //     user.email = data.user.email
+    //     user.username = data.user.username
+    //     user.avatar_path = data.user.avatar_path
+    //     console.log('Sign Success:', data)
+    // }
     // await signUp({ username: email.value, password: password.value, code: veriCode.value })
     fetch(`${appConfig.backend_url}/login`, {
         method: 'POST', // or 'GET'
@@ -163,30 +190,32 @@ async function signIn() {
         }),
         credentials: 'include'
     })
-        .then(async (response) => {
-            console.log(response)
-            if (!response.ok) {
-                const { msg: errorMessage } = await response.json()
-
+        .then((response) => {
+            // interface userData {
+            //     email: string
+            //     username: string
+            //     avatar_path: string
+            // }
+            return response.json() as Promise<{
+                status: boolean
+                message: string
+                user: any
+            }>
+        })
+        .then((data) => {
+            console.log(data.status)
+            if (!data.status) {
                 return showToast({
-                    message: errorMessage,
-                    type: ToastType.Error
+                    message: data.message,
+                    type: ToastType.Warning
                 })
             }
-            interface userData {
-                email: string
-                username: string
-                avatar_path: string
-            }
-            response.json().then((data) => {
-                showToast({ message: 'Sign Success', type: ToastType.Success })
-                user.isLogin = true
-                router.push('/')
-                user.email = data.user.email
-                user.username = data.user.username
-                user.avatar_path = data.user.avatar_path
-                console.log('Sign Success:', data)
-            })
+            showToast({ message: data.message, type: ToastType.Success })
+            user.isLogin = true
+            router.push('/')
+            user.email = data.user.email
+            user.username = data.user.username
+            user.avatar_path = data.user.avatar_path
         })
         .catch((error) => {
             console.error('Error:', error)

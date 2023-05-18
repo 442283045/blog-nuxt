@@ -11,7 +11,7 @@ import fileServer from '@fastify/static'
 import path from 'node:path'
 // import logger from './log/index.js'
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-import hello from './api/index.js'
+import api from './api/index.js'
 dotenv.config()
 const server = fastify({})
 
@@ -32,7 +32,5 @@ server.register(jwt, { secret: 'supersecret' })
 server.register(dbConnector)
 server.register(router)
 server.register(articlesApi)
-server.register(hello).after((err) => {
-    if (err) throw err
-})
+server.register(api)
 export default server

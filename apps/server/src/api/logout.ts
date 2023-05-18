@@ -8,7 +8,7 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
             logger.info('health_check')
             return 'ok'
         })
-        instance.get('/logout', (request, reply) => {
+        instance.get('/api/logout', (request, reply) => {
             logger.info('logout')
             reply.setCookie('token', '', {
                 httpOnly: true,

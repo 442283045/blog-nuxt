@@ -1,5 +1,6 @@
 import logger from './log/index.js'
 import server from './app.js'
+
 server.listen({ port: 3001 }, function (err, address) {
     if (err) {
         server.log.error(err)
