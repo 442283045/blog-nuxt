@@ -22,17 +22,17 @@ fetch(`${apiConfig.backend_url}/api/check_login`, {
     .then((res) => {
         console.log(res)
         if (res.login === true) {
-            user.isLogin = true
-            console.log(res.user)
-            user.avatar_path = res.user.avatar_path
-            user.email = res.user.email
-            user.username = res.user.username
-            user.id = res.user.id
-            console.log(user)
+            user.$patch({
+                avatar_path: res.user.avatar_path,
+                email: res.user.email,
+                username: res.user.username,
+                id: res.user.id,
+                isLogin: true
+            })
+            console.log('patch successfully')
         } else {
             console.log(res)
         }
-        console.log('success')
     })
     .catch((err) => {
         console.log(err)

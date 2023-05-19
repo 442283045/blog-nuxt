@@ -141,6 +141,7 @@
                                 class="<lg:hidden"
                                 lg:block
                                 cursor-pointer
+                                dark:text-gray-300
                             ></UserName>
                         </div>
 

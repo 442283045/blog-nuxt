@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
-
+import { RowDataPacket } from 'mysql2'
 import logger from '../log/index.js'
 
 export default function (
@@ -23,6 +23,37 @@ export default function (
             return reply.code(500).send({ msg: 'Internal server error' })
         }
     })
+    instance.get('/comments', async (request, reply) => {
+        try {
+            const { article_id } = request.query as { article_id: number }
+            if (!article_id) {
+                return reply.code(400).send({
+                    message: 'please provide the article id',
+                    status: false
+                })
+            }
+
+            const [rows] = await instance.mysql.query<RowDataPacket[]>(
+                `select * from comments where article_id = ${article_id}`
+            )
+            for (let row of rows) {
+                const [[user]] = await instance.mysql.query<RowDataPacket[]>(
+                    `select username, email, avatar_path from users where id = ${row.author_id}`
+                )
+                Object.assign(row, {
+                    ...user
+                })
+                console.log(row)
+            }
+            return reply.code(200).send({
+                message: 'get comments successfully',
+                status: true,
+                data: rows
+            })
+        } catch (err) {
+            return reply.code(500).send({ msg: 'Internal server error' })
+        }
+    })
 
     interface CommentRequest {
         author_id: string
@@ -35,19 +66,29 @@ export default function (
             try {
                 const { author_id, article_id, content } = request.body
                 if (author_id && article_id && content) {
-                    logger.info({ author_id, article_id, content })
+                    logger.info(
+                        JSON.stringify({ author_id, article_id, content })
+                    )
                     // todo: prevent the sql injection
                     const [rows] = await instance.mysql.query(`
                     INSERT INTO comments (author_id, article_id, content) 
                     VALUES (${author_id}, ${article_id}, '${content}');
                     `)
                     console.log(rows)
-                    return reply.code(201).send({ msg: 'ok' })
+                    return reply.code(201).send({
+                        status: true,
+                        message: 'add a comment successfully'
+                    })
                 }
-                reply.code(400).send({ msg: 'no' })
+                reply.code(400).send({
+                    status: false,
+                    message: 'add a comment unsuccessfully'
+                })
             } catch (err) {
                 logger.error({ address: '/articles', err })
-                return reply.code(500).send({ msg: 'Internal server error' })
+                return reply
+                    .code(500)
+                    .send({ status: false, message: 'Internal server error' })
             }
         }
     )

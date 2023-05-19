@@ -5,7 +5,8 @@
         "Cooldown",
         "lottiefiles",
         "pino",
-        "sidebase"
+        "sidebase",
+        "tabler"
     ],
     "unocss.root": [
         "apps/blog"

@@ -33,6 +33,7 @@
                     bg-neutral-100
                     focus:bg-white
                     placeholder:text-gray-400
+                    dark:text-gray-300
                     @click="
                         () => {
                             showComment = true
@@ -70,12 +71,27 @@
         <div
             class="dark:text-[#B4AEA4]"
             b-b-1
+            b-gray-200
+            dark:b-gray-500
             flex
             my-5
-            v-for="i in 10"
-            :key="i"
+            v-for="{
+                id,
+                content,
+                published_date,
+                author_id,
+                username,
+                avatar_path
+            } in comments"
+            :key="id"
         >
-            <UserAvatar rounded-5 w-10 h-10></UserAvatar>
+            <img
+                rounded-5
+                w-10
+                h-10
+                :src="`${apiConfig.backend_url}${avatar_path}`"
+                alt="user avatar"
+            />
             <div ml-10 w-full flex items-center flex-col>
                 <div
                     items-center
@@ -87,8 +103,8 @@
                     justify-between
                     leading-10
                 >
-                    <UserName truncate w-30></UserName>
-                    <div>one month ago</div>
+                    <div truncate w-30>{{ username }}</div>
+                    <div>{{ published_date }}</div>
                 </div>
                 <div
                     class="dark:text-[#B4AEA4]"
@@ -97,10 +113,7 @@
                     text-sm
                     text-neutral-600
                 >
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                    Eveniet placeat molestiae blanditiis dolorem quos autimpedit
-                    consequuntur, magni saepe fugit omnis, repudiandae magnam
-                    officia alias aperiam perspiciatis iure expedita minima.
+                    {{ content }}
                 </div>
             </div>
         </div>
@@ -115,6 +128,23 @@ const button = ref()
 const apiConfig = useAppConfig()
 const route = useRoute()
 const user = useUser()
+const { showToast, ToastType } = useToast()
+const comments = ref({})
+fetch(`${apiConfig.backend_url}/comments?article_id=${route.query.id}`, {
+    method: 'GET'
+})
+    .then((res) => {
+        console.log(res)
+        return res.json()
+    })
+    .then((res) => {
+        comments.value = res.data
+        console.log(comments.value)
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+
 function submitComment() {
     if (comment.value !== '' && user.id && route.query.id) {
         fetch(`${apiConfig.backend_url}/add_comment`, {
@@ -134,7 +164,20 @@ function submitComment() {
                 return res.json()
             })
             .then((res) => {
+                if (!res.status) {
+                    return showToast({
+                        message: res.message,
+                        type: ToastType.Warning
+                    })
+                }
+                showToast({
+                    message: res.message,
+                    type: ToastType.Success
+                })
                 console.log(res)
+            })
+            .catch((err) => {
+                console.log(err)
             })
     } else {
         console.log('error')

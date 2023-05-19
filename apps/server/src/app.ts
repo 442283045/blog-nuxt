@@ -20,8 +20,8 @@ server.register(cors, {
     credentials: true
 })
 server.register(fileServer, {
-    root: path.join(path.resolve(), 'public'), // Replace 'public' with your directory containing static files
-    prefix: '/public/' // Optional: Prefix all routes with '/public/'
+    root: path.join(path.resolve(), 'public') // Replace 'public' with your directory containing static files
+    // Optional: Prefix all routes with '/public/'
 })
 server.register(cookie, {
     secret: 'my-secret', // for cookies signature

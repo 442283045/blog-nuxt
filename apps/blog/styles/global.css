@@ -5,3 +5,6 @@
 .dark pre * {
     background-color: rgb(30, 32, 33) !important;
 }
+html {
+    scroll-behavior: smooth;
+}
