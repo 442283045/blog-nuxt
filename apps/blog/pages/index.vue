@@ -1,5 +1,11 @@
 <template>
-    <main w-full flex justify-center bg-gray-200 class="dark:bg-[#25282a]">
+    <main
+        w-full
+        flex
+        justify-center
+        bg-gray-200
+        class="min-h-[calc(100vh-4rem)] dark:bg-[#25282a]"
+    >
         <div flex-col w-full justify-between h-full flex max-w-5xl>
             <ul m-4 flex-col flex gap-4>
                 <li

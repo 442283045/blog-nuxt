@@ -1,11 +1,11 @@
 <template>
     <div
-        class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
+        class="min-h-screen dark:bg-gray-900 flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
     >
-        <Toast></Toast>
         <div class="max-w-md w-full space-y-8">
             <div>
                 <h2
+                    dark:text-white
                     class="mt-6 text-center text-3xl font-extrabold text-gray-900"
                 >
                     Sign up
@@ -19,6 +19,8 @@
                                 Email address
                             </label>
                             <input
+                                dark:bg-gray-800
+                                dark:caret-white
                                 flex-1
                                 id="email-address"
                                 name="email"
@@ -43,6 +45,7 @@
                                 placeholder="Email address"
                             />
                             <div
+                                dark:caret-white
                                 text-white
                                 bg-indigo-600
                                 hover:bg-indigo-700
@@ -91,11 +94,14 @@
                             verification code
                         </label>
                         <input
+                            dark:caret-white
                             id="verification-code"
                             name="veriCode"
                             v-model="veriCode"
                             type="text"
                             required
+                            dark:bg-gray-800
+                            dark:c
                             class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
                             placeholder="verification code"
                         />
@@ -111,10 +117,13 @@
                     <div>
                         <label for="password" class="sr-only">Password</label>
                         <input
+                            dark:caret-white
                             id="password"
                             name="password"
                             type="password"
                             v-model="password"
+                            dark:bg-gray-800
+                            dark:c
                             required
                             class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
                             placeholder="Password"

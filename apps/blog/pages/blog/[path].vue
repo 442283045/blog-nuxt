@@ -22,16 +22,13 @@
             shadow-lg
             class="<lg:hidden"
         >
-            <div
-                py-3
-                b-b-1
-                b-gray-200
-                @click="isFavorite = !isFavorite"
-                cursor-pointer
-                text-5
-            >
-                <div v-if="isFavorite" class="i-tabler-star-filled"></div>
-                <div v-else class="i-tabler-star"></div>
+            <div py-3 b-b-1 b-gray-200 cursor-pointer text-5>
+                <div
+                    v-if="isFavorite"
+                    @click="removeFromFavorites"
+                    class="i-tabler-star-filled"
+                ></div>
+                <div v-else @click="addToFavorites" class="i-tabler-star"></div>
             </div>
             <div py-3 b-b-1 b-gray-200 cursor-pointer text-5>
                 <a href="#comments">
@@ -83,14 +80,38 @@
 </template>
 
 <script setup lang="ts">
+import { s } from 'vitest/dist/types-ad1c3f45'
 import '../../styles/markdown.css'
+import { totalmem } from 'os'
 
 const route = useRoute()
 const router = useRouter()
 const path = route.params.path
-
+const apiConfig = useAppConfig()
+const { showToast, ToastType } = useToast()
 if (route.path === '/') {
     router.push('/')
 }
 const isFavorite = ref(false)
+function addToFavorites() {
+    fetch(`${apiConfig.backend_url}/add_favorite`)
+        .then((res) => res.json())
+        .then((res) => {
+            if (res.status) {
+                isFavorite.value = true
+                showToast({
+                    message: 'Favorite it successfully',
+                    type: ToastType.Success
+                })
+            } else {
+                showToast({
+                    message: 'Favorite it unsuccessfully',
+                    type: ToastType.Warning
+                })
+            }
+        })
+}
+function removeFromFavorites() {
+    isFavorite.value = false
+}
 </script>

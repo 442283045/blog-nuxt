@@ -1,11 +1,12 @@
 <template>
     <div
+        dark:bg-gray-900
         class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
     >
-        <Toast></Toast>
         <div class="max-w-md w-full space-y-8">
             <div>
                 <h2
+                    dark:text-white
                     class="mt-6 text-center text-3xl font-extrabold text-gray-900"
                 >
                     Log in
@@ -18,6 +19,8 @@
                             Email address
                         </label>
                         <input
+                            dark:bg-gray-700
+                            dark:caret-white
                             id="email-address"
                             name="email"
                             type="email"
@@ -38,6 +41,8 @@
                     <div>
                         <label for="password" class="sr-only">Password</label>
                         <input
+                            dark:bg-gray-700
+                            dark:caret-white
                             id="password"
                             name="password"
                             type="password"
@@ -101,7 +106,7 @@ import { useField } from 'vee-validate'
 const appConfig = useAppConfig()
 function emailValidateField(value: string) {
     if (!value) {
-        return 'email is required'
+        return 'Please input the email'
     }
     let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
     if (!emailPattern.test(value)) {
@@ -149,36 +154,14 @@ async function signIn() {
         console.log(err)
     })
     if (!email.value || !password.value) {
-        return showToast({ message: 'email is empty', type: ToastType.Warning })
+        return showToast({
+            message: 'Please input the email',
+            type: ToastType.Warning
+        })
     }
     if (emailErrorMessage.value || passwordErrorMessage.value) {
         return
     }
-    // let data = await fetchData('/login', {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({
-    //         email: email.value,
-    //         password: password.value
-    //     })
-    // })
-    // interface userData {
-    //     email: string
-    //     username: string
-    //     avatar_path: string
-    // }
-    // if (data) {
-    //     showToast({ message: 'Sign Success', type: ToastType.Success })
-    //     user.isLogin = true
-    //     router.push('/')
-    //     user.email = data.user.email
-    //     user.username = data.user.username
-    //     user.avatar_path = data.user.avatar_path
-    //     console.log('Sign Success:', data)
-    // }
-    // await signUp({ username: email.value, password: password.value, code: veriCode.value })
     fetch(`${appConfig.backend_url}/login`, {
         method: 'POST', // or 'GET'
         headers: {

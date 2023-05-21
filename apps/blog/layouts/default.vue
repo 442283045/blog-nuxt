@@ -4,7 +4,7 @@
         <!-- <transition name="fade">
           
         </transition> -->
-        <Toast></Toast>
+
         <slot />
         <GlobalFooter></GlobalFooter>
     </div>

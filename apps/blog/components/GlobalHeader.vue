@@ -15,7 +15,14 @@
     >
         <div w-full items-center justify-between h-full max-w-7xl flex>
             <div @click="page.toggleMask" lg:hidden>
-                <div text-gray-700 cursor-pointer ml-4 text-8 i-mdi-menu></div>
+                <div
+                    dark:text-white
+                    text-gray-700
+                    cursor-pointer
+                    ml-4
+                    text-8
+                    i-mdi-menu
+                ></div>
             </div>
             <div
                 dark:text-white
@@ -35,7 +42,7 @@
             </div>
 
             <div relative flex items-center class="settings" pr-4>
-                <div>
+                <div class="<lg:hidden">
                     <div
                         @click.stop="toggleThemePanel"
                         rounded-5
@@ -184,7 +191,7 @@
                             </div>
                         </div>
                     </div>
-                    <div v-show="!user.isLogin">
+                    <div v-show="!user.isLogin" dark:text-white>
                         <NuxtLink to="/register">Sign up</NuxtLink>
                     </div>
                 </div>
