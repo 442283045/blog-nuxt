@@ -47,22 +47,23 @@ export default function (
     })
     instance.get('/comments', async (request, reply) => {
         try {
-            const { article_id } = request.query as { article_id: number }
+            const { article_id } = request.query as { article_id: string }
             if (!article_id) {
                 return reply.code(400).send({
                     message: 'Please provide the article id',
                     status: false
                 })
             }
-            const [articles] = await Promise.all([
+            instance.log.info({ address: '/comments', article_id })
+            const [comments] = await Promise.all([
                 instance.prisma.comments.findMany({
                     where: {
-                        article_id
+                        article_id: Number(article_id)
                     }
                 }),
                 instance.prisma.articles.update({
                     where: {
-                        id: article_id
+                        id: Number(article_id)
                     },
                     data: {
                         view_count: {
@@ -71,24 +72,28 @@ export default function (
                     }
                 })
             ])
+            let commentWithUser = []
+            instance.log.info({ address: '/comments', comments })
 
-            for (let article of articles) {
+            for (let comment of comments) {
                 const user = await instance.prisma.users.findUnique({
                     where: {
-                        id: article.author_id
+                        id: comment.author_id
+                    },
+                    select: {
+                        username: true,
+                        avatar_path: true
                     }
                 })
-
-                Object.assign(article, {
-                    ...user
-                })
+                commentWithUser.push({ ...comment, user })
             }
             return reply.code(200).send({
-                message: 'get comments successfully',
+                message: 'Get comments successfully',
                 status: true,
-                data: articles
+                data: commentWithUser
             })
         } catch (err) {
+            instance.log.error({ address: '/comments', err })
             return reply.code(500).send({ msg: 'Internal server error' })
         }
     })

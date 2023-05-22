@@ -50,13 +50,15 @@
                         p-2
                         mr-20
                         hover:bg-gray-200
+                        dark:hover:bg-gray-700
                     >
                         <div
                             cursor-pointer
-                            text-6.5
+                            dark:text-gray-300
                             ref="theme"
                             text-gray-6
-                            class="i-mdi-white-balance-sunny"
+                            i-carbon-sun
+                            dark:i-carbon-moon
                         ></div>
                     </div>
                     <div
@@ -64,63 +66,59 @@
                         border-1
                         absolute
                         rounded-md
-                        bg-gray-50
+                        bg-white
+                        dark:bg-gray-600
+                        dark:text-gray-200
+                        dark:b-gray-800
+                        shadow-lg
+                        w-30
                         flex
                         top-12
                         flex-col
                         text-sm
                         text-gray-6
                         cursor-pointer
+                        overflow-hidden
                         z-100
                     >
                         <div
                             b-b-1
                             b-white
+                            dark:b-gray-800
                             p-2
                             hover:bg-gray-100
+                            dark:hover:bg-gray-400
                             flex
                             items-center
-                            @click="lightTheme"
+                            @click="changeTheme('light')"
                         >
-                            <div
-                                pr-10
-                                text-6.5
-                                text-gray-6
-                                class="i-mdi-white-balance-sunny"
-                            ></div>
+                            <div pr-5 text-gray-6 class="i-carbon-sun"></div>
                             Light
                         </div>
                         <div
                             b-b-1
                             b-white
                             p-2
+                            dark:b-gray-800
                             hover:bg-gray-100
+                            dark:hover:bg-gray-400
                             flex
                             items-center
-                            @click="darkTheme"
+                            @click="changeTheme('dark')"
                         >
-                            <div
-                                pr-10
-                                text-6.5
-                                text-gray-6
-                                class="i-mdi-weather-night"
-                            ></div>
+                            <div pr-5 text-gray-6 class="i-carbon-moon"></div>
                             Dark
                         </div>
                         <div
-                            @click="systemTheme"
+                            @click="changeTheme('auto')"
                             p-2
                             hover:bg-gray-100
+                            dark:hover:bg-gray-400
                             flex
                             items-center
                         >
-                            <div
-                                pr-10
-                                text-6.5
-                                text-gray-6
-                                class="i-mdi-theme-light-dark"
-                            ></div>
-                            System
+                            <div pr-5 text-gray-6 class="i-carbon-screen"></div>
+                            Auto
                         </div>
                     </div>
                 </div>
@@ -155,13 +153,19 @@
                         <div
                             absolute
                             rounded-md
-                            bg-gray-50
+                            bg-white
                             flex
+                            shadow-lg
+                            w-30
+                            overflow-hidden
                             top-12
                             flex-col
                             text-sm
                             text-gray-6
                             border-1
+                            dark:bg-gray-600
+                            dark:text-gray-200
+                            dark:b-gray-800
                             v-show="personPanel"
                         >
                             <NuxtLink to="/user">
@@ -171,9 +175,11 @@
                                     py-2
                                     px-4
                                     hover:bg-gray-100
+                                    dark:b-gray-800
                                     flex
                                     items-center
                                     cursor-pointer
+                                    dark:hover:bg-gray-400
                                 >
                                     Profile
                                 </div>
@@ -186,6 +192,7 @@
                                 flex
                                 items-center
                                 @click="logout"
+                                dark:hover:bg-gray-400
                             >
                                 Log out
                             </div>
@@ -217,6 +224,12 @@ function toggleThemePanel() {
         personPanel.value = false
     }
 }
+const mode = useColorMode({
+    emitAuto: true
+})
+function changeTheme(theme: 'light' | 'dark' | 'auto') {
+    mode.value = theme
+}
 function togglePersonPanel() {
     personPanel.value = !personPanel.value
     if (themePanel.value) {
@@ -235,87 +248,12 @@ onMounted(() => {
             personPanel.value = false
         }
     })
-    loadTheme()
 })
-function loadTheme() {
-    if (
-        localStorage.theme === 'dark' ||
-        localStorage.theme === 'light' ||
-        localStorage.theme === 'system'
-    ) {
-        if (localStorage.theme === 'dark') {
-            theme.value.className = ''
-            theme.value.classList.add('i-mdi-weather-night')
-            theme.value.style.color = '#3b82f6'
-            document.documentElement.classList.add('dark')
-        } else if (
-            localStorage.theme === 'system' &&
-            window.matchMedia('(prefers-color-scheme: dark)').matches
-        ) {
-            theme.value.className = ''
-            theme.value.classList.add('i-mdi-weather-night')
-            document.documentElement.classList.add('dark')
-        } else {
-            theme.value.className = ''
-            theme.value.classList.add('i-mdi-white-balance-sunny')
-        }
-        if (localStorage.theme === 'light') {
-            theme.value.style.color = '#3b82f6'
-        }
-        if (localStorage.theme === 'theme') {
-            theme.value.style.color = 'rgba(75,85,99,var(--un-text-opacity))'
-        }
-    } else {
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            theme.value.className = ''
-            theme.value.classList.add('i-mdi-weather-night')
-            localStorage.theme === 'dark'
-            document.documentElement.classList.add('dark')
-        } else {
-            theme.value.className = ''
-            theme.value.classList.add('i-mdi-white-balance-sunny')
-            localStorage.theme === 'light'
-        }
-    }
-}
 
 setTimeout(() => {
     username.value = user.username
 })
-const theme = ref()
 
-function lightTheme() {
-    localStorage.theme = 'light'
-    theme.value.style.color = '#3b82f6'
-    document.documentElement.className = ''
-    if (!theme.value.classList.contains('i-mdi-white-balance-sunny')) {
-        theme.value.className = ''
-        theme.value.classList.add('i-mdi-white-balance-sunny')
-    }
-}
-function darkTheme() {
-    localStorage.theme = 'dark'
-    theme.value.style.color = '#3b82f6'
-    document.documentElement.className = ''
-    document.documentElement.classList.add('dark')
-    if (!theme.value.classList.contains('i-mdi-weather-night')) {
-        theme.value.className = ''
-        theme.value.classList.add('i-mdi-weather-night')
-    }
-}
-function systemTheme() {
-    theme.value.style.color = 'rgba(75,85,99,var(--un-text-opacity))'
-    localStorage.theme = 'system'
-    document.documentElement.className = ''
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.classList.add('dark')
-        theme.value.className = ''
-        theme.value.classList.add('i-mdi-weather-night')
-    } else {
-        theme.value.className = ''
-        theme.value.classList.add('i-mdi-white-balance-sunny')
-    }
-}
 function logout() {
     fetch(`${appConfig.backend_url}/api/logout`, {
         method: 'GET',

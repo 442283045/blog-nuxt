@@ -1,5 +1,3 @@
-import { fileURLToPath } from 'node:url'
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     modules: [
@@ -7,7 +5,8 @@ export default defineNuxtConfig({
         '@unocss/nuxt',
         'nuxt-vitest',
         '@nuxt/image-edge',
-        '@pinia/nuxt'
+        '@pinia/nuxt',
+        '@vueuse/nuxt'
     ],
     content: {
         // https://content.nuxtjs.org/api/configuration
