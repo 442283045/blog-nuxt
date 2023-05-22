@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model articles {
+  id             Int       @id @default(autoincrement())
+  title          String    @db.VarChar(255)
+  author_id      String    @db.VarChar(255)
+  published_date DateTime  @default(now()) @db.DateTime(0)
+  thumbs_up      Int       @default(0) @db.UnsignedInt
+  favorites      Int       @default(0) @db.UnsignedInt
+  updated_date   DateTime? @db.DateTime(0)
+  comments       Int       @default(0) @db.UnsignedInt
+  view_count     Int       @default(0) @db.UnsignedInt
+}
+
+model comments {
+  id             Int      @id @default(autoincrement())
+  content        String   @db.VarChar(255)
+  published_date DateTime @default(now()) @db.DateTime(0)
+  author_id      Int      @db.UnsignedInt
+  article_id     Int?
+}
+
+model user_favorites {
+  id         Int @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  user_id    Int
+  article_id Int
+
+  @@index([user_id], map: "user_Id_UNIQUE")
+}
+
+model users {
+  id          Int       @id @default(autoincrement())
+  username    String    @db.VarChar(255)
+  email       String    @unique(map: "email") @db.VarChar(255)
+  password    String    @db.VarChar(255)
+  avatar_path String?   @db.VarChar(255)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @db.Timestamp(0)
+  last_login  DateTime? @default(now()) @db.Timestamp(0)
+}

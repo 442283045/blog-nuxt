@@ -1,19 +1,18 @@
 import { FastifyPluginAsync } from 'fastify'
-import { RowDataPacket } from 'mysql2'
-import logger from '../log/index.js'
+
 import bcrypt from 'bcrypt'
 import { promisify } from 'node:util'
 
 const plugin: FastifyPluginAsync = async function (instance, options) {
     try {
         instance.post('/login', async (request, reply) => {
-            logger.info('login')
+            instance.log.info('login')
 
             const { password, email } = request.body as {
                 password: string
                 email: string
             }
-            logger.info(JSON.stringify({ password, email }))
+            instance.log.info(JSON.stringify({ password, email }))
             if (!password || !email) {
                 return reply
                     .code(400)
@@ -29,13 +28,16 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
                         message: 'Internal Server Error'
                     })
                 })
-            logger.info(hashedPassword)
-            let rows: RowDataPacket[]
+            instance.log.info(hashedPassword)
+            let user: Awaited<
+                ReturnType<typeof instance.prisma.users.findUnique>
+            >
             try {
-                const result = await instance.mysql.query<RowDataPacket[]>(
-                    `select * from users where email = "${email}"`
-                )
-                rows = result[0]
+                user = await instance.prisma.users.findUnique({
+                    where: {
+                        email: email
+                    }
+                })
             } catch (err) {
                 console.log('database insertion error')
                 console.log(err)
@@ -45,50 +47,41 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
                 return // This is important to prevent further execution in case of an error
             }
 
-            logger.info(JSON.stringify(rows[0]))
+            instance.log.info(JSON.stringify(user))
 
-            if (rows[0].email !== email) {
+            if (!user || user.email !== email) {
                 return reply.code(400).send({
                     status: false,
                     message: 'email or password is incorrect'
                 })
             }
             const promisifyCompare = promisify(bcrypt.compare)
-            // bcrypt.compare(password, rows[0].password, function (err, result) {
-            //     console.log(result)
-            //     // result == true
-            // })
 
             const isSame = await promisifyCompare(
                 password,
-                rows[0].password
+                user.password
             ).catch((err) => {
-                logger.info(err)
+                instance.log.info(err)
             })
             if (!isSame) {
-                logger.info({
-                    message: 'the password is incorrect, refuse to login'
+                instance.log.info({
+                    message: 'The password is incorrect, refuse to login',
+                    address: '/login'
                 })
                 return reply.code(400).send({
-                    message: 'email or password is incorrect',
+                    message: 'Email or password is incorrect',
                     status: false
                 })
             }
-            let userId: number = rows[0].id
 
             const token = instance.jwt.sign({
-                payload: userId
+                payload: user.id
             })
-            if (!token) {
-                return
-            }
-            logger.info({ token })
+
+            instance.log.info({ token })
 
             reply.setCookie('token', token, {
                 httpOnly: true,
-                // secure: true, // Set to true if using HTTPS
-                // domain: 'your-domain.com', // Uncomment and set to your domain if needed
-                // sameSite: 'strict', // Uncomment and set to 'strict' or 'lax' if needed
                 path: '/',
                 maxAge: 60 * 60 * 24 * 7, // 7 days in seconds
                 sameSite: 'none',
@@ -98,9 +91,9 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
                 status: true,
                 message: 'Logged in successfully',
                 user: {
-                    email,
-                    avatar_path: '/public/avatar/default.png',
-                    username: email
+                    email: user.email,
+                    avatar_path: user.avatar_path,
+                    username: user.username
                 }
             })
         })

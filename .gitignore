@@ -38,3 +38,12 @@ yarn-error.log*
 apps/server/log
 
 dist
+node_modules
+*.log*
+.nuxt
+.nitro
+.cache
+.output
+
+
+
