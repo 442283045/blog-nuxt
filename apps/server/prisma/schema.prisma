@@ -8,7 +8,7 @@ datasource db {
 }
 
 model articles {
-  id             Int       @id @default(autoincrement())
+  article_id     Int       @id @default(autoincrement())
   title          String    @db.VarChar(255)
   author_id      String    @db.VarChar(255)
   published_date DateTime  @default(now()) @db.DateTime(0)
@@ -20,7 +20,7 @@ model articles {
 }
 
 model comments {
-  id             Int      @id @default(autoincrement())
+  comment_id     Int      @id @default(autoincrement())
   content        String   @db.VarChar(255)
   published_date DateTime @default(now()) @db.DateTime(0)
   author_id      Int      @db.UnsignedInt
@@ -28,15 +28,15 @@ model comments {
 }
 
 model user_favorites {
-  id         Int @id @unique(map: "id_UNIQUE") @default(autoincrement())
-  user_id    Int
-  article_id Int
+  favorite_id Int @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  user_id     Int
+  article_id  Int
 
   @@index([user_id], map: "user_Id_UNIQUE")
 }
 
 model users {
-  id          Int       @id @default(autoincrement())
+  user_id     Int       @id @default(autoincrement())
   username    String    @db.VarChar(255)
   email       String    @unique(map: "email") @db.VarChar(255)
   password    String    @db.VarChar(255)

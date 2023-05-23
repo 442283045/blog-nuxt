@@ -63,10 +63,6 @@
                                 {{ published_date }}
                             </div>
                             <div flex gap-4 items-end>
-                                <!-- <div translate-y-12px gap-1 flex items-center>
-                                    <Lottie dark:bg-black translate-x-10px />
-                                    <div z-30>{{ favorites }}</div>
-                                </div> -->
                                 <div gap-1 flex items-center>
                                     <div flex i-mdi-cards-heart-outline></div>
                                     <div>{{ favorites }}</div>
@@ -96,31 +92,46 @@
 }
 </style>
 <script setup lang="ts">
+const { showToast, ToastType } = useToast()
 const appConfig = useAppConfig()
 const articles = await queryContent()
     .only(['article_id', 'title', 'description', '_path'])
     .sort({ article_id: 1 })
     .find()
     .catch((err) => {
-        console.log(err)
+        console.log({ err, address: 'index page' })
     })
-console.log(articles)
-const articlesInfo = await fetch(`${appConfig.backend_url}/articles`, {
-    method: 'GET'
+const { data: articlesInfo, error } = await useFetch('/articles', {
+    baseURL: appConfig.backend_url,
+    default: () => {
+        return [
+            {
+                id: -1,
+                title: '',
+                author_id: -1,
+                published_date: '',
+                thumbs_up: 0,
+                favorites: 0,
+                updated_date: '',
+                comments: 0,
+                view_count: 0
+            }
+        ]
+    }
 })
-    .then((res) => {
-        return res.json()
-    })
-    .catch((err) => {
-        console.log(err)
-    })
+onMounted(() => {
+    if (error.value) {
+        showToast({ message: error.value.message, type: ToastType.Warning })
+    }
+})
+
 interface Article {
-    _path: string
+    _path?: string
     title: string
-    description: string
-    article_id: number
+    description?: string
+    article_id?: number
     id: number
-    author_id: string
+    author_id: number
     published_date: string
     thumbs_up: number
     favorites: number
@@ -130,12 +141,12 @@ interface Article {
 }
 
 const combinedInfo: Array<Article> = []
-if (articles) {
+if (articles && articlesInfo.value) {
     for (let i = 0; i < articles.length; i++) {
-        combinedInfo.push({ ...articles[i], ...articlesInfo[i] })
+        combinedInfo.push({ ...articles[i], ...articlesInfo.value[i] })
     }
 }
-console.log(combinedInfo)
+
 const description = ref(null)
 interface CustomCSSStyleDeclaration extends CSSStyleDeclaration {
     ['-webkit-line-clamp']?: string

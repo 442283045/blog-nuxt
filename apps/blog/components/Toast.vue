@@ -15,10 +15,11 @@
                 dark:text-gray-400
                 dark:bg-gray-800
             >
-                <Success v-if="toastType === ToastType.Success">
+                <!-- toastType.value -->
+                <Success v-if="toastType.value === ToastType.Success">
                     {{ toastMessage }}
                 </Success>
-                <Warning v-else-if="toastType === ToastType.Warning">
+                <Warning v-else-if="toastType.value === ToastType.Warning">
                     {{ toastMessage }}
                 </Warning>
                 <Info v-else>{{ toastMessage }}</Info>

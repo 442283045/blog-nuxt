@@ -26,8 +26,19 @@ server.register(mailerPlugin)
 server.register(cookiePlugin)
 server.register(staticPlugin)
 
-server.addHook('onRequest', async (req, reply) => {})
-server.addHook('onResponse', async (req, reply) => {})
+server.addHook('onRequest', async (req, reply) => {
+    server.log.info({
+        message: 'request received',
+        address: req.routerPath
+    })
+})
+server.addHook('onResponse', async (req, reply) => {
+    server.log.info({
+        message: 'response sended',
+        address: req.routerPath
+    })
+    server.log.info({ message: '------------------------------------' })
+})
 
 server.register(api)
 export default server

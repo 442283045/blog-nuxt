@@ -206,7 +206,7 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                 instance.log.info(newUser)
 
                 const token = instance.jwt.sign({
-                    payload: newUser.id
+                    payload: newUser.user_id
                 })
                 if (!token) {
                     return
@@ -238,6 +238,7 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
 
     instance.get('/api/check_login', async (request, reply) => {
         const token = request.cookies.token
+        instance.log.info({ token })
         if (!token) {
             return reply
                 .code(200)
@@ -252,7 +253,7 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
 
             const user = await instance.prisma.users.findUnique({
                 where: {
-                    id: decode.payload
+                    user_id: decode.payload
                 }
             })
             if (!user) {
@@ -270,7 +271,7 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                 })
             }
 
-            const { id, username, email, avatar_path } = user
+            const { user_id, username, email, avatar_path } = user
             return reply.send({
                 message: 'Logged in',
                 login: true,
@@ -278,7 +279,7 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                     email,
                     avatar_path,
                     username,
-                    id
+                    user_id
                 }
             })
         } catch (err) {

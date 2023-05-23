@@ -92,7 +92,13 @@
                             items-center
                             @click="changeTheme('light')"
                         >
-                            <div pr-5 text-gray-6 class="i-carbon-sun"></div>
+                            <div
+                                dark:text-gray-100
+                                ml-1
+                                mr-3
+                                text-gray-6
+                                class="i-carbon-sun"
+                            ></div>
                             Light
                         </div>
                         <div
@@ -106,7 +112,13 @@
                             items-center
                             @click="changeTheme('dark')"
                         >
-                            <div pr-5 text-gray-6 class="i-carbon-moon"></div>
+                            <div
+                                dark:text-gray-100
+                                ml-1
+                                mr-3
+                                text-gray-6
+                                class="i-carbon-moon"
+                            ></div>
                             Dark
                         </div>
                         <div
@@ -117,7 +129,13 @@
                             flex
                             items-center
                         >
-                            <div pr-5 text-gray-6 class="i-carbon-screen"></div>
+                            <div
+                                dark:text-gray-100
+                                ml-1
+                                mr-3
+                                text-gray-6
+                                class="i-carbon-screen"
+                            ></div>
                             Auto
                         </div>
                     </div>

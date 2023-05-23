@@ -63,7 +63,7 @@ export default function (
                 }),
                 instance.prisma.articles.update({
                     where: {
-                        id: Number(article_id)
+                        article_id: Number(article_id)
                     },
                     data: {
                         view_count: {
@@ -78,14 +78,14 @@ export default function (
             for (let comment of comments) {
                 const user = await instance.prisma.users.findUnique({
                     where: {
-                        id: comment.author_id
+                        user_id: comment.author_id
                     },
                     select: {
                         username: true,
                         avatar_path: true
                     }
                 })
-                commentWithUser.push({ ...comment, user })
+                commentWithUser.push({ ...comment, ...user })
             }
             return reply.code(200).send({
                 message: 'Get comments successfully',

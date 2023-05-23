@@ -75,7 +75,7 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
             }
 
             const token = instance.jwt.sign({
-                payload: user.id
+                payload: user.user_id
             })
 
             instance.log.info({ token })
