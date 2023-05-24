@@ -93,15 +93,30 @@
                     </NuxtLink>
                 </div>
             </div>
+            <input
+                v-model.number="number"
+                pl-2
+                caret-white
+                bg-gray-600
+                type="text"
+            />
+            <button @click="clear">hello world</button>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import useToast from '~/stores/toast'
+const number = ref(0)
+function clear() {
+    console.log(number)
+    toastStore.clearToast(number.value)
+}
+const toastStore = useToast()
 definePageMeta({
     layout: false
 })
-const { showToast, ToastType } = useToast()
+// const { showToast, ToastType } = useToast()
 import { useField } from 'vee-validate'
 const appConfig = useAppConfig()
 function emailValidateField(value: string) {
@@ -154,10 +169,16 @@ async function signIn() {
         console.log(err)
     })
     if (!email.value || !password.value) {
-        return showToast({
-            message: 'Please input the email',
-            type: ToastType.Warning
+        toastStore.addToast({
+            message: 'Please input the email and password',
+            type: 'warning'
         })
+        console.log(toastStore.toasts)
+        return
+        // return showToast({
+        //     message: 'Please input the email',
+        //     type: ToastType.Warning
+        // })
     }
     if (emailErrorMessage.value || passwordErrorMessage.value) {
         return
@@ -179,10 +200,10 @@ async function signIn() {
                 return console.log('response error')
             }
 
-            showToast({
-                message: 'Sign in successfully',
-                type: ToastType.Success
-            })
+            // showToast({
+            //     message: 'Sign in successfully',
+            //     type: ToastType.Success
+            // })
             user.isLogin = true
             user.email = res.response._data.user.email
             user.username = res.response._data.user.username
@@ -190,10 +211,10 @@ async function signIn() {
             router.push('/')
         },
         onResponseError: (res) => {
-            showToast({
-                message: res.error?.message || 'Sign in failed',
-                type: ToastType.Warning
-            })
+            // showToast({
+            //     message: res.error?.message || 'Sign in failed',
+            //     type: ToastType.Warning
+            // })
         }
     })
     // fetch(`${appConfig.backend_url}/login`, {

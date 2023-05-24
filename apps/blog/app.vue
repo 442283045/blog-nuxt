@@ -1,7 +1,15 @@
 <template>
     <div>
         <NuxtLayout>
-            <Toast></Toast>
+            <div flex flex-col gap-3 z-10 fixed bottom-5 right-5>
+                <!-- <TransitionGroup> -->
+                <NewToast
+                    v-for="(toast, index) of toasts"
+                    :toast="toast"
+                    :key="toast.id"
+                ></NewToast>
+                <!-- </TransitionGroup> -->
+            </div>
             <NuxtLoadingIndicator />
             <NuxtPage />
         </NuxtLayout>
@@ -10,8 +18,14 @@
 <script setup lang="ts">
 import '@unocss/reset/tailwind-compat.css'
 import './styles/global.css'
-import 'vue3-lottie/dist/style.css'
+
 import useUser from './stores/user'
+import useToast from './stores/toast'
+const toastStore = useToast()
+
+const toasts = computed(() => {
+    return toastStore.toasts
+})
 const user = useUser()
 const apiConfig = useAppConfig()
 
@@ -46,3 +60,21 @@ watch(data, () => {
 
 console.log(user.id)
 </script>
+<style scoped>
+.v-leave-active {
+    position: absolute;
+}
+/* .v-leave-active {
+    position: relative;
+} */
+.v-move,
+.v-enter-active,
+.v-leave-active {
+    transition: all 0.5s ease;
+}
+.v-enter-from,
+.v-leave-to {
+    opacity: 0;
+    transform: translateX(500px);
+}
+</style>
