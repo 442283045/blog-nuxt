@@ -250,7 +250,7 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
 
         try {
             const decode = instance.jwt.verify(token) as VerifyPayloadType
-
+            instance.log.info(decode)
             const user = await instance.prisma.users.findUnique({
                 where: {
                     user_id: decode.payload
@@ -270,7 +270,7 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                     login: false
                 })
             }
-
+            instance.log.info(user)
             const { user_id, username, email, avatar_path } = user
             return reply.send({
                 message: 'Logged in',

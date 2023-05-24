@@ -22,9 +22,9 @@
     "vitest": "^0.31.1"
   },
   "dependencies": {
-    "@iconify-json/mdi": "^1.1.52",
     "@iconify-json/carbon": "^1.1.16",
     "@iconify-json/material-symbols": "^1.1.42",
+    "@iconify-json/mdi": "^1.1.52",
     "@iconify-json/tabler": "^1.1.76",
     "@lottiefiles/lottie-player": "^1.7.1",
     "@pinia/nuxt": "^0.4.11",
@@ -32,6 +32,7 @@
     "@vueuse/nuxt": "^10.1.2",
     "lottie-web": "^5.11.0",
     "pinia": "^2.1.1",
+    "primevue": "^3.29.1",
     "vee-validate": "^4.9.4",
     "vue3-lottie": "^2.7.0"
   }

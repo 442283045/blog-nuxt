@@ -2,16 +2,17 @@ enum ToastType {
     Info = 'info',
     Success = 'success',
     Warning = 'warning',
-    Error = 'error'
+    Error = 'error',
+    Default = 'info'
 }
+// type ToastType = 'info' | 'success' | 'warning' | 'error' | ''
 export default function useToast() {
     const toastMessage = useState<string>('toastMessage', () => 'Hello World')
-    const toastType = useState<ToastType>('toastType', () => ToastType.Info)
+    const toastType = useState<ToastType>('toastType', () => ToastType.Default)
     const toastVisible = useState<boolean>('toastVisible', () => false)
-
     function showToast({
         message,
-        type = ToastType.Info
+        type = ToastType.Default
     }: {
         message: string
         type: ToastType
@@ -30,6 +31,7 @@ export default function useToast() {
         toastType,
         toastVisible,
         showToast,
-        ToastType // Export the ToastType enum so it can be used in components
+        ToastType
+        // Export the ToastType enum so it can be used in components
     }
 }

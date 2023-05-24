@@ -52,7 +52,9 @@
                             rounded-full
                             hover:bg-blue-700
                             active:bg-blue-800
+                            dark:bg-gray-500
                             focus:outline-none
+                            dark:hover:bg-gray-700
                             focus:border-blue-900
                             focus:ring-2
                             focus:ring-blue-300
@@ -68,7 +70,7 @@
                     </div>
                 </div>
             </div>
-            <div py-5 v-else text-white text-gray-400>
+            <div py-5 v-if="!user.isLogin" text-white text-gray-400>
                 You haven't logged in yet,
                 <NuxtLink to="/login">login</NuxtLink>
                 to comment
@@ -78,14 +80,13 @@
             class="dark:text-[#B4AEA4]"
             b-b-1
             b-gray-200
-            dark:b-gray-500
+            dark:b-gray-700
             flex
             my-5
             v-for="{
                 comment_id,
                 content,
                 published_date,
-                author_id,
                 username,
                 avatar_path
             } in comments"
@@ -154,49 +155,88 @@ const { data, error } = await useFetch(
                     }
                 ]
             }
-        }
+        },
+        key: 'comments'
     }
 )
-const comments = data.value?.data
+const comments = computed(() => data.value?.data)
 
-function submitComment() {
-    if (comment.value !== '' && user.id && route.query.id) {
-        fetch(`${apiConfig.backend_url}/add_comment`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                author_id: user.id,
-                article_id: route.query.id,
-                content: comment.value
-            })
-        })
-            .then((res) => {
-                return res.json()
-            })
-            .then((res) => {
-                if (!res.status) {
-                    return showToast({
-                        message: res.message,
-                        type: ToastType.Warning
-                    })
-                }
-                showToast({
-                    message: res.message,
-                    type: ToastType.Success
-                })
-            })
-            .catch((err) => {})
-    } else {
+if (error.value) {
+    showToast({ message: 'Something went wrong', type: ToastType.Warning })
+}
+
+async function submitComment() {
+    if (!(comment.value !== '' && user.id && route.query.id)) {
+        showToast({ message: 'Something went wrong', type: ToastType.Warning })
     }
+    useFetch(`/add_comment`, {
+        baseURL: apiConfig.backend_url,
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            author_id: user.id,
+
+            article_id: route.query.id,
+            content: comment.value
+        }),
+        onResponse: () => {
+            comment.value = ''
+            button.value.blur()
+            isDisableButton()
+            showComment.value = false
+            refreshNuxtData('comments')
+            showToast({
+                message: 'Comment added successfully',
+                type: ToastType.Warning
+            })
+        },
+        onResponseError: (err) => {
+            showToast({
+                message: 'Something went wrong',
+                type: ToastType.Warning
+            })
+        }
+    })
+    // fetch(`${apiConfig.backend_url}/add_comment`, {
+    //     method: 'POST',
+    //     credentials: 'include',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //         author_id: user.id,
+    //         article_id: route.query.id,
+    //         content: comment.value
+    //     })
+    // })
+    //     .then((res) => {
+    //         return res.json()
+    //     })
+    //     .then((res) => {
+    //         if (!res.status) {
+    //             return showToast({
+    //                 message: res.message,
+    //                 type: ToastType.Warning
+    //             })
+    //         }
+    //         refreshNuxtData('comments')
+    //         showToast({
+    //             message: res.message,
+    //             type: ToastType.Success
+    //         })
+    //     })
+    //     .catch((err) => {})
 }
 function isDisableButton() {
-    if (comment.value.trim() === '') {
+    if (comment.value === '') {
         button.value.disabled = true
+        button.value.style.cursor = 'not-allowed'
     } else {
         button.value.disabled = false
+        button.value.style.cursor = 'pointer'
     }
 }
 onMounted(() => {

@@ -15,32 +15,34 @@ import useUser from './stores/user'
 const user = useUser()
 const apiConfig = useAppConfig()
 
-useFetch('/api/check_login', {
+const {
+    data,
+    error
+}: {
+    data: any
+    error: any
+} = await useFetch('/api/check_login', {
     baseURL: apiConfig.backend_url,
     credentials: 'include',
     mode: 'cors',
     server: false,
-    default: () => {
-        return {
-            login: false,
-            user: { avatar_path: '', email: '', username: '', user_id: -1 }
+    lazy: false
+})
+
+watch(data, () => {
+    if (data.value) {
+        console.log(data.value)
+        if (data.value.login === true) {
+            user.$patch({
+                avatar_path: data.value.user.avatar_path,
+                email: data.value.user.email,
+                username: data.value.user.username,
+                id: data.value.user.user_id,
+                isLogin: true
+            })
         }
     }
 })
-    .then(({ data }) => {
-        if (data.value) {
-            if (data.value.login === true) {
-                user.$patch({
-                    avatar_path: data.value.user.avatar_path,
-                    email: data.value.user.email,
-                    username: data.value.user.username,
-                    id: data.value.user.user_id,
-                    isLogin: true
-                })
-            }
-        }
-    })
-    .catch((err) => {
-        console.log(err)
-    })
+
+console.log(user.id)
 </script>

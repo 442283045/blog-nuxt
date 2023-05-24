@@ -19,12 +19,12 @@ importers:
       '@iconify-json/carbon':
         specifier: ^1.1.16
         version: 1.1.16
-      '@iconify-json/ic':
-        specifier: ^1.1.13
-        version: 1.1.13
       '@iconify-json/material-symbols':
         specifier: ^1.1.42
         version: 1.1.42
+      '@iconify-json/mdi':
+        specifier: ^1.1.52
+        version: 1.1.52
       '@iconify-json/tabler':
         specifier: ^1.1.76
         version: 1.1.76
@@ -46,6 +46,9 @@ importers:
       pinia:
         specifier: ^2.1.1
         version: 2.1.1(typescript@5.0.4)(vue@3.3.4)
+      primevue:
+        specifier: ^3.29.1
+        version: 3.29.1(vue@3.3.4)
       vee-validate:
         specifier: ^4.9.4
         version: 4.9.4(typescript@5.0.4)(vue@3.3.4)
@@ -53,9 +56,6 @@ importers:
         specifier: ^2.7.0
         version: 2.7.0(vue@3.3.4)
     devDependencies:
-      '@iconify-json/mdi':
-        specifier: ^1.1.52
-        version: 1.1.52
       '@nuxt/content':
         specifier: ^2.6.0
         version: 2.6.0
@@ -817,12 +817,6 @@ packages:
       '@iconify/types': 2.0.0
     dev: false
 
-  /@iconify-json/ic@1.1.13:
-    resolution: {integrity: sha512-5i5zal/VRwTrs99iMTnG1Zu97bgX9Mkiu9TzR1U1rHBylUnBW+HkOweoQVEPgQITGG024/lNbZxU+3Aa2xuDww==}
-    dependencies:
-      '@iconify/types': 2.0.0
-    dev: false
-
   /@iconify-json/material-symbols@1.1.42:
     resolution: {integrity: sha512-GVCi+035oCXCjpzTzjBx/Qgnsv4B2iJcLQCRqhNuY/Le9BmvHVg2+dHGMWc6iBgspjWu11SzRnz4wfs3XJGp1w==}
     dependencies:
@@ -833,7 +827,7 @@ packages:
     resolution: {integrity: sha512-tLzpFcmoGw1/jHcl+BshUd4bqvP4755OUluaARsuKskTp2aIPIAkRQOhzJGpry9CZ0i82z0alq4HrKrp9uvj4A==}
     dependencies:
       '@iconify/types': 2.0.0
-    dev: true
+    dev: false
 
   /@iconify-json/tabler@1.1.76:
     resolution: {integrity: sha512-p/NRbxR3xjxHaiyVg0SAtUIZjvhGy9UJHBU+blpcLUTlz4T8yM3gNLTnmQJrQ6bcbRHxHNG0ncjixTH/MVdrqg==}
@@ -6657,6 +6651,14 @@ packages:
       ansi-styles: 5.2.0
       react-is: 17.0.2
     dev: true
+
+  /primevue@3.29.1(vue@3.3.4):
+    resolution: {integrity: sha512-dn00eWy5ZVL5srjVD/sLppjg4leDPKx3EUxOMuTi/o5e0XHGB1ZASfXPSSNTr314k3NWpoQqzuDfPNOg4PJ7fg==}
+    peerDependencies:
+      vue: ^3.0.0
+    dependencies:
+      vue: 3.3.4
+    dev: false
 
   /process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}

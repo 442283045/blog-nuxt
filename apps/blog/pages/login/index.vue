@@ -101,7 +101,7 @@
 definePageMeta({
     layout: false
 })
-const { ToastType, showToast } = useToast()
+const { showToast, ToastType } = useToast()
 import { useField } from 'vee-validate'
 const appConfig = useAppConfig()
 function emailValidateField(value: string) {
@@ -162,8 +162,9 @@ async function signIn() {
     if (emailErrorMessage.value || passwordErrorMessage.value) {
         return
     }
-    fetch(`${appConfig.backend_url}/login`, {
-        method: 'POST', // or 'GET'
+    useFetch(`/login`, {
+        baseURL: appConfig.backend_url,
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -171,37 +172,65 @@ async function signIn() {
             email: email.value,
             password: password.value
         }),
-        credentials: 'include'
-    })
-        .then((response) => {
-            // interface userData {
-            //     email: string
-            //     username: string
-            //     avatar_path: string
-            // }
-            return response.json() as Promise<{
-                status: boolean
-                message: string
-                user: any
-            }>
-        })
-        .then((data) => {
-            console.log(data.status)
-            if (!data.status) {
-                return showToast({
-                    message: data.message,
-                    type: ToastType.Warning
-                })
+        credentials: 'include',
+        mode: 'cors',
+        onResponse: (res) => {
+            if (!res.response.ok) {
+                return console.log('response error')
             }
-            showToast({ message: data.message, type: ToastType.Success })
+
+            showToast({
+                message: 'Sign in successfully',
+                type: ToastType.Success
+            })
             user.isLogin = true
+            user.email = res.response._data.user.email
+            user.username = res.response._data.user.username
+            user.avatar_path = res.response._data.user.avatar_path
             router.push('/')
-            user.email = data.user.email
-            user.username = data.user.username
-            user.avatar_path = data.user.avatar_path
-        })
-        .catch((error) => {
-            console.error('Error:', error)
-        })
+        },
+        onResponseError: (res) => {
+            showToast({
+                message: res.error?.message || 'Sign in failed',
+                type: ToastType.Warning
+            })
+        }
+    })
+    // fetch(`${appConfig.backend_url}/login`, {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //         email: email.value,
+    //         password: password.value
+    //     }),
+    //     credentials: 'include'
+    // })
+    //     .then((response) => {
+    //         return response.json() as Promise<{
+    //             status: boolean
+    //             message: string
+    //             user: any
+    //         }>
+    //     })
+    //     .then((data) => {
+    //         console.log(data.status)
+    //         if (!data.status) {
+    //             return showToast({
+    //                 message: data.message,
+    //                 type: ToastType.Warning
+    //             })
+    //         }
+    //         showToast({ message: data.message, type: ToastType.Success })
+    //         user.isLogin = true
+    //         router.push('/')
+    //         user.email = data.user.email
+    //         user.username = data.user.username
+    //         user.avatar_path = data.user.avatar_path
+    //     })
+    //     .catch((error) => {
+    //         console.error('Error:', error)
+    //     })
 }
 </script>

@@ -10,7 +10,7 @@
             <ul m-4 flex-col flex gap-4>
                 <li
                     v-for="{
-                        id,
+                        article_id,
                         title,
                         description,
                         _path,
@@ -19,7 +19,7 @@
                         favorites,
                         view_count
                     } in combinedInfo"
-                    :key="id"
+                    :key="article_id"
                     h-36
                     md:h-42
                     flex
@@ -42,7 +42,7 @@
                     <div class="dark:text-neutral-200" flex-1 grid px-4 py-1>
                         <div truncate text-xl>
                             <NuxtLink
-                                :to="`/blog${_path}?id=${id}`"
+                                :to="`/blog${_path}?id=${article_id}`"
                                 hover:text-sky-500
                             >
                                 {{ title }}
@@ -106,7 +106,7 @@ const { data: articlesInfo, error } = await useFetch('/articles', {
     default: () => {
         return [
             {
-                id: -1,
+                article_id: -1,
                 title: '',
                 author_id: -1,
                 published_date: '',
@@ -130,7 +130,7 @@ interface Article {
     title: string
     description?: string
     article_id?: number
-    id: number
+
     author_id: number
     published_date: string
     thumbs_up: number

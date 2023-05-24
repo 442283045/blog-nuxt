@@ -59,6 +59,9 @@ export default function (
                 instance.prisma.comments.findMany({
                     where: {
                         article_id: Number(article_id)
+                    },
+                    orderBy: {
+                        published_date: 'desc'
                     }
                 }),
                 instance.prisma.articles.update({
@@ -99,8 +102,8 @@ export default function (
     })
 
     interface CommentRequest {
-        author_id: number
-        article_id: number
+        author_id: string
+        article_id: string
         content: string
     }
     instance.post(
@@ -115,8 +118,8 @@ export default function (
 
                     await instance.prisma.comments.create({
                         data: {
-                            author_id,
-                            article_id,
+                            author_id: Number(author_id),
+                            article_id: Number(article_id),
                             content
                         }
                     })

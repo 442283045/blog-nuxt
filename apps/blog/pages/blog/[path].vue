@@ -2,7 +2,6 @@
     <main
         class="markdown dark:bg-[#25282a]"
         w-full
-        bg-gray-200
         lg:pt-4
         flex
         flex-col
