@@ -46,15 +46,9 @@ importers:
       pinia:
         specifier: ^2.1.1
         version: 2.1.1(typescript@5.0.4)(vue@3.3.4)
-      primevue:
-        specifier: ^3.29.1
-        version: 3.29.1(vue@3.3.4)
       vee-validate:
         specifier: ^4.9.4
         version: 4.9.4(typescript@5.0.4)(vue@3.3.4)
-      vue3-lottie:
-        specifier: ^2.7.0
-        version: 2.7.0(vue@3.3.4)
     devDependencies:
       '@nuxt/content':
         specifier: ^2.6.0
@@ -4856,10 +4850,6 @@ packages:
     dependencies:
       p-locate: 5.0.0
 
-  /lodash-es@4.17.21:
-    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
-    dev: false
-
   /lodash._reinterpolate@3.0.0:
     resolution: {integrity: sha512-xYHt68QRoYGjeeM/XOE1uJtvXQAgvszfBhjV4yvsQH0u2i9I6cI6c6/eG4Hh3UAOVn0y/xAXwmTzEay49Q//HA==}
 
@@ -6658,14 +6648,6 @@ packages:
       ansi-styles: 5.2.0
       react-is: 17.0.2
     dev: true
-
-  /primevue@3.29.1(vue@3.3.4):
-    resolution: {integrity: sha512-dn00eWy5ZVL5srjVD/sLppjg4leDPKx3EUxOMuTi/o5e0XHGB1ZASfXPSSNTr314k3NWpoQqzuDfPNOg4PJ7fg==}
-    peerDependencies:
-      vue: ^3.0.0
-    dependencies:
-      vue: 3.3.4
-    dev: false
 
   /process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
@@ -8592,17 +8574,6 @@ packages:
       '@vue/devtools-api': 6.5.0
       vue: 3.3.4
     dev: true
-
-  /vue3-lottie@2.7.0(vue@3.3.4):
-    resolution: {integrity: sha512-6vblrGFQxRP1bqd5Lfg+/g/kDH7OL5dQMxU9xYORSsTC7NfHXOjebhYrIYOlRodtA5/zfWMkG+3+sIR7wjaIXw==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      vue: ^3.2
-    dependencies:
-      lodash-es: 4.17.21
-      lottie-web: 5.11.0
-      vue: 3.3.4
-    dev: false
 
   /vue@3.3.2:
     resolution: {integrity: sha512-98hJcAhyDwZoOo2flAQBSPVYG/o0HA9ivIy2ktHshjE+6/q8IMQ+kvDKQzOZTFPxvnNMcGM+zS2A00xeZMA7tA==}
