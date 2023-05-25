@@ -111,7 +111,7 @@
                     leading-10
                 >
                     <div truncate w-30>{{ username }}</div>
-                    <div>{{ published_date }}</div>
+                    <div>{{ formatChineseTime(published_date) }}</div>
                 </div>
                 <div
                     class="dark:text-[#B4AEA4]"

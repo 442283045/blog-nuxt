@@ -60,7 +60,7 @@
                             text-xs
                         >
                             <div text-gray-500>
-                                {{ published_date }}
+                                {{ formatChineseTime(published_date) }}
                             </div>
                             <div flex gap-4 items-end>
                                 <div gap-1 flex items-center>
@@ -92,6 +92,7 @@
 }
 </style>
 <script setup lang="ts">
+import formatChineseTime from '~/utils/formatChineseTime'
 const { showToast, ToastType } = useToast()
 const appConfig = useAppConfig()
 const articles = await queryContent()
