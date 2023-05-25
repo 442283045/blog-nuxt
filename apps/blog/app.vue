@@ -2,13 +2,13 @@
     <div>
         <NuxtLayout>
             <div flex flex-col gap-3 z-10 fixed bottom-5 right-5>
-                <!-- <TransitionGroup> -->
-                <NewToast
-                    v-for="(toast, index) of toasts"
-                    :toast="toast"
-                    :key="toast.id"
-                ></NewToast>
-                <!-- </TransitionGroup> -->
+                <TransitionGroup>
+                    <NewToast
+                        v-for="(toast, index) of toasts"
+                        :toast="toast"
+                        :key="toast.id"
+                    ></NewToast>
+                </TransitionGroup>
             </div>
             <NuxtLoadingIndicator />
             <NuxtPage />
@@ -61,12 +61,10 @@ watch(data, () => {
 console.log(user.id)
 </script>
 <style scoped>
-.v-leave-active {
-    position: absolute;
-}
 /* .v-leave-active {
-    position: relative;
+    position: absolute;
 } */
+
 .v-move,
 .v-enter-active,
 .v-leave-active {

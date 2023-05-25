@@ -123,7 +123,19 @@ export default function (
                             content
                         }
                     })
-
+                    const number = await instance.prisma.comments.count({
+                        where: {
+                            article_id: Number(article_id)
+                        }
+                    })
+                    await instance.prisma.articles.update({
+                        where: {
+                            article_id: Number(article_id)
+                        },
+                        data: {
+                            comments: number
+                        }
+                    })
                     return reply.code(201).send({
                         status: true,
                         message: 'Add a comment successfully'

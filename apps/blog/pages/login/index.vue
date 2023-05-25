@@ -93,30 +93,17 @@
                     </NuxtLink>
                 </div>
             </div>
-            <input
-                v-model.number="number"
-                pl-2
-                caret-white
-                bg-gray-600
-                type="text"
-            />
-            <button @click="clear">hello world</button>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import useToast from '~/stores/toast'
-const number = ref(0)
-function clear() {
-    console.log(number)
-    toastStore.clearToast(number.value)
-}
+
 const toastStore = useToast()
 definePageMeta({
     layout: false
 })
-// const { showToast, ToastType } = useToast()
 import { useField } from 'vee-validate'
 const appConfig = useAppConfig()
 function emailValidateField(value: string) {
@@ -173,15 +160,17 @@ async function signIn() {
             message: 'Please input the email and password',
             type: 'warning'
         })
-        console.log(toastStore.toasts)
+
         return
-        // return showToast({
-        //     message: 'Please input the email',
-        //     type: ToastType.Warning
-        // })
     }
     if (emailErrorMessage.value || passwordErrorMessage.value) {
-        return
+        return toastStore.addToast({
+            message:
+                emailErrorMessage.value ||
+                passwordErrorMessage.value ||
+                'Please input the email and password',
+            type: 'warning'
+        })
     }
     useFetch(`/login`, {
         baseURL: appConfig.backend_url,
@@ -195,63 +184,29 @@ async function signIn() {
         }),
         credentials: 'include',
         mode: 'cors',
-        onResponse: (res) => {
+        onResponse: async (res) => {
             if (!res.response.ok) {
+                console.log(res.error?.message)
                 return console.log('response error')
             }
 
-            // showToast({
-            //     message: 'Sign in successfully',
-            //     type: ToastType.Success
-            // })
             user.isLogin = true
             user.email = res.response._data.user.email
             user.username = res.response._data.user.username
             user.avatar_path = res.response._data.user.avatar_path
-            router.push('/')
+
+            await navigateTo('/')
+            toastStore.addToast({
+                message: 'Login successfully',
+                type: 'success'
+            })
         },
-        onResponseError: (res) => {
-            // showToast({
-            //     message: res.error?.message || 'Sign in failed',
-            //     type: ToastType.Warning
-            // })
+        onResponseError: () => {
+            return toastStore.addToast({
+                message: 'Email or password is incorrect',
+                type: 'warning'
+            })
         }
     })
-    // fetch(`${appConfig.backend_url}/login`, {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({
-    //         email: email.value,
-    //         password: password.value
-    //     }),
-    //     credentials: 'include'
-    // })
-    //     .then((response) => {
-    //         return response.json() as Promise<{
-    //             status: boolean
-    //             message: string
-    //             user: any
-    //         }>
-    //     })
-    //     .then((data) => {
-    //         console.log(data.status)
-    //         if (!data.status) {
-    //             return showToast({
-    //                 message: data.message,
-    //                 type: ToastType.Warning
-    //             })
-    //         }
-    //         showToast({ message: data.message, type: ToastType.Success })
-    //         user.isLogin = true
-    //         router.push('/')
-    //         user.email = data.user.email
-    //         user.username = data.user.username
-    //         user.avatar_path = data.user.avatar_path
-    //     })
-    //     .catch((error) => {
-    //         console.error('Error:', error)
-    //     })
 }
 </script>

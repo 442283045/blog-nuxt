@@ -4,10 +4,9 @@ const useToast = defineStore('toast', {
     }),
     actions: {
         addToast(toast: { message: string; type: string }) {
-            const number = Math.random().toString().slice(2)
             this.toasts.push({
-                id: Number(number),
-                message: number,
+                id: Number(Math.random().toString().slice(2)),
+                message: toast.message,
                 type: toast.type
             })
         },

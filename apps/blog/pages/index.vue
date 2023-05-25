@@ -64,7 +64,7 @@
                             </div>
                             <div flex gap-4 items-end>
                                 <div gap-1 flex items-center>
-                                    <div flex i-mdi-cards-heart-outline></div>
+                                    <div flex i-tabler-star></div>
                                     <div>{{ favorites }}</div>
                                 </div>
                                 <div gap-1 flex items-center>

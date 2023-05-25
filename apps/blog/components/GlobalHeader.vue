@@ -177,6 +177,7 @@
                             w-30
                             overflow-hidden
                             top-12
+                            right-0
                             flex-col
                             text-sm
                             text-gray-6
