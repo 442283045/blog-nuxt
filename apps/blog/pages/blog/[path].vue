@@ -79,15 +79,14 @@
 </template>
 
 <script setup lang="ts">
-import { s } from 'vitest/dist/types-ad1c3f45'
 import '../../styles/markdown.css'
-import { totalmem } from 'os'
-
+import useToast from '~/stores/toast'
+const toastStore = useToast()
 const route = useRoute()
 const router = useRouter()
 const path = route.params.path
 const apiConfig = useAppConfig()
-const { showToast, ToastType } = useToast()
+
 if (route.path === '/') {
     router.push('/')
 }
@@ -98,14 +97,14 @@ function addToFavorites() {
         .then((res) => {
             if (res.status) {
                 isFavorite.value = true
-                showToast({
+                toastStore.addToast({
                     message: 'Favorite it successfully',
-                    type: ToastType.Success
+                    type: 'success'
                 })
             } else {
-                showToast({
+                toastStore.addToast({
                     message: 'Favorite it unsuccessfully',
-                    type: ToastType.Warning
+                    type: 'warning'
                 })
             }
         })

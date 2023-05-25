@@ -128,15 +128,14 @@
 </template>
 <script lang="ts" setup>
 import useUser from '~/stores/user'
-
+import useToast from '~/stores/toast'
 const comment = ref('')
 const showComment = ref(false)
 const button = ref()
 const apiConfig = useAppConfig()
 const route = useRoute()
 const user = useUser()
-const { showToast, ToastType } = useToast()
-// const comments = ref({})
+const toastStore = useToast()
 const { data, error } = await useFetch(
     `/comments?article_id=${route.query.id}`,
     {
@@ -162,12 +161,18 @@ const { data, error } = await useFetch(
 const comments = computed(() => data.value?.data)
 
 if (error.value) {
-    showToast({ message: 'Something went wrong', type: ToastType.Warning })
+    toastStore.addToast({
+        message: 'Something went wrong',
+        type: 'warning'
+    })
 }
 
 async function submitComment() {
     if (!(comment.value !== '' && user.id && route.query.id)) {
-        showToast({ message: 'Something went wrong', type: ToastType.Warning })
+        toastStore.addToast({
+            message: 'Something went wrong',
+            type: 'warning'
+        })
     }
     useFetch(`/add_comment`, {
         baseURL: apiConfig.backend_url,
@@ -188,47 +193,18 @@ async function submitComment() {
             isDisableButton()
             showComment.value = false
             refreshNuxtData('comments')
-            showToast({
+            toastStore.addToast({
                 message: 'Comment added successfully',
-                type: ToastType.Warning
+                type: 'warning'
             })
         },
         onResponseError: (err) => {
-            showToast({
+            toastStore.addToast({
                 message: 'Something went wrong',
-                type: ToastType.Warning
+                type: 'warning'
             })
         }
     })
-    // fetch(`${apiConfig.backend_url}/add_comment`, {
-    //     method: 'POST',
-    //     credentials: 'include',
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({
-    //         author_id: user.id,
-    //         article_id: route.query.id,
-    //         content: comment.value
-    //     })
-    // })
-    //     .then((res) => {
-    //         return res.json()
-    //     })
-    //     .then((res) => {
-    //         if (!res.status) {
-    //             return showToast({
-    //                 message: res.message,
-    //                 type: ToastType.Warning
-    //             })
-    //         }
-    //         refreshNuxtData('comments')
-    //         showToast({
-    //             message: res.message,
-    //             type: ToastType.Success
-    //         })
-    //     })
-    //     .catch((err) => {})
 }
 function isDisableButton() {
     if (comment.value === '') {

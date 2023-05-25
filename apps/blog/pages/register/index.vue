@@ -172,8 +172,11 @@
 // import Toast from '../../components/Toast.vue'
 import usePage from '../../stores/page'
 import useUser from '../../stores/user'
+import useToast from '~/stores/toast'
+const toastStore = useToast()
 const page = usePage()
 const user = useUser()
+
 definePageMeta({
     layout: false
 })
@@ -197,18 +200,18 @@ watch(messageState, () => {
         resendTime.value = 120
     }
 })
-const { showToast, ToastType } = useToast()
+
 import { useField } from 'vee-validate'
 const appConfig = useAppConfig()
 async function sendCode() {
     await emailValidate()
 
     if (emailErrorMessage.value) {
-        showToast({
+        toastStore.addToast({
             message: 'Please enter a valid email address',
-            type: ToastType.Warning
+            type: 'warning'
         })
-        console.log('hello toast')
+
         return
     }
     fetch(`${appConfig.backend_url}/api/send_code`, {
@@ -223,14 +226,13 @@ async function sendCode() {
             if (!response.ok) {
                 const { msg: errorMessage } = await response.json()
                 messageState.value = sendState.sendCode
-                return showToast({
+                return toastStore.addToast({
                     message: errorMessage,
-                    type: ToastType.Error
+                    type: 'warning'
                 })
             }
             response.json().then((data) => {
                 messageState.value = sendState.resend
-                console.log('Success:', data)
             })
         })
         .catch((error) => {
@@ -297,7 +299,10 @@ const { value: password, errorMessage: passwordErrorMessage } = useField(
 const router = useRouter()
 async function singUp() {
     if (!email.value || !veriCode.value || !password.value) {
-        return showToast({ message: 'email is empty', type: ToastType.Warning })
+        return toastStore.addToast({
+            message: 'email is empty',
+            type: 'warning'
+        })
     }
     if (
         emailErrorMessage.value ||
@@ -306,7 +311,6 @@ async function singUp() {
     ) {
         return
     }
-    // await signUp({ username: email.value, password: password.value, code: veriCode.value })
     fetch(`${appConfig.backend_url}/register`, {
         method: 'POST', // or 'GET'
         headers: {
@@ -323,10 +327,9 @@ async function singUp() {
             console.log(response)
             if (!response.ok) {
                 const { msg: errorMessage } = await response.json()
-
-                return showToast({
+                return toastStore.addToast({
                     message: errorMessage,
-                    type: ToastType.Error
+                    type: 'warning'
                 })
             }
             interface userData {
@@ -335,7 +338,11 @@ async function singUp() {
                 avatar_path: string
             }
             response.json().then((data) => {
-                showToast({ message: 'Sign Success', type: ToastType.Success })
+                toastStore.addToast({
+                    message: 'Sign Success',
+                    type: 'success'
+                })
+
                 user.isLogin = true
                 router.push('/')
                 user.email = data.user.email

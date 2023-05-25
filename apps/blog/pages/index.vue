@@ -93,7 +93,8 @@
 </style>
 <script setup lang="ts">
 import formatChineseTime from '~/utils/formatChineseTime'
-const { showToast, ToastType } = useToast()
+import useToast from '~/stores/toast'
+const toastStore = useToast()
 const appConfig = useAppConfig()
 const articles = await queryContent()
     .only(['article_id', 'title', 'description', '_path'])
@@ -122,7 +123,7 @@ const { data: articlesInfo, error } = await useFetch('/articles', {
 })
 onMounted(() => {
     if (error.value) {
-        showToast({ message: error.value.message, type: ToastType.Warning })
+        toastStore.addToast({ message: error.value.message, type: 'warning' })
     }
 })
 
