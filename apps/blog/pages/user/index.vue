@@ -23,7 +23,7 @@
                 <UserAvatar rounded-10 h-20 w-20></UserAvatar>
 
                 <UserName dark:text-gray-200 drop-shadow-lg></UserName>
-                <div
+                <!-- <div
                     absolute
                     right-1
                     bottom-1
@@ -38,7 +38,7 @@
                     dark:text-gray-200
                 >
                     edit
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -59,20 +59,22 @@
                 <li class="mr-2">
                     <a
                         href="#"
-                        class="inline-block p-4 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                        class="inline-block p-4 rounded-t-lg active"
+                        aria-current="page"
+                        ref="initialFocus"
                     >
-                        Profile
+                        Favorites
                     </a>
                 </li>
                 <li class="mr-2">
                     <a
                         href="#"
-                        class="inline-block p-4 text-blue-600 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500"
-                        aria-current="page"
+                        class="inline-block p-4 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                     >
-                        Favorites
+                        Profile
                     </a>
                 </li>
+
                 <li class="mr-2">
                     <a
                         href="#"
@@ -89,41 +91,41 @@
                         Contacts
                     </a>
                 </li>
-                <li>
-                    <a
-                        class="inline-block p-4 text-gray-400 rounded-t-lg cursor-not-allowed dark:text-gray-500"
-                    >
-                        Disabled
-                    </a>
-                </li>
             </ul>
-            <div bg-pink relative>
+            <div relative>
                 <div
                     transition-all
                     ref="slider"
                     absolute
-                    left-20
                     h-0.5
                     bg-blue-600
-                    w-20
                 ></div>
             </div>
         </div>
     </main>
 </template>
-<style scoped>
-input[type='radio']:checked + label div {
-    color: pink;
-}
-</style>
+
 <script lang="ts" setup>
 import useUser from '~/stores/user'
 const slider = ref()
 const page = ref('')
 const appConfig = useAppConfig()
 const user = useUser()
+const initialFocus = ref()
+onMounted(() => {
+    slider.value.style.width =
+        (initialFocus.value as HTMLElement).getBoundingClientRect().width + 'px'
+    slider.value.style.left =
+        (initialFocus.value as HTMLElement).getBoundingClientRect().left + 'px'
+    ;(initialFocus.value as HTMLElement).style.color =
+        'rgba(37, 99, 235, var(--un-text-opacity))'
+})
 function changeTab(e: MouseEvent) {
     if (!slider.value) {
+        return
+    }
+
+    if ((e.target as HTMLElement).tagName !== 'A') {
         return
     }
 
