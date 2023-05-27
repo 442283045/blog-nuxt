@@ -15,11 +15,24 @@ export default function (
             return reply.code(500).send({ msg: 'Internal server error' })
         }
     })
-    instance.get('/add_favorite', async (request, reply) => {
+    instance.get('/favorites', async (request, reply) => {
         try {
+            const { token } = request.cookies
+            instance.log.info(token)
+            if (token) {
+                try {
+                    const data = instance.jwt.verify(token)
+                    instance.log.info(data)
+                } catch (err) {
+                    instance.log.error({ message: 'the token is invalid', err })
+                }
+                const datas = instance.jwt.decode(token)
+                console.log(datas)
+            }
+            return 'ok'
             const { article_id, user_id } = request.query as {
-                article_id: number
-                user_id: number
+                article_id: string
+                user_id: string
             }
             if (!article_id) {
                 return reply.code(400).send({
@@ -29,11 +42,23 @@ export default function (
             }
             await instance.prisma.user_favorites.create({
                 data: {
-                    user_id,
-                    article_id
+                    user_id: Number(user_id),
+                    article_id: Number(article_id)
                 }
             })
-
+            const number = await instance.prisma.user_favorites.count({
+                where: {
+                    article_id: Number(article_id)
+                }
+            })
+            await instance.prisma.articles.update({
+                where: {
+                    article_id: Number(article_id)
+                },
+                data: {
+                    favorites: number
+                }
+            })
             reply.code(200).send({
                 message: 'add it to favorites successfully',
                 status: true
@@ -45,6 +70,49 @@ export default function (
                 .send({ message: 'Internal server error', status: false })
         }
     })
+    instance.get('/add_favorite', async (request, reply) => {
+        try {
+            const { article_id, user_id } = request.query as {
+                article_id: string
+                user_id: string
+            }
+            if (!article_id) {
+                return reply.code(400).send({
+                    message: 'Please provide the article id',
+                    status: false
+                })
+            }
+            await instance.prisma.user_favorites.create({
+                data: {
+                    user_id: Number(user_id),
+                    article_id: Number(article_id)
+                }
+            })
+            const number = await instance.prisma.user_favorites.count({
+                where: {
+                    article_id: Number(article_id)
+                }
+            })
+            await instance.prisma.articles.update({
+                where: {
+                    article_id: Number(article_id)
+                },
+                data: {
+                    favorites: number
+                }
+            })
+            reply.code(200).send({
+                message: 'add it to favorites successfully',
+                status: true
+            })
+        } catch (err) {
+            instance.log.error({ address: '/add_favorite', err })
+            return reply
+                .code(500)
+                .send({ message: 'Internal server error', status: false })
+        }
+    })
+
     instance.get('/comments', async (request, reply) => {
         try {
             const { article_id } = request.query as { article_id: string }
