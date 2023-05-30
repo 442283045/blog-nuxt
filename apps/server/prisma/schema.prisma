@@ -8,31 +8,24 @@ datasource db {
 }
 
 model articles {
-  article_id     Int       @id @default(autoincrement())
-  title          String    @db.VarChar(255)
-  author_id      String    @db.VarChar(255)
-  published_date DateTime  @default(now()) @db.DateTime(0)
-  thumbs_up      Int       @default(0) @db.UnsignedInt
-  favorites      Int       @default(0) @db.UnsignedInt
-  updated_date   DateTime? @db.DateTime(0)
-  comments       Int       @default(0) @db.UnsignedInt
-  view_count     Int       @default(0) @db.UnsignedInt
+  article_id              Int                 @id @default(autoincrement())
+  article_title           String              @db.VarChar(255)
+  article_author_user_id  Int
+  article_published_date  DateTime            @default(now()) @db.DateTime(0)
+  article_thumbs_up_count Int                 @default(0) @db.UnsignedInt
+  article_favorites_count Int                 @default(0) @db.UnsignedInt
+  article_updated_date    DateTime?           @db.DateTime(0)
+  article_comments_count  Int                 @default(0) @db.UnsignedInt
+  article_view_count      Int                 @default(0) @db.UnsignedInt
+  favorite_articles       favorite_articles[]
 }
 
 model comments {
-  comment_id     Int      @id @default(autoincrement())
-  content        String   @db.VarChar(255)
-  published_date DateTime @default(now()) @db.DateTime(0)
-  author_id      Int      @db.UnsignedInt
-  article_id     Int?
-}
-
-model user_favorites {
-  favorite_id Int @id @unique(map: "id_UNIQUE") @default(autoincrement())
-  user_id     Int
-  article_id  Int
-
-  @@index([user_id], map: "user_Id_UNIQUE")
+  comment_id             Int      @id @default(autoincrement())
+  comment_content        String   @db.VarChar(255)
+  comment_published_date DateTime @default(now()) @db.DateTime(0)
+  comment_author_user_id Int      @db.UnsignedInt
+  comment_article_id     Int
 }
 
 model users {
@@ -44,4 +37,15 @@ model users {
   created_at  DateTime? @default(now()) @db.Timestamp(0)
   updated_at  DateTime? @default(now()) @db.Timestamp(0)
   last_login  DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model favorite_articles {
+  favorite_id         Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  favorite_user_id    Int
+  favorite_article_id Int
+  favorite_date       DateTime @default(now()) @db.DateTime(0)
+  articles            articles @relation(fields: [favorite_article_id], references: [article_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_favorite_article")
+
+  @@index([favorite_user_id], map: "user_Id_UNIQUE")
+  @@index([favorite_article_id], map: "fk_favorite_article_idx")
 }

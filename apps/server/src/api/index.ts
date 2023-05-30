@@ -2,6 +2,7 @@ import logout from './logout.js'
 import login from './login.js'
 import register from './register.js'
 import articles from './articles.js'
+import user from './user.js'
 import { FastifyPluginAsync } from 'fastify'
 
 const plugin: FastifyPluginAsync = async function (instance, options) {
@@ -10,6 +11,7 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
         instance.register(login)
         instance.register(register)
         instance.register(articles)
+        instance.register(user)
     } catch (err) {
         console.log(err)
     }

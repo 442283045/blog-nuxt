@@ -15,61 +15,7 @@ export default function (
             return reply.code(500).send({ msg: 'Internal server error' })
         }
     })
-    instance.get('/favorites', async (request, reply) => {
-        try {
-            const { token } = request.cookies
-            instance.log.info(token)
-            if (token) {
-                try {
-                    const data = instance.jwt.verify(token)
-                    instance.log.info(data)
-                } catch (err) {
-                    instance.log.error({ message: 'the token is invalid', err })
-                }
-                const datas = instance.jwt.decode(token)
-                console.log(datas)
-            }
-            return 'ok'
-            const { article_id, user_id } = request.query as {
-                article_id: string
-                user_id: string
-            }
-            if (!article_id) {
-                return reply.code(400).send({
-                    message: 'Please provide the article id',
-                    status: false
-                })
-            }
-            await instance.prisma.user_favorites.create({
-                data: {
-                    user_id: Number(user_id),
-                    article_id: Number(article_id)
-                }
-            })
-            const number = await instance.prisma.user_favorites.count({
-                where: {
-                    article_id: Number(article_id)
-                }
-            })
-            await instance.prisma.articles.update({
-                where: {
-                    article_id: Number(article_id)
-                },
-                data: {
-                    favorites: number
-                }
-            })
-            reply.code(200).send({
-                message: 'add it to favorites successfully',
-                status: true
-            })
-        } catch (err) {
-            instance.log.error({ address: '/add_favorite', err })
-            return reply
-                .code(500)
-                .send({ message: 'Internal server error', status: false })
-        }
-    })
+
     instance.get('/add_favorite', async (request, reply) => {
         try {
             const { article_id, user_id } = request.query as {
@@ -82,15 +28,15 @@ export default function (
                     status: false
                 })
             }
-            await instance.prisma.user_favorites.create({
+            await instance.prisma.favorite_articles.create({
                 data: {
-                    user_id: Number(user_id),
-                    article_id: Number(article_id)
+                    favorite_user_id: Number(user_id),
+                    favorite_article_id: Number(article_id)
                 }
             })
-            const number = await instance.prisma.user_favorites.count({
+            const number = await instance.prisma.favorite_articles.count({
                 where: {
-                    article_id: Number(article_id)
+                    favorite_article_id: Number(article_id)
                 }
             })
             await instance.prisma.articles.update({
@@ -98,7 +44,7 @@ export default function (
                     article_id: Number(article_id)
                 },
                 data: {
-                    favorites: number
+                    article_favorites_count: number
                 }
             })
             reply.code(200).send({
@@ -126,10 +72,10 @@ export default function (
             const [comments] = await Promise.all([
                 instance.prisma.comments.findMany({
                     where: {
-                        article_id: Number(article_id)
+                        comment_article_id: Number(article_id)
                     },
                     orderBy: {
-                        published_date: 'desc'
+                        comment_published_date: 'desc'
                     }
                 }),
                 instance.prisma.articles.update({
@@ -137,7 +83,7 @@ export default function (
                         article_id: Number(article_id)
                     },
                     data: {
-                        view_count: {
+                        article_view_count: {
                             increment: 1
                         }
                     }
@@ -149,7 +95,7 @@ export default function (
             for (let comment of comments) {
                 const user = await instance.prisma.users.findUnique({
                     where: {
-                        user_id: comment.author_id
+                        user_id: comment.comment_author_user_id
                     },
                     select: {
                         username: true,
@@ -186,14 +132,14 @@ export default function (
 
                     await instance.prisma.comments.create({
                         data: {
-                            author_id: Number(author_id),
-                            article_id: Number(article_id),
-                            content
+                            comment_author_user_id: Number(author_id),
+                            comment_article_id: Number(article_id),
+                            comment_content: content
                         }
                     })
                     const number = await instance.prisma.comments.count({
                         where: {
-                            article_id: Number(article_id)
+                            comment_article_id: Number(article_id)
                         }
                     })
                     await instance.prisma.articles.update({
@@ -201,7 +147,7 @@ export default function (
                             article_id: Number(article_id)
                         },
                         data: {
-                            comments: number
+                            article_comments_count: number
                         }
                     })
                     return reply.code(201).send({
