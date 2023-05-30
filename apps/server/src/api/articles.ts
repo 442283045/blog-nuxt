@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequest } from 'fastify'
+import fastify, { FastifyInstance, FastifyRequest } from 'fastify'
 
 export default function (
     instance: FastifyInstance,
@@ -15,7 +15,47 @@ export default function (
             return reply.code(500).send({ msg: 'Internal server error' })
         }
     })
-
+    instance.get(
+        '/is_favorite',
+        { onRequest: instance.auth([instance.verifyJWT]) },
+        async (request, reply) => {
+            try {
+                if (!request.context.userId) {
+                    return reply.code(200).send({
+                        status: false,
+                        message: 'user is not login'
+                    })
+                }
+                const { article_id } = request.query as {
+                    article_id: string
+                }
+                if (!article_id) {
+                    return reply.code(400).send({
+                        message: 'Please provide the article id',
+                        status: false
+                    })
+                }
+                const count = await instance.prisma.favorite_articles.count({
+                    where: {
+                        favorite_article_id: Number(article_id),
+                        favorite_user_id: request.context.userId
+                    }
+                })
+                if (count) {
+                    reply.send({
+                        status: true
+                    })
+                } else {
+                    return reply.code(200).send({
+                        status: false,
+                        message: 'user is not favorite'
+                    })
+                }
+            } catch (err) {
+                instance.log.error({ address: '/is_favorite', err })
+            }
+        }
+    )
     instance.get('/add_favorite', async (request, reply) => {
         try {
             const { article_id, user_id } = request.query as {
@@ -68,7 +108,6 @@ export default function (
                     status: false
                 })
             }
-            instance.log.info({ address: '/comments', article_id })
             const [comments] = await Promise.all([
                 instance.prisma.comments.findMany({
                     where: {
@@ -90,7 +129,6 @@ export default function (
                 })
             ])
             let commentWithUser = []
-            instance.log.info({ address: '/comments', comments })
 
             for (let comment of comments) {
                 const user = await instance.prisma.users.findUnique({

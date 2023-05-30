@@ -19,11 +19,12 @@ const server = fastify({
 
 await server.register(env)
 await server.register(jwtPlugin)
+await server.register(cookiePlugin)
 server.register(corsPlugin)
 server.register(prismaPlugin)
 server.register(authPlugin)
 server.register(mailerPlugin)
-server.register(cookiePlugin)
+
 server.register(staticPlugin)
 
 server.addHook('onRequest', async (req, reply) => {
@@ -35,7 +36,9 @@ server.addHook('onRequest', async (req, reply) => {
 server.addHook('onResponse', async (req, reply) => {
     server.log.info({
         message: 'response sended',
-        address: req.routerPath
+        address: req.routerPath,
+        status: reply.statusCode,
+        headers: reply.getHeaders()
     })
     server.log.info({ message: '------------------------------------' })
 })
