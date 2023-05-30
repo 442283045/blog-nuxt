@@ -65,3 +65,7 @@ body .markdown {
     max-width: 100%;
     box-sizing: border-box;
 }
+
+.dark .markdown code {
+    background-color: #333;
+}
