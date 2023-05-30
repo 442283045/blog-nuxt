@@ -97,16 +97,26 @@
                         <ul m-4 flex-col flex gap-4>
                             <li
                                 v-for="{
-                                    article_id,
-                                    title,
-                                    description,
-                                    _path,
-                                    published_date,
-                                    comments,
-                                    favorites,
-                                    view_count
-                                } in combinedInfo"
-                                :key="article_id"
+                                    articles: {
+                                        article_author_user_id,
+                                        article_comments_count,
+                                        article_favorites_count,
+                                        article_id,
+                                        article_published_date,
+                                        article_thumbs_up_count,
+                                        article_title,
+                                        article_updated_date,
+                                        article_view_count,
+                                        _path,
+                                        description,
+                                        title
+                                    },
+                                    favorite_article_id,
+                                    favorite_date,
+                                    favorite_id,
+                                    favorite_user_id
+                                } in favorites_data"
+                                :key="favorite_id"
                                 h-36
                                 md:h-42
                                 flex
@@ -162,27 +172,35 @@
                                         <div text-gray-500>
                                             {{
                                                 formatChineseTime(
-                                                    published_date
+                                                    article_published_date
                                                 )
                                             }}
                                         </div>
                                         <div flex gap-4 items-end>
                                             <div gap-1 flex items-center>
                                                 <div flex i-tabler-star></div>
-                                                <div>{{ favorites }}</div>
+                                                <div>
+                                                    {{
+                                                        article_favorites_count
+                                                    }}
+                                                </div>
                                             </div>
                                             <div gap-1 flex items-center>
                                                 <div
                                                     flex
                                                     i-mdi-comment-outline
                                                 ></div>
-                                                <div>{{ comments }}</div>
+                                                <div>
+                                                    {{ article_comments_count }}
+                                                </div>
                                             </div>
                                             <div gap-1 flex items-center>
                                                 <div
                                                     i-mdi-eye-circle-outline
                                                 ></div>
-                                                <div>{{ view_count }}</div>
+                                                <div>
+                                                    {{ article_view_count }}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -210,73 +228,81 @@ const page = ref('')
 const appConfig = useAppConfig()
 const user = useUser()
 const initialFocus = ref()
-await useFetch('/favorites', {
+import useToast from '~/stores/toast'
+const toast = useToast()
+interface Article {
+    article_id: number
+    article_title: string
+    article_author_user_id: number
+    article_published_date: string
+    article_thumbs_up_count: number
+    article_favorites_count: number
+    article_updated_date: string | null
+    article_comments_count: number
+    article_view_count: number
+    description: string
+    title: string
+    _path: string
+}
+
+interface Favorite {
+    favorite_id: number
+    favorite_user_id: number
+    favorite_article_id: number
+    favorite_date: string
+    articles: Article
+}
+const favorites_data: Ref<Array<Favorite>> = ref([])
+
+useFetch('/favorites', {
     baseURL: appConfig.backend_url,
     credentials: 'include',
     mode: 'cors',
     server: false,
-    onResponse(opt) {
-        console.log(opt.response)
+    async onResponse(opt) {
+        if (!opt.response.ok) {
+            return
+        }
+        favorites_data.value = opt.response._data
+        console.log(favorites_data.value)
+
+        let articles_id: number[] = []
+        for (const favorite of favorites_data.value) {
+            articles_id.push(favorite.articles.article_id)
+        }
+        console.log(articles_id)
+        const articles = await queryContent()
+            .where({
+                article_id: { $in: articles_id }
+            })
+            .only(['article_id', 'title', 'description', '_path'])
+            .sort({ article_id: 1 })
+            .find()
+            .catch((err) => {
+                console.log({ err, address: 'index page' })
+            })
+        let sortedArticles: {
+            [key: number]: object
+        } = {}
+        if (!articles) {
+            return
+        }
+        for (const article of articles) {
+            sortedArticles[article.article_id as number] = article
+        }
+        for (let i = 0; i < favorites_data.value.length; i++) {
+            favorites_data.value[i].articles = {
+                ...favorites_data.value[i].articles,
+                ...sortedArticles[favorites_data.value[i].articles.article_id]
+            }
+        }
+        console.log(sortedArticles)
+    },
+    onResponseError() {
+        toast.addToast({ message: 'loading failed', type: 'warning' })
     }
 })
 
-// watch(data, () => {
-//     console.log(data.value)
-// })
-const combinedInfo = [
-    {
-        _path: '/sevice_management',
-        title: 'service_management',
-        description: 'Linux 服务管理笔记',
-        article_id: 1,
-        author_id: '35',
-        published_date: '2023-05-12T20:48:57.000Z',
-        thumbs_up: 0,
-        favorites: 0,
-        updated_date: null,
-        comments: 35,
-        view_count: 214
-    },
-    {
-        _path: '/css_property',
-        title: 'css_property',
-        description: 'meta description of the page',
-        article_id: 2,
-        author_id: '35',
-        published_date: '2023-05-12T20:55:48.000Z',
-        thumbs_up: 0,
-        favorites: 0,
-        updated_date: null,
-        comments: 1,
-        view_count: 16
-    },
-    {
-        _path: '/linux_commands',
-        title: 'linux_commands',
-        description: 'meta description of the page',
-        article_id: 3,
-        author_id: '35',
-        published_date: '2023-05-12T20:55:48.000Z',
-        thumbs_up: 0,
-        favorites: 0,
-        updated_date: null,
-        comments: 0,
-        view_count: 7
-    },
-    {
-        _path: '/vim_tutorial',
-        title: 'vim_tutorial',
-        description: 'meta description of the page',
-        article_id: 4,
-        author_id: '35',
-        published_date: '2023-05-12T20:55:48.000Z',
-        thumbs_up: 0,
-        favorites: 0,
-        updated_date: null,
-        comments: 0,
-        view_count: 3
-    }
-]
 onMounted(() => {
     slider.value.style.width =
         (initialFocus.value as HTMLElement).getBoundingClientRect().width + 'px'

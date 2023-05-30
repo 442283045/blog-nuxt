@@ -14,10 +14,10 @@
                         title,
                         description,
                         _path,
-                        published_date,
-                        comments,
-                        favorites,
-                        view_count
+                        article_published_date,
+                        article_comments_count,
+                        article_favorites_count,
+                        article_view_count
                     } in combinedInfo"
                     :key="article_id"
                     h-36
@@ -60,20 +60,20 @@
                             text-xs
                         >
                             <div text-gray-500>
-                                {{ formatChineseTime(published_date) }}
+                                {{ formatChineseTime(article_published_date) }}
                             </div>
                             <div flex gap-4 items-end>
                                 <div gap-1 flex items-center>
                                     <div flex i-tabler-star></div>
-                                    <div>{{ favorites }}</div>
+                                    <div>{{ article_favorites_count }}</div>
                                 </div>
                                 <div gap-1 flex items-center>
                                     <div flex i-mdi-comment-outline></div>
-                                    <div>{{ comments }}</div>
+                                    <div>{{ article_comments_count }}</div>
                                 </div>
                                 <div gap-1 flex items-center>
                                     <div i-mdi-eye-circle-outline></div>
-                                    <div>{{ view_count }}</div>
+                                    <div>{{ article_view_count }}</div>
                                 </div>
                             </div>
                         </div>
@@ -94,60 +94,82 @@
 <script setup lang="ts">
 import formatChineseTime from '~/utils/formatChineseTime'
 import useToast from '~/stores/toast'
+interface Article {
+    article_id: number
+    article_title: string
+    article_author_user_id: number
+    article_published_date: string
+    article_thumbs_up_count: number
+    article_favorites_count: number
+    article_updated_date: string | null
+    article_comments_count: number
+    article_view_count: number
+    description: string
+    title: string
+    _path: string
+}
+interface ArticleData {
+    article_id: number
+    article_title: string
+    article_author_user_id: number
+    article_published_date: string
+    article_thumbs_up_count: number
+    article_favorites_count: number
+    article_updated_date: string | null
+    article_comments_count: number
+    article_view_count: number
+}
+interface ContentType {
+    description: string
+    title: string
+    _path: string
+    article_id: number
+}
 const toastStore = useToast()
 const appConfig = useAppConfig()
-const articles = await queryContent()
-    .only(['article_id', 'title', 'description', '_path'])
+
+const combinedInfo: Record<number, Article> = []
+const { data: articleData, error } = await useFetch<Array<ArticleData>>(
+    '/articles',
+    {
+        baseURL: appConfig.backend_url
+    }
+)
+
+const articles = await queryContent<ContentType>()
+    .only<['article_id', 'title', 'description', '_path']>([
+        'article_id',
+        'title',
+        'description',
+        '_path'
+    ])
     .sort({ article_id: 1 })
     .find()
     .catch((err) => {
         console.log({ err, address: 'index page' })
     })
-const { data: articlesInfo, error } = await useFetch('/articles', {
-    baseURL: appConfig.backend_url,
-    default: () => {
-        return [
-            {
-                article_id: -1,
-                title: '',
-                author_id: -1,
-                published_date: '',
-                thumbs_up: 0,
-                favorites: 0,
-                updated_date: '',
-                comments: 0,
-                view_count: 0
-            }
-        ]
+
+let sortedArticles: {
+    [key: number]: ContentType
+} = {}
+if (articles && articleData.value) {
+    for (const article of articles) {
+        sortedArticles[article.article_id] = article
     }
-})
+    for (let i = 0; i < articleData.value.length; i++) {
+        combinedInfo[i] = {
+            ...articleData.value[i],
+            ...sortedArticles[articleData.value[i].article_id]
+        }
+    }
+}
+
+console.log(combinedInfo)
 onMounted(() => {
     if (error.value) {
         toastStore.addToast({ message: error.value.message, type: 'warning' })
     }
 })
-
-interface Article {
-    _path?: string
-    title: string
-    description?: string
-    article_id?: number
-
-    author_id: number
-    published_date: string
-    thumbs_up: number
-    favorites: number
-    updated_date: string | null
-    comments: number
-    view_count: number
-}
-
-const combinedInfo: Array<Article> = []
-if (articles && articlesInfo.value) {
-    for (let i = 0; i < articles.length; i++) {
-        combinedInfo.push({ ...articles[i], ...articlesInfo.value[i] })
-    }
-}
 
 const description = ref(null)
 interface CustomCSSStyleDeclaration extends CSSStyleDeclaration {
