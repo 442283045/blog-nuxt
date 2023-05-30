@@ -84,11 +84,13 @@
             flex
             my-5
             v-for="{
-                comment_id,
-                content,
-                published_date,
                 username,
-                avatar_path
+                comment_id,
+                avatar_path,
+                comment_article_id,
+                comment_author_user_id,
+                comment_content,
+                comment_published_date
             } in comments"
             :key="comment_id"
         >
@@ -111,7 +113,7 @@
                     leading-10
                 >
                     <div truncate w-30>{{ username }}</div>
-                    <div>{{ formatChineseTime(published_date) }}</div>
+                    <div>{{ formatChineseTime(comment_published_date) }}</div>
                 </div>
                 <div
                     class="dark:text-[#B4AEA4]"
@@ -120,7 +122,7 @@
                     text-sm
                     text-neutral-600
                 >
-                    {{ content }}
+                    {{ comment_content }}
                 </div>
             </div>
         </div>
@@ -136,30 +138,25 @@ const apiConfig = useAppConfig()
 const route = useRoute()
 const user = useUser()
 const toastStore = useToast()
-const { data, error } = await useFetch(
+interface Comment {
+    comment_id: number
+    comment_content: string
+    comment_published_date: string
+    comment_author_user_id: number
+    comment_article_id: number
+    username: string
+    avatar_path: string
+}
+const { data, error } = await useFetch<{ data: Comment[] }>(
     `/comments?article_id=${route.query.id}`,
     {
         baseURL: apiConfig.backend_url,
-        default: () => {
-            return {
-                data: [
-                    {
-                        comment_id: 0,
-                        content: '',
-                        published_date: '',
-                        author_id: 0,
-                        article_id: 0,
-                        username: '',
-                        avatar_path: ''
-                    }
-                ]
-            }
-        },
+
         key: 'comments'
     }
 )
 const comments = computed(() => data.value?.data)
-
+console.log(data.value)
 if (error.value) {
     toastStore.addToast({
         message: 'Something went wrong',
