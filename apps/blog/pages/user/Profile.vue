@@ -1,0 +1,187 @@
+<template>
+    <div flex justify-center items-center class="h-[calc(100vh-356px)]">
+        <div
+            font-500
+            border-1
+            rounded-md
+            h-10
+            px-5
+            flex
+            justify-center
+            items-center
+            cursor-pointer
+            shadow-gray-400
+            hover:shadow-lg
+            hover:shadow-gray-300
+            hover:border-blue-200
+            @click="isEditProfileOpen = true"
+        >
+            <div mr-2 i-carbon-edit></div>
+            Edit profile
+        </div>
+
+        <div
+            v-show="isEditProfileOpen"
+            class="<md:w-100%"
+            text-black
+            w-200
+            h-150
+            dark:bg-gray-800
+            bg-white
+            rounded-md
+            border-1
+            top-30
+            dark:border-gray-500
+            dark:text-white
+            fixed
+        >
+            <div
+                dark:border-gray-500
+                border-b-1
+                p-5
+                flex
+                justify-center
+                font-normal
+                text-6
+            >
+                <div>Edit profile</div>
+                <div
+                    @click="isEditProfileOpen = false"
+                    right-5
+                    absolute
+                    cursor-pointer
+                    i-carbon-close
+                ></div>
+            </div>
+            <div pa-5>
+                <div
+                    dark:border-gray-500
+                    relative
+                    h-30
+                    text-4
+                    flex
+                    border-b-1
+                    pt-5
+                >
+                    <div>Profile photo</div>
+                    <div
+                        absolute
+                        left-50%
+                        class="top-50% left-50% -translate-x-10 -translate-y-10"
+                    >
+                        <UserAvatar w-20 h-20 rounded-10></UserAvatar>
+                        <div
+                            right-0
+                            bottom-0
+                            absolute
+                            border-1
+                            w-6
+                            h-6
+                            class="rounded-50%"
+                            bg-white
+                            flex
+                            justify-center
+                            items-center
+                            cursor-pointer
+                            hover:border-gray-500
+                        >
+                            <div text-dark i-carbon-edit></div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    relative
+                    h-30
+                    text-4
+                    flex
+                    justify-between
+                    border-b-1
+                    items-center
+                    dark:border-gray-500
+                >
+                    <div w-30 text-left>Username</div>
+                    <input
+                        w-100
+                        bg-gray-200
+                        h-10
+                        pl-3
+                        rounded-md
+                        border-1
+                        focus:outline-none
+                        focus:border-gray-300
+                        outline-1
+                        class="mr-20%"
+                        caret-red
+                        type="text"
+                    />
+                </div>
+                <div
+                    relative
+                    h-30
+                    text-4
+                    flex
+                    justify-between
+                    border-b-1
+                    items-center
+                    dark:border-gray-500
+                >
+                    <div text-left w-30>Email</div>
+                    <input
+                        pl-3
+                        w-100
+                        bg-gray-200
+                        h-10
+                        rounded-md
+                        border-1
+                        focus:outline-none
+                        focus:border-gray-300
+                        outline-1
+                        class="mr-20%"
+                        caret-red
+                        type="text"
+                    />
+                </div>
+                <div
+                    relative
+                    h-30
+                    text-4
+                    flex
+                    justify-end
+                    items-center
+                    dark:border-gray-500
+                    gap-5
+                >
+                    <div
+                        dark:bg-gray-300
+                        text-dark
+                        border-gray-700
+                        border-1
+                        px-5
+                        py-2
+                        rounded-md
+                        cursor-pointer
+                        hover:bg-gray-100
+                    >
+                        Cancel
+                    </div>
+                    <div
+                        dark:bg-gray-300
+                        text-dark
+                        border-gray-700
+                        border-1
+                        px-5
+                        py-2
+                        rounded-md
+                        cursor-pointer
+                        hover:bg-gray-100
+                    >
+                        Save
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script lang="ts" setup>
+const isEditProfileOpen = ref(false)
+</script>

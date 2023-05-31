@@ -239,15 +239,21 @@ import usePage from '../stores/page'
 const page = usePage()
 const isDropdownOpen = ref(false)
 const theme = ref()
+let changeTheme: Function
+let mode: any
+onMounted(() => {
+    mode = useColorMode({
+        emitAuto: true
+    })
 
-const mode = useColorMode({
-    emitAuto: true
+    changeTheme = function (theme: 'light' | 'dark' | 'auto') {
+        mode.value = theme
+        console.log(mode.value)
+        console.log(mode.system.value)
+        console.log(mode.store.value)
+        isDropdownOpen.value = false
+    }
 })
-
-function changeTheme(theme: 'light' | 'dark' | 'auto') {
-    mode.value = theme
-    isDropdownOpen.value = false
-}
 </script>
 <style scoped>
 .mask {

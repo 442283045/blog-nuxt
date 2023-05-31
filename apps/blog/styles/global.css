@@ -8,3 +8,6 @@
 html {
     scroll-behavior: smooth;
 }
+html {
+    overflow-y: scroll;
+}

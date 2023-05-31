@@ -58,23 +58,6 @@
                         Profile
                     </a>
                 </li>
-
-                <li class="mr-2">
-                    <a
-                        href="#"
-                        class="inline-block p-4 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-                    >
-                        Settings
-                    </a>
-                </li>
-                <li class="mr-2">
-                    <a
-                        href="#"
-                        class="inline-block p-4 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-                    >
-                        Contacts
-                    </a>
-                </li>
             </ul>
             <div relative>
                 <div
@@ -86,129 +69,8 @@
                 ></div>
             </div>
             <div>
-                <div
-                    w-full
-                    flex
-                    justify-center
-                    bg-gray-200
-                    class="min-h-[calc(100vh-4rem)] dark:bg-[#25282a]"
-                >
-                    <div flex-col w-full justify-between h-full flex max-w-5xl>
-                        <ul m-4 flex-col flex gap-4>
-                            <li
-                                v-for="{
-                                    articles: {
-                                        article_author_user_id,
-                                        article_comments_count,
-                                        article_favorites_count,
-                                        article_id,
-                                        article_published_date,
-                                        article_thumbs_up_count,
-                                        article_title,
-                                        article_updated_date,
-                                        article_view_count,
-                                        _path,
-                                        description,
-                                        title
-                                    },
-                                    favorite_article_id,
-                                    favorite_date,
-                                    favorite_id,
-                                    favorite_user_id
-                                } in favorites_data"
-                                :key="favorite_id"
-                                h-36
-                                md:h-42
-                                flex
-                                bg-white
-                                class="dark:bg-[#181a1b]"
-                                shadow-lg
-                                rounded-2
-                                p-2
-                            >
-                                <div h-full flex items-center>
-                                    <NuxtImg
-                                        src="/linux.png"
-                                        alt="Discover Nuxt 3"
-                                        width="128"
-                                        height="128"
-                                        rounded-2
-                                        class="nuxt_img"
-                                    />
-                                </div>
-
-                                <div
-                                    class="dark:text-neutral-200"
-                                    flex-1
-                                    px-4
-                                    py-1
-                                    grid
-                                    justify-items-start
-                                >
-                                    <div truncate text-xl>
-                                        <NuxtLink
-                                            :to="`/blog${_path}?id=${article_id}`"
-                                            hover:text-sky-500
-                                        >
-                                            {{ title }}
-                                        </NuxtLink>
-                                    </div>
-                                    <div
-                                        text-sm
-                                        font-normal
-                                        h-18
-                                        ref="description"
-                                    >
-                                        {{ description }}
-                                    </div>
-                                    <div
-                                        flex
-                                        items-end
-                                        text-gray-500
-                                        justify-between
-                                        w-full
-                                        text-xs
-                                    >
-                                        <div text-gray-500>
-                                            {{
-                                                formatChineseTime(
-                                                    article_published_date
-                                                )
-                                            }}
-                                        </div>
-                                        <div flex gap-4 items-end>
-                                            <div gap-1 flex items-center>
-                                                <div flex i-tabler-star></div>
-                                                <div>
-                                                    {{
-                                                        article_favorites_count
-                                                    }}
-                                                </div>
-                                            </div>
-                                            <div gap-1 flex items-center>
-                                                <div
-                                                    flex
-                                                    i-mdi-comment-outline
-                                                ></div>
-                                                <div>
-                                                    {{ article_comments_count }}
-                                                </div>
-                                            </div>
-                                            <div gap-1 flex items-center>
-                                                <div
-                                                    i-mdi-eye-circle-outline
-                                                ></div>
-                                                <div>
-                                                    {{ article_view_count }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <Profile v-show="pageTab === 'Profile'"></Profile>
+                <Favorites v-show="pageTab === 'Favorites'"></Favorites>
             </div>
         </div>
     </main>
@@ -222,7 +84,11 @@
 }
 </style>
 <script lang="ts" setup>
+import Profile from './Profile.vue'
+import Favorites from './Favorites.vue'
+// const Profile = resolveComponent('./Profile')
 import useUser from '~/stores/user'
+const pageTab = ref('Favorites')
 const slider = ref()
 const page = ref('')
 const appConfig = useAppConfig()
@@ -253,7 +119,7 @@ interface Favorite {
     articles: Article
 }
 const favorites_data: Ref<Array<Favorite>> = ref([])
-
+const combinedFavorite: Ref<Array<Favorite>> = ref([])
 useFetch('/favorites', {
     baseURL: appConfig.backend_url,
     credentials: 'include',
@@ -284,19 +150,21 @@ useFetch('/favorites', {
         let sortedArticles: {
             [key: number]: object
         } = {}
+        console.log(articles)
         if (!articles) {
             return
         }
         for (const article of articles) {
             sortedArticles[article.article_id as number] = article
         }
+        console.log(sortedArticles)
         for (let i = 0; i < favorites_data.value.length; i++) {
             favorites_data.value[i].articles = {
                 ...favorites_data.value[i].articles,
                 ...sortedArticles[favorites_data.value[i].articles.article_id]
             }
         }
-        console.log(sortedArticles)
+        console.log(combinedFavorite)
     },
     onResponseError() {
         toast.addToast({ message: 'loading failed', type: 'warning' })
@@ -312,14 +180,19 @@ onMounted(() => {
         'rgba(37, 99, 235, var(--un-text-opacity))'
 })
 function changeTab(e: MouseEvent) {
+    // when the mount is not finished, don't do anything
     if (!slider.value) {
         return
     }
-
+    // When click other zones, don't do anything
     if ((e.target as HTMLElement).tagName !== 'A') {
         return
     }
-
+    const content = (e.target as HTMLElement).textContent
+    if (content) {
+        pageTab.value = content.trim()
+    }
+    console.log((e.target as HTMLElement).textContent?.trim())
     slider.value.style.width =
         (e.target as Element).getBoundingClientRect().width + 'px'
     slider.value.style.left =
