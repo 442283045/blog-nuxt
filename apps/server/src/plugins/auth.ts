@@ -16,7 +16,7 @@ const authPlugin: FastifyPluginAsync = fp(async (server, options) => {
                             request.cookies.token
                         ) as { payload: number }
 
-                        request.context.userId = userId
+                        request.routeConfig.userId = userId
                     } catch (err) {
                         request.log.info('jwt verify error')
                     }

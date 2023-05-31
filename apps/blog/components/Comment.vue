@@ -156,7 +156,7 @@ const { data, error } = await useFetch<{ data: Comment[] }>(
     }
 )
 const comments = computed(() => data.value?.data)
-console.log(data.value)
+
 if (error.value) {
     toastStore.addToast({
         message: 'Something went wrong',

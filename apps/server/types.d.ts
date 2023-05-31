@@ -13,7 +13,7 @@ declare module 'fastify' {
         prisma: PrismaClient
         sendMail: FastifyPluginAsync
     }
-    interface FastifyContext {
-        userId?: number | null
+    interface FastifyContextConfig {
+        userId?: number
     }
 }

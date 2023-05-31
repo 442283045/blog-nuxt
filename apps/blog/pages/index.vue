@@ -164,7 +164,6 @@ if (articles && articleData.value) {
     }
 }
 
-console.log(combinedInfo)
 onMounted(() => {
     if (error.value) {
         toastStore.addToast({ message: error.value.message, type: 'warning' })

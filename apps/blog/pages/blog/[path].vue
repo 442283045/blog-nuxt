@@ -91,7 +91,17 @@ const user = useUser()
 if (route.path === '/') {
     router.push('/')
 }
-const isFavorite = ref(false)
+// const isFavorite = ref(false)
+const { data } = useFetch<{ status: boolean }>('/is_favorite', {
+    baseURL: apiConfig.backend_url,
+    method: 'GET',
+    server: false,
+    credentials: 'include',
+    query: {
+        article_id: route.query.id
+    }
+})
+const isFavorite = ref(data.value?.status)
 function addToFavorites() {
     if (!route.query.id || !user.id) {
         return
@@ -104,8 +114,8 @@ function addToFavorites() {
             article_id: route.query.id,
             user_id: user.id
         },
+        credentials: 'include',
         onResponse(opt) {
-            console.log(opt)
             if (!opt.response.ok) {
                 return
             }
@@ -127,5 +137,32 @@ function addToFavorites() {
 }
 function removeFromFavorites() {
     isFavorite.value = false
+    useFetch('/remove_favorite', {
+        baseURL: apiConfig.backend_url,
+        method: 'GET',
+        query: {
+            article_id: route.query.id,
+            user_id: user.id
+        },
+        credentials: 'include',
+        onResponse(opt) {
+            if (!opt.response.ok) {
+                return
+            }
+            isFavorite.value = true
+            toastStore.addToast({
+                message: 'Favorite it successfully',
+                type: 'success'
+            })
+        },
+        onResponseError(opt) {
+            isFavorite.value = false
+            console.log(opt.response._data.message)
+            toastStore.addToast({
+                message: 'Favorite it unsuccessfully',
+                type: 'warning'
+            })
+        }
+    })
 }
 </script>

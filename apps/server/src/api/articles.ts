@@ -20,7 +20,7 @@ export default function (
         { onRequest: instance.auth([instance.verifyJWT]) },
         async (request, reply) => {
             try {
-                if (!request.context.userId) {
+                if (!request.routeConfig.userId) {
                     return reply.code(200).send({
                         status: false,
                         message: 'user is not login'
@@ -38,7 +38,7 @@ export default function (
                 const count = await instance.prisma.favorite_articles.count({
                     where: {
                         favorite_article_id: Number(article_id),
-                        favorite_user_id: request.context.userId
+                        favorite_user_id: request.routeConfig.userId
                     }
                 })
                 if (count) {
