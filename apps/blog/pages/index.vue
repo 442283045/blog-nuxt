@@ -128,13 +128,16 @@ interface ContentType {
 const toastStore = useToast()
 const appConfig = useAppConfig()
 
-const combinedInfo: Record<number, Article> = []
-const { data: articleData, error } = await useFetch<Array<ArticleData>>(
-    '/articles',
-    {
-        baseURL: appConfig.backend_url
-    }
-)
+const combinedInfo: Ref<Record<number, Article>> = ref([])
+const {
+    data: articleData,
+    error,
+    refresh
+} = await useFetch<Array<ArticleData>>('/articles', {
+    baseURL: appConfig.backend_url,
+    server: false,
+    key: 'articles'
+})
 
 const articles = await queryContent<ContentType>()
     .only<['article_id', 'title', 'description', '_path']>([
@@ -152,19 +155,38 @@ const articles = await queryContent<ContentType>()
 let sortedArticles: {
     [key: number]: ContentType
 } = {}
-if (articles && articleData.value) {
-    for (const article of articles) {
-        sortedArticles[article.article_id] = article
-    }
-    for (let i = 0; i < articleData.value.length; i++) {
-        combinedInfo[i] = {
-            ...articleData.value[i],
-            ...sortedArticles[articleData.value[i].article_id]
+watch(articleData, () => {
+    console.log(articleData.value)
+    if (articles && articleData.value) {
+        for (const article of articles) {
+            sortedArticles[article.article_id] = article
+        }
+        for (let i = 0; i < articleData.value.length; i++) {
+            combinedInfo.value[i] = {
+                ...articleData.value[i],
+                ...sortedArticles[articleData.value[i].article_id]
+            }
         }
     }
-}
-
+})
+// if (articles && articleData.value) {
+//     for (const article of articles) {
+//         sortedArticles[article.article_id] = article
+//     }
+//     for (let i = 0; i < articleData.value.length; i++) {
+//         combinedInfo[i] = {
+//             ...articleData.value[i],
+//             ...sortedArticles[articleData.value[i].article_id]
+//         }
+//     }
+// }
+onBeforeMount(() => {
+    // const { data: posts } = useNuxtData('articles')
+    // console.log(posts)
+    refresh()
+})
 onMounted(() => {
+    console.log(combinedInfo.value)
     if (error.value) {
         toastStore.addToast({ message: error.value.message, type: 'warning' })
     }
