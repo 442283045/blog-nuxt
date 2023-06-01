@@ -45,7 +45,6 @@ const {
 
 watch(data, () => {
     if (data.value) {
-        console.log(data.value)
         if (data.value.login === true) {
             user.$patch({
                 avatar_path: data.value.user.avatar_path,
@@ -57,8 +56,6 @@ watch(data, () => {
         }
     }
 })
-
-console.log(user.id)
 </script>
 <style scoped>
 /* .v-leave-active {

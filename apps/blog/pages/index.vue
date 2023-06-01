@@ -182,7 +182,7 @@ watch(articleData, () => {
 // }
 onBeforeMount(() => {
     // const { data: posts } = useNuxtData('articles')
-    // console.log(posts)
+ 
     refresh()
 })
 onMounted(() => {

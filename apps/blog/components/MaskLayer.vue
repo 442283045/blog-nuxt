@@ -248,9 +248,7 @@ onMounted(() => {
 
     changeTheme = function (theme: 'light' | 'dark' | 'auto') {
         mode.value = theme
-        console.log(mode.value)
-        console.log(mode.system.value)
-        console.log(mode.store.value)
+
         isDropdownOpen.value = false
     }
 })

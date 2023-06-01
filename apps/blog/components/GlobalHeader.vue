@@ -281,7 +281,6 @@ function logout() {
     })
         .then((res) => res.json())
         .then((res) => {
-            console.log(res)
             user.logout()
         })
         .catch((err) => {

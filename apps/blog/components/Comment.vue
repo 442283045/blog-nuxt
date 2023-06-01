@@ -14,7 +14,7 @@
     >
         <div class="dark:text-[#E8E6E3]" text-xl font-bold>Comments</div>
         <div>
-            <div v-if="user.isLogin" @click.stop="" flex mt-4>
+            <div v-show="user.isLogin" @click.stop="" flex mt-4>
                 <UserAvatar w-10 h-10 rounded-5></UserAvatar>
                 <div ml-10 w-full>
                     <textarea
@@ -70,7 +70,7 @@
                     </div>
                 </div>
             </div>
-            <div py-5 v-if="!user.isLogin" text-white text-gray-400>
+            <div py-5 v-show="!user.isLogin" text-white text-gray-400>
                 You haven't logged in yet,
                 <NuxtLink to="/login">login</NuxtLink>
                 to comment
@@ -131,6 +131,7 @@
 <script lang="ts" setup>
 import useUser from '~/stores/user'
 import useToast from '~/stores/toast'
+
 const comment = ref('')
 const showComment = ref(false)
 const button = ref()
@@ -147,22 +148,29 @@ interface Comment {
     username: string
     avatar_path: string
 }
-const { data, error } = await useFetch<{ data: Comment[] }>(
+
+const { data, error, refresh } = await useFetch<{ data: Comment[] }>(
     `/comments?article_id=${route.query.id}`,
     {
         baseURL: apiConfig.backend_url,
 
-        key: 'comments'
+        key: 'comments',
+        server: false
     }
 )
 const comments = computed(() => data.value?.data)
-
-if (error.value) {
-    toastStore.addToast({
-        message: 'Something went wrong',
-        type: 'warning'
-    })
-}
+onBeforeMount(() => {
+    refresh()
+})
+onMounted(() => {
+    if (error.value) {
+        console.log(error)
+        toastStore.addToast({
+            message: 'Something went wrong',
+            type: 'warning'
+        })
+    }
+})
 
 async function submitComment() {
     if (!(comment.value !== '' && user.id && route.query.id)) {

@@ -19,9 +19,6 @@ let flag = 0
 let animation: AnimationItem
 
 function playAnimation() {
-    // console.log(animation.totalFrames)
-    // console.log(animation.currentFrame)
-
     if (animation.currentFrame !== 0 && flag === 0) {
         // 动画未播放完成时，用户取消点赞
         animation.removeEventListener('enterFrame', handleFrame)
@@ -38,7 +35,6 @@ function playAnimation() {
     animation.addEventListener('enterFrame', handleFrame)
 
     function handleFrame(e: BMEnterFrameEvent) {
-        // console.log(e.currentTime)
         if (Math.round(e.currentTime) === 50) {
             animation.pause()
             flag = 1

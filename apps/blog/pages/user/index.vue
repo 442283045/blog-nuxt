@@ -172,18 +172,23 @@ useFetch('/favorites', {
 })
 
 onMounted(() => {
-    slider.value.style.width =
-        (initialFocus.value as HTMLElement).getBoundingClientRect().width + 'px'
-    slider.value.style.left =
-        (initialFocus.value as HTMLElement).getBoundingClientRect().left + 'px'
-    ;(initialFocus.value as HTMLElement).style.color =
-        'rgba(37, 99, 235, var(--un-text-opacity))'
+    if (initialFocus.value) {
+        slider.value.style.width =
+            (initialFocus.value as HTMLElement).getBoundingClientRect().width +
+            'px'
+        slider.value.style.left =
+            (initialFocus.value as HTMLElement).getBoundingClientRect().left +
+            'px'
+        ;(initialFocus.value as HTMLElement).style.color =
+            'rgba(37, 99, 235, var(--un-text-opacity))'
+    }
 })
 function changeTab(e: MouseEvent) {
     // when the mount is not finished, don't do anything
-    if (!slider.value) {
+    if (!slider.value || e.target === null) {
         return
     }
+
     // When click other zones, don't do anything
     if ((e.target as HTMLElement).tagName !== 'A') {
         return

@@ -101,7 +101,13 @@ const { data } = useFetch<{ status: boolean }>('/is_favorite', {
         article_id: route.query.id
     }
 })
-const isFavorite = ref(data.value?.status)
+const isFavorite = ref(false)
+watch(data, () => {
+    if (data.value) {
+        isFavorite.value = data.value.status
+    }
+})
+
 function addToFavorites() {
     if (!route.query.id || !user.id) {
         return
