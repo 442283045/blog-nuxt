@@ -194,7 +194,7 @@ async function signIn() {
             user.email = res.response._data.user.email
             user.username = res.response._data.user.username
             user.avatar_path = res.response._data.user.avatar_path
-
+            user.id = res.response._data.user.userId
             await navigateTo('/')
             toastStore.addToast({
                 message: 'Login successfully',

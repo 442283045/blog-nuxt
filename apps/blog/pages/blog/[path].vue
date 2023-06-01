@@ -12,7 +12,6 @@
             items-center
             w-10
             flex-col
-            h-50
             fixed
             right-10
             bottom-10
@@ -23,13 +22,17 @@
         >
             <div py-3 b-b-1 b-gray-200 cursor-pointer text-5>
                 <div
-                    v-if="isFavorite"
+                    v-show="isFavorite"
                     @click="removeFromFavorites"
                     class="i-tabler-star-filled"
                 ></div>
-                <div v-else @click="addToFavorites" class="i-tabler-star"></div>
+                <div
+                    v-show="!isFavorite"
+                    @click="addToFavorites"
+                    class="i-tabler-star"
+                ></div>
             </div>
-            <div py-3 b-b-1 b-gray-200 cursor-pointer text-5>
+            <div py-3 b-gray-200 cursor-pointer text-5>
                 <a href="#comments">
                     <div
                         text-gray-600
@@ -96,6 +99,7 @@ const { data } = useFetch<{ status: boolean }>('/is_favorite', {
     baseURL: apiConfig.backend_url,
     method: 'GET',
     server: false,
+    lazy: false,
     credentials: 'include',
     query: {
         article_id: route.query.id
@@ -110,6 +114,9 @@ watch(data, () => {
 
 function addToFavorites() {
     if (!route.query.id || !user.id) {
+        console.log(route.query.id)
+        console.log(user.id)
+        console.log('no id')
         return
     }
 
@@ -147,17 +154,16 @@ function removeFromFavorites() {
         baseURL: apiConfig.backend_url,
         method: 'GET',
         query: {
-            article_id: route.query.id,
-            user_id: user.id
+            article_id: route.query.id
         },
         credentials: 'include',
         onResponse(opt) {
             if (!opt.response.ok) {
                 return
             }
-            isFavorite.value = true
+            isFavorite.value = false
             toastStore.addToast({
-                message: 'Favorite it successfully',
+                message: opt.response._data.message,
                 type: 'success'
             })
         },
@@ -165,7 +171,7 @@ function removeFromFavorites() {
             isFavorite.value = false
             console.log(opt.response._data.message)
             toastStore.addToast({
-                message: 'Favorite it unsuccessfully',
+                message: 'remove it from favorites successfully',
                 type: 'warning'
             })
         }

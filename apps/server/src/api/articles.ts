@@ -98,7 +98,63 @@ export default function (
                 .send({ message: 'Internal server error', status: false })
         }
     })
-
+    instance.get(
+        '/remove_favorite',
+        { onRequest: instance.auth([instance.verifyJWT]) },
+        async (request, reply) => {
+            try {
+                const { article_id } = request.query as {
+                    article_id: string
+                }
+                if (!request.routeConfig.userId) {
+                    return reply.code(200).send({
+                        status: false,
+                        message: 'user is not login'
+                    })
+                }
+                if (!article_id) {
+                    return reply.code(400).send({
+                        message: 'Please provide the article id',
+                        status: false
+                    })
+                }
+                const deletedColumn =
+                    await instance.prisma.favorite_articles.deleteMany({
+                        where: {
+                            favorite_article_id: Number(article_id),
+                            favorite_user_id: request.routeConfig.userId
+                        }
+                    })
+                instance.log.info({
+                    address: '/remove_favorite',
+                    message: 'A column has been deleted',
+                    deletedColumn
+                })
+                const number = await instance.prisma.favorite_articles.count({
+                    where: {
+                        favorite_article_id: Number(article_id)
+                    }
+                })
+                await instance.prisma.articles.update({
+                    where: {
+                        article_id: Number(article_id)
+                    },
+                    data: {
+                        article_favorites_count: number
+                    }
+                })
+                reply.code(200).send({
+                    message: 'remove it from favorites successfully',
+                    status: true
+                })
+            } catch (err) {
+                instance.log.error({ address: '/add_favorite', err })
+                return reply
+                    .code(500)
+                    .send({ message: 'Internal server error', status: false })
+            }
+        }
+    )
     instance.get('/comments', async (request, reply) => {
         try {
             const { article_id } = request.query as { article_id: string }

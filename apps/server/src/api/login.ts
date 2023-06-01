@@ -93,7 +93,8 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
                 user: {
                     email: user.email,
                     avatar_path: user.avatar_path,
-                    username: user.username
+                    username: user.username,
+                    userId: user.user_id
                 }
             })
         })

@@ -218,7 +218,7 @@
                         </div>
                     </div>
                     <div v-show="!user.isLogin" dark:text-white>
-                        <NuxtLink to="/register">Sign up</NuxtLink>
+                        <NuxtLink to="/login">Log in</NuxtLink>
                     </div>
                 </div>
             </div>

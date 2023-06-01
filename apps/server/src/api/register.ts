@@ -221,11 +221,13 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                     secure: true
                 })
                 return reply.send({
-                    message: 'Logged in successfully',
+                    status: true,
+                    message: 'register successfully',
                     user: {
-                        email,
-                        avatar_path: '/public/avatar/default.png',
-                        username: email
+                        email: newUser.email,
+                        avatar_path: newUser.avatar_path,
+                        username: newUser.username,
+                        userId: newUser.user_id
                     }
                 })
             })

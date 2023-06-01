@@ -129,15 +129,6 @@ const toastStore = useToast()
 const appConfig = useAppConfig()
 
 const combinedInfo: Ref<Record<number, Article>> = ref([])
-const {
-    data: articleData,
-    error,
-    refresh
-} = await useFetch<Array<ArticleData>>('/articles', {
-    baseURL: appConfig.backend_url,
-    server: false,
-    key: 'articles'
-})
 
 const articles = await queryContent<ContentType>()
     .only<['article_id', 'title', 'description', '_path']>([
@@ -155,7 +146,19 @@ const articles = await queryContent<ContentType>()
 let sortedArticles: {
     [key: number]: ContentType
 } = {}
+// const { data: posts } = useNuxtData('articles')
+const {
+    data: articleData,
+    error,
+    refresh
+} = await useFetch<Array<ArticleData>>('/articles', {
+    baseURL: appConfig.backend_url,
+    server: false,
+    key: 'articles',
+    lazy: false
+})
 watch(articleData, () => {
+    console.log(articleData.value)
     if (articles && articleData.value) {
         for (const article of articles) {
             sortedArticles[article.article_id] = article
@@ -168,17 +171,21 @@ watch(articleData, () => {
         }
     }
 })
-
-onBeforeMount(() => {
-    // const { data: posts } = useNuxtData('articles')
-
+onBeforeMount(async () => {
     refresh()
-})
-onMounted(() => {
     console.log(combinedInfo.value)
     if (error.value) {
         toastStore.addToast({ message: error.value.message, type: 'warning' })
     }
+    setTimeout(() => {
+        console.log(combinedInfo.value)
+    }, 5000)
+})
+onMounted(() => {
+    // console.log(combinedInfo.value)
+    // if (error.value) {
+    //     toastStore.addToast({ message: error.value.message, type: 'warning' })
+    // }
 })
 
 const description = ref(null)

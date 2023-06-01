@@ -8,7 +8,6 @@ const authPlugin: FastifyPluginAsync = fp(async (server, options) => {
         'verifyJWT',
         async function (request: FastifyRequest, reply: FastifyReply) {
             try {
-                server.log.info({ message: 'hello verify' })
                 server.log.info({ token: request.cookies.token })
                 if (request.cookies.token) {
                     try {
