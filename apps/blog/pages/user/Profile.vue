@@ -66,7 +66,6 @@
                     <div>Profile photo</div>
                     <div
                         absolute
-                        left-50%
                         class="top-50% left-50% -translate-x-10 -translate-y-10"
                     >
                         <UserAvatar w-20 h-20 rounded-10></UserAvatar>
