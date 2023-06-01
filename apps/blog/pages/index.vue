@@ -156,7 +156,6 @@ let sortedArticles: {
     [key: number]: ContentType
 } = {}
 watch(articleData, () => {
-    console.log(articleData.value)
     if (articles && articleData.value) {
         for (const article of articles) {
             sortedArticles[article.article_id] = article
@@ -169,20 +168,10 @@ watch(articleData, () => {
         }
     }
 })
-// if (articles && articleData.value) {
-//     for (const article of articles) {
-//         sortedArticles[article.article_id] = article
-//     }
-//     for (let i = 0; i < articleData.value.length; i++) {
-//         combinedInfo[i] = {
-//             ...articleData.value[i],
-//             ...sortedArticles[articleData.value[i].article_id]
-//         }
-//     }
-// }
+
 onBeforeMount(() => {
     // const { data: posts } = useNuxtData('articles')
- 
+
     refresh()
 })
 onMounted(() => {
