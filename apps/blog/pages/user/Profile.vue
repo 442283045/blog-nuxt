@@ -84,8 +84,37 @@
                             cursor-pointer
                             hover:border-gray-500
                         >
-                            <div text-dark i-carbon-edit></div>
+                            <div
+                                @click="selectFile"
+                                text-dark
+                                i-carbon-edit
+                            ></div>
                         </div>
+                    </div>
+                </div>
+                <div
+                    relative
+                    text-4
+                    flex
+                    justify-between
+                    border-b-1
+                    items-center
+                    dark:border-gray-500
+                    font-normal
+                    h-15
+                >
+                    <div w-30 text-left>Email</div>
+                    <div
+                        absolute
+                        leading-10
+                        rounded-md
+                        focus:outline-none
+                        w-full
+                        focus:border-gray-300
+                        outline-1
+                        class="mr-20% top-50% left-50% -translate-x-50% -translate-y-50%"
+                    >
+                        {{ email }}
                     </div>
                 </div>
                 <div
@@ -97,11 +126,13 @@
                     border-b-1
                     items-center
                     dark:border-gray-500
+                    font-normal
                 >
                     <div w-30 text-left>Username</div>
                     <input
                         w-100
                         bg-gray-200
+                        dark:bg-gray-500
                         h-10
                         pl-3
                         rounded-md
@@ -112,9 +143,11 @@
                         class="mr-20%"
                         caret-red
                         type="text"
+                        v-model="username"
                     />
                 </div>
                 <div
+                    font-normal
                     relative
                     h-30
                     text-4
@@ -124,12 +157,13 @@
                     items-center
                     dark:border-gray-500
                 >
-                    <div text-left w-30>Email</div>
-                    <input
+                    <div text-left w-30>Bio</div>
+                    <textarea
+                        dark:bg-gray-500
                         pl-3
                         w-100
                         bg-gray-200
-                        h-10
+                        h-20
                         rounded-md
                         border-1
                         focus:outline-none
@@ -138,7 +172,10 @@
                         class="mr-20%"
                         caret-red
                         type="text"
-                    />
+                        v-model="bio"
+                        resize-none
+                        p-3
+                    ></textarea>
                 </div>
                 <div
                     relative
@@ -173,6 +210,7 @@
                         rounded-md
                         cursor-pointer
                         hover:bg-gray-100
+                        @click="uploadProfile"
                     >
                         Save
                     </div>
@@ -183,4 +221,48 @@
 </template>
 <script lang="ts" setup>
 const isEditProfileOpen = ref(false)
+import useUser from '~/stores/user'
+const user = useUser()
+const username = ref(user.username)
+let email = ''
+
+const bio = ref('')
+onMounted(() => {
+    email = user.email
+})
+let avatarFile: File | null = null
+function selectFile() {
+    const fileInput = document.createElement('input')
+    fileInput.type = 'file'
+    fileInput.accept = 'image/png, image/jpeg' // Optional: Specify accepted file types
+
+    fileInput.addEventListener('change', (event) => {
+        const target = event.target as HTMLInputElement
+        if (target.files) {
+            avatarFile = target.files[0]
+            console.log(target.files[0])
+        }
+    })
+
+    fileInput.click()
+}
+import appConfig from '~/app.config'
+
+function uploadProfile() {
+    console.log(avatarFile)
+    if (avatarFile) {
+        const formData = new FormData()
+        formData.append('imageFile', avatarFile)
+
+        // Perform the file upload using an HTTP request
+        console.log('Uploading file...')
+        useFetch('/update_profile', {
+            method: 'POST',
+            body: formData,
+            server: false,
+            credentials: 'include',
+            baseURL: appConfig.backend_url
+        })
+    }
+}
 </script>

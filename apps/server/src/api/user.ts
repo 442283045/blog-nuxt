@@ -1,5 +1,8 @@
 import { FastifyPluginAsync } from 'fastify'
-
+import { pipeline } from 'node:stream/promises'
+import path from 'node:path'
+import generateUniqueFileName from '../utils/generateUniqueFileName.js'
+import fs from 'node:fs'
 const plugin: FastifyPluginAsync = async function (instance, options) {
     instance.get('/favorites', async (request, reply) => {
         try {
@@ -38,5 +41,55 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
                 .send({ message: 'Internal server error', status: false })
         }
     })
+    instance.post(
+        '/update_profile',
+        { onRequest: instance.auth([instance.verifyJWT]) },
+        async (request, reply) => {
+            try {
+                instance.log.info('update profile')
+                const parts = request.parts()
+                for await (const part of parts) {
+                    if (part.type === 'file') {
+                        instance.log.info(part.filename)
+                        const filename = generateUniqueFileName(
+                            path.extname(part.filename)
+                        )
+                        const fileAddress = path.join(
+                            process.cwd(),
+                            'public',
+                            'avatar',
+                            filename
+                        )
+                        await pipeline(
+                            part.file,
+                            fs.createWriteStream(fileAddress)
+                        )
+                        await instance.prisma.users.update({
+                            where: {
+                                user_id: request.routeConfig.userId
+                            },
+                            data: {
+                                avatar_path: path.join('/avatar', filename)
+                            }
+                        })
+                    } else {
+                        // part.type === 'field
+                        console.log(part)
+                    }
+                }
+
+                reply.send({
+                    status: true,
+                    message: 'Update profile successfully'
+                })
+            } catch (err) {
+                instance.log.error({
+                    address: '/update_profile',
+                    message: 'fail to update profile ',
+                    err
+                })
+            }
+        }
+    )
 }
 export default plugin

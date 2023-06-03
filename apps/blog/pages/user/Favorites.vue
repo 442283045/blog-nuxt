@@ -120,7 +120,6 @@
 }
 </style>
 <script lang="ts" setup>
-// import useUser from '~/stores/user'
 // const slider = ref()
 // const page = ref('')
 const appConfig = useAppConfig()
@@ -162,13 +161,11 @@ useFetch('/favorites', {
             return
         }
         favorites_data.value = opt.response._data
-        console.log(favorites_data.value)
 
         let articles_id: number[] = []
         for (const favorite of favorites_data.value) {
             articles_id.push(favorite.articles.article_id)
         }
-        console.log(articles_id)
         const articles = await queryContent()
             .where({
                 article_id: { $in: articles_id }
@@ -182,21 +179,18 @@ useFetch('/favorites', {
         let sortedArticles: {
             [key: number]: object
         } = {}
-        console.log(articles)
         if (!articles) {
             return
         }
         for (const article of articles) {
             sortedArticles[article.article_id as number] = article
         }
-        console.log(sortedArticles)
         for (let i = 0; i < favorites_data.value.length; i++) {
             favorites_data.value[i].articles = {
                 ...favorites_data.value[i].articles,
                 ...sortedArticles[favorites_data.value[i].articles.article_id]
             }
         }
-        console.log(combinedFavorite)
     },
     onResponseError() {
         toast.addToast({ message: 'loading failed', type: 'warning' })

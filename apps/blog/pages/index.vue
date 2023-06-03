@@ -92,6 +92,21 @@
 }
 </style>
 <script setup lang="ts">
+useHead({
+    title: 'Cows and Horses',
+    meta: [
+        {
+            name: 'description',
+            content: 'Cows and Horses Blog - A simple blog wrote by Nuxt3',
+            hid: 'description',
+            property: 'og:description'
+        },
+        {
+            name: 'keywords',
+            content: 'Cows and Horses, blog, nuxt3, web develop'
+        }
+    ]
+})
 import formatChineseTime from '~/utils/formatChineseTime'
 import useToast from '~/stores/toast'
 interface Article {
@@ -158,7 +173,6 @@ const {
     lazy: false
 })
 watch(articleData, () => {
-    console.log(articleData.value)
     if (articles && articleData.value) {
         for (const article of articles) {
             sortedArticles[article.article_id] = article
@@ -173,19 +187,9 @@ watch(articleData, () => {
 })
 onBeforeMount(async () => {
     refresh()
-    console.log(combinedInfo.value)
     if (error.value) {
         toastStore.addToast({ message: error.value.message, type: 'warning' })
     }
-    setTimeout(() => {
-        console.log(combinedInfo.value)
-    }, 5000)
-})
-onMounted(() => {
-    // console.log(combinedInfo.value)
-    // if (error.value) {
-    //     toastStore.addToast({ message: error.value.message, type: 'warning' })
-    // }
 })
 
 const description = ref(null)

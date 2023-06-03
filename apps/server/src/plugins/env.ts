@@ -8,7 +8,8 @@ const schema = {
         'CLIENT_URL',
         'COOKIE_SECRET',
         'MAILBOX_EMAIL',
-        'MAILBOX_AUTHORIZATION_CODE'
+        'MAILBOX_AUTHORIZATION_CODE',
+        'NODE_ENV'
     ],
     properties: {
         JWT_SECRET: {
@@ -24,6 +25,9 @@ const schema = {
             type: 'string'
         },
         MAILBOX_AUTHORIZATION_CODE: {
+            type: 'string'
+        },
+        NODE_ENV: {
             type: 'string'
         }
     }

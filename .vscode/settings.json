@@ -4,12 +4,14 @@
         "callsite",
         "composables",
         "Cooldown",
+        "cropperjs",
         "lottiefiles",
         "pino",
         "primevue",
         "sidebase",
         "tabler",
-        "unref"
+        "unref",
+        "zoomable"
     ],
     "unocss.root": [
         "apps/blog"

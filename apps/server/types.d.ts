@@ -12,6 +12,7 @@ declare module 'fastify' {
         verifyJWT: FastifyPluginAsync
         prisma: PrismaClient
         sendMail: FastifyPluginAsync
+        logger: winston.Logger
     }
     interface FastifyContextConfig {
         userId?: number
