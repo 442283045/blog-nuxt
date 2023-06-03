@@ -1,5 +1,13 @@
 <template>
     <div flex justify-center items-center class="h-[calc(100vh-356px)]">
+        <ClientOnly>
+            <ImageCropper
+                @close-image-cropper="closeCroppedImage"
+                @get-cropped-image="handleCroppedImage"
+                v-if="showImageCropper"
+                :imageFile="imageFile"
+            ></ImageCropper>
+        </ClientOnly>
         <div
             font-500
             border-1
@@ -14,14 +22,14 @@
             hover:shadow-lg
             hover:shadow-gray-300
             hover:border-blue-200
-            @click="isEditProfileOpen = true"
+            @click="showEditProfile = true"
         >
             <div mr-2 i-carbon-edit></div>
             Edit profile
         </div>
 
         <div
-            v-show="isEditProfileOpen"
+            v-show="showEditProfile"
             class="<md:w-100%"
             text-black
             w-200
@@ -46,7 +54,7 @@
             >
                 <div>Edit profile</div>
                 <div
-                    @click="isEditProfileOpen = false"
+                    @click="closeEditProfile"
                     right-5
                     absolute
                     cursor-pointer
@@ -197,6 +205,7 @@
                         rounded-md
                         cursor-pointer
                         hover:bg-gray-100
+                        @click="closeEditProfile"
                     >
                         Cancel
                     </div>
@@ -220,17 +229,31 @@
     </div>
 </template>
 <script lang="ts" setup>
-const isEditProfileOpen = ref(false)
+const showEditProfile = ref(false)
+
+// create a function to close the EditProfile and clear the formData
+function closeEditProfile() {
+    showEditProfile.value = false
+    for (let key of formData.keys()) {
+        formData.delete(key)
+    }
+}
+import appConfig from '~/app.config'
 import useUser from '~/stores/user'
+import useToast from '~/stores/toast'
+const toast = useToast()
+// import ImageCropper from './ImageCropper.vue'
+const ImageCropper = defineAsyncComponent(() => import('./ImageCropper.vue'))
 const user = useUser()
 const username = ref(user.username)
 let email = ''
-
+const showImageCropper = ref(false)
 const bio = ref('')
+const imageFile = ref<File | null>(null)
 onMounted(() => {
     email = user.email
 })
-let avatarFile: File | null = null
+
 function selectFile() {
     const fileInput = document.createElement('input')
     fileInput.type = 'file'
@@ -239,30 +262,88 @@ function selectFile() {
     fileInput.addEventListener('change', (event) => {
         const target = event.target as HTMLInputElement
         if (target.files) {
-            avatarFile = target.files[0]
-            console.log(target.files[0])
+            imageFile.value = target.files[0]
+            showImageCropper.value = true
+            showEditProfile.value = false
         }
     })
 
     fileInput.click()
 }
-import appConfig from '~/app.config'
-
-function uploadProfile() {
-    console.log(avatarFile)
-    if (avatarFile) {
-        const formData = new FormData()
-        formData.append('imageFile', avatarFile)
-
-        // Perform the file upload using an HTTP request
-        console.log('Uploading file...')
-        useFetch('/update_profile', {
-            method: 'POST',
-            body: formData,
-            server: false,
-            credentials: 'include',
-            baseURL: appConfig.backend_url
+const formData = new FormData()
+function closeCroppedImage() {
+    showImageCropper.value = false
+    showEditProfile.value = true
+}
+function handleCroppedImage(file: File) {
+    /**
+     * use set method to avoid user to repeat upload
+     */
+    formData.set('imageFile', file)
+    console.log(formData.entries)
+    console.log(formData.get('imageFile'))
+}
+async function uploadProfile() {
+    // Perform the file upload using an HTTP request
+    console.log('Uploading file...')
+    console.log(username.value)
+    console.log(user.username)
+    fetch(`${appConfig.backend_url}/update_profile`, {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+    })
+        .then((response) => response.json())
+        .then((result) => {
+            console.log('Success:', result)
+            if (result.status) {
+                toast.addToast({
+                    message: result.message,
+                    type: 'success'
+                })
+                // user.username = username.value
+                // user.bio = bio.value
+                // user.profileImage = result.profileImage
+                closeEditProfile()
+            } else {
+                toast.addToast({
+                    message: result.message,
+                    type: 'warning'
+                })
+            }
         })
-    }
+        .catch((error) => {
+            console.error('Error:', error)
+        })
+    // const { data: res, error } = await useFetch<{
+    //     status: boolean
+    //     message: string
+    // }>('/update_profile', {
+    //     method: 'POST',
+    //     body: formData,
+    //     server: false,
+    //     credentials: 'include',
+    //     baseURL: appConfig.backend_url
+    // })
+    // watch(res, () => {
+    //     console.log('executed')
+    //     if (res.value?.status) {
+    //         console.log(toast.toasts)
+    //         toast.addToast({
+    //             message: res.value?.message,
+    //             type: 'success'
+    //         })
+    //     }
+    // })
+    // console.log(error.value)
+    // if (error.value !== null) {
+    //     console.log(error.value)
+    //     toast.addToast({
+    //         message: res.value?.message
+    //             ? res.value?.message
+    //             : 'update profile failed',
+    //         type: 'warning'
+    //     })
+    // }
 }
 </script>

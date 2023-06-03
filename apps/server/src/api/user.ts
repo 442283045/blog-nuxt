@@ -46,11 +46,11 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
         { onRequest: instance.auth([instance.verifyJWT]) },
         async (request, reply) => {
             try {
-                instance.log.info('update profile')
                 const parts = request.parts()
+
                 for await (const part of parts) {
                     if (part.type === 'file') {
-                        instance.log.info(part.filename)
+                        // instance.logger.info(part.filename)
                         const filename = generateUniqueFileName(
                             path.extname(part.filename)
                         )
@@ -74,7 +74,7 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
                         })
                     } else {
                         // part.type === 'field
-                        console.log(part)
+                        console.log({ part: part.value })
                     }
                 }
 

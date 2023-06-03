@@ -38,7 +38,9 @@ const props = defineProps({
     }
 })
 setTimeout(() => {
+    console.log('clear toast', props.toast.id)
     toastStore.clearToast(props.toast.id)
+    console.log(toastStore.toasts)
 }, 3000)
 </script>
 

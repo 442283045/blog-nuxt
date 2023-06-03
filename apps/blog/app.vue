@@ -2,13 +2,15 @@
     <div>
         <NuxtLayout>
             <div flex flex-col gap-3 z-10 fixed bottom-5 right-5>
-                <TransitionGroup>
-                    <NewToast
-                        v-for="(toast, index) of toasts"
-                        :toast="toast"
-                        :key="toast.id"
-                    ></NewToast>
-                </TransitionGroup>
+                <ClientOnly>
+                    <TransitionGroup>
+                        <NewToast
+                            v-for="(toast, index) of toasts"
+                            :toast="toast"
+                            :key="toast.id"
+                        ></NewToast>
+                    </TransitionGroup>
+                </ClientOnly>
             </div>
             <NuxtLoadingIndicator />
             <NuxtPage />
