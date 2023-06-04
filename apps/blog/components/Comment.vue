@@ -187,8 +187,6 @@ async function submitComment() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            author_id: user.id,
-
             article_id: route.query.id,
             content: comment.value
         }),
@@ -203,11 +201,13 @@ async function submitComment() {
                 type: 'warning'
             })
         },
-        onResponseError: (err) => {
-            toastStore.addToast({
-                message: 'Something went wrong',
-                type: 'warning'
-            })
+        onResponseError: (res) => {
+            if (!res.response.ok) {
+                toastStore.addToast({
+                    message: 'fail to publish comment',
+                    type: 'warning'
+                })
+            }
         }
     })
 }

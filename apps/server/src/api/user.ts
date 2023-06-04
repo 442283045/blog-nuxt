@@ -47,10 +47,18 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
         async (request, reply) => {
             try {
                 const parts = request.parts()
-
+                let userInfo
                 for await (const part of parts) {
                     if (part.type === 'file') {
                         // instance.logger.info(part.filename)
+                        const oldData = await instance.prisma.users.findUnique({
+                            where: {
+                                user_id: request.routeConfig.userId
+                            },
+                            select: {
+                                avatar_path: true
+                            }
+                        })
                         const filename = generateUniqueFileName(
                             path.extname(part.filename)
                         )
@@ -64,7 +72,23 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
                             part.file,
                             fs.createWriteStream(fileAddress)
                         )
-                        await instance.prisma.users.update({
+                        if (oldData?.avatar_path) {
+                            fs.promises
+                                .rm(
+                                    path.join(
+                                        process.cwd(),
+                                        'public',
+                                        oldData?.avatar_path
+                                    )
+                                )
+                                .then(() => {
+                                    instance.logger.info('file removed')
+                                })
+                                .catch((err) => {
+                                    instance.logger.error(err.message)
+                                })
+                        }
+                        userInfo = await instance.prisma.users.update({
                             where: {
                                 user_id: request.routeConfig.userId
                             },
@@ -73,14 +97,38 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
                             }
                         })
                     } else {
-                        // part.type === 'field
-                        console.log({ part: part.value })
+                        // part.type === 'field'
+                        instance.logger.info(part.fieldname, {
+                            value: part.value
+                        })
+                        let updateData = {}
+                        if (part.fieldname === 'username') {
+                            updateData = {
+                                username: part.value
+                            }
+                        } else if (part.fieldname === 'bio') {
+                            updateData = {
+                                user_bio: part.value
+                            }
+                        }
+                        userInfo = await instance.prisma.users.update({
+                            where: {
+                                user_id: request.routeConfig.userId
+                            },
+                            data: updateData
+                        })
+                        console.log({ part: part.fieldname })
                     }
                 }
 
                 reply.send({
                     status: true,
-                    message: 'Update profile successfully'
+                    message: 'Update profile successfully',
+                    user: {
+                        username: userInfo?.username,
+                        bio: userInfo?.user_bio,
+                        avatar_path: userInfo?.avatar_path
+                    }
                 })
             } catch (err) {
                 instance.log.error({

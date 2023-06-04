@@ -21,7 +21,7 @@
     "@fastify/multipart": "^7.6.0",
     "@fastify/mysql": "^4.1.0",
     "@fastify/static": "^6.10.1",
-    "@prisma/client": "^4.14.1",
+    "@prisma/client": "^4.15.0",
     "bcrypt": "^5.1.0",
     "dotenv": "^16.0.3",
     "fastify": "^4.17.0",

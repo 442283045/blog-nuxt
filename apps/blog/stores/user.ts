@@ -4,7 +4,8 @@ const useUser = defineStore('user', {
         avatar_path: '',
         email: '',
         username: '',
-        id: 0
+        id: 0,
+        bio: ''
     }),
     actions: {
         logout() {

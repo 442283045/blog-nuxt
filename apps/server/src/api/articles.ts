@@ -216,9 +216,14 @@ export default function (
     }
     instance.post(
         '/add_comment',
-        async (request: FastifyRequest<{ Body: CommentRequest }>, reply) => {
+        { onRequest: instance.auth([instance.verifyJWT]) },
+        async (request, reply) => {
             try {
-                const { author_id, article_id, content } = request.body
+                const { article_id, content } = request.body as {
+                    article_id: string
+                    content: string
+                }
+                const author_id = request.routeConfig.userId
                 if (author_id && article_id && content) {
                     instance.log.info(
                         JSON.stringify({ author_id, article_id, content })

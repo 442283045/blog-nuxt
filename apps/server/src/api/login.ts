@@ -87,6 +87,7 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
                 sameSite: 'none',
                 secure: true
             })
+
             return reply.send({
                 status: true,
                 message: 'Logged in successfully',
@@ -94,7 +95,8 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
                     email: user.email,
                     avatar_path: user.avatar_path,
                     username: user.username,
-                    userId: user.user_id
+                    userId: user.user_id,
+                    userBio: user.user_bio
                 }
             })
         })

@@ -5,6 +5,7 @@
         "composables",
         "Cooldown",
         "cropperjs",
+        "fieldname",
         "lottiefiles",
         "pino",
         "primevue",

@@ -43,15 +43,6 @@ server.addHook('onResponse', async (req, reply) => {
         status: reply.statusCode,
         path: req.routerPath ?? '404'
     })
-
-    // server.logger.info({
-    //     message: 'response sended',
-
-    //     address: req.routerPath,
-    //     status: reply.statusCode,
-    //     headers: reply.getHeaders()
-    // })
-    server.log.info({ message: '------------------------------------' })
 })
 
 server.register(api, {

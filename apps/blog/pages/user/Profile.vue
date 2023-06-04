@@ -76,7 +76,12 @@
                         absolute
                         class="top-50% left-50% -translate-x-10 -translate-y-10"
                     >
-                        <UserAvatar w-20 h-20 rounded-10></UserAvatar>
+                        <UserAvatar
+                            :url="avatarPath"
+                            w-20
+                            h-20
+                            rounded-10
+                        ></UserAvatar>
                         <div
                             right-0
                             bottom-0
@@ -137,22 +142,27 @@
                     font-normal
                 >
                     <div w-30 text-left>Username</div>
-                    <input
-                        w-100
-                        bg-gray-200
-                        dark:bg-gray-500
-                        h-10
-                        pl-3
-                        rounded-md
-                        border-1
-                        focus:outline-none
-                        focus:border-gray-300
-                        outline-1
-                        class="mr-20%"
-                        caret-red
-                        type="text"
-                        v-model="username"
-                    />
+                    <div relative class="mr-20%" w-100>
+                        <input
+                            w-full
+                            bg-gray-200
+                            dark:bg-gray-500
+                            h-10
+                            pl-3
+                            rounded-md
+                            border-1
+                            @input="handleUsername"
+                            focus:outline-none
+                            focus:border-gray-300
+                            outline-1
+                            caret-red
+                            type="text"
+                            v-model="username"
+                        />
+                        <div text-xs text-gray-500 right-0 absolute>
+                            {{ username?.length }}/30
+                        </div>
+                    </div>
                 </div>
                 <div
                     font-normal
@@ -166,24 +176,29 @@
                     dark:border-gray-500
                 >
                     <div text-left w-30>Bio</div>
-                    <textarea
-                        dark:bg-gray-500
-                        pl-3
-                        w-100
-                        bg-gray-200
-                        h-20
-                        rounded-md
-                        border-1
-                        focus:outline-none
-                        focus:border-gray-300
-                        outline-1
-                        class="mr-20%"
-                        caret-red
-                        type="text"
-                        v-model="bio"
-                        resize-none
-                        p-3
-                    ></textarea>
+                    <div w-100 class="mr-20%" relative>
+                        <textarea
+                            dark:bg-gray-500
+                            pl-3
+                            w-full
+                            bg-gray-200
+                            h-20
+                            rounded-md
+                            border-1
+                            focus:outline-none
+                            focus:border-gray-300
+                            outline-1
+                            caret-red
+                            type="text"
+                            v-model="bio"
+                            resize-none
+                            p-3
+                            @input="handleBio"
+                        ></textarea>
+                        <div text-xs text-gray-500 right-0 absolute>
+                            {{ bio?.length }}/80
+                        </div>
+                    </div>
                 </div>
                 <div
                     relative
@@ -238,17 +253,43 @@ function closeEditProfile() {
         formData.delete(key)
     }
 }
-import appConfig from '~/app.config'
+const appConfig = useAppConfig()
 import useUser from '~/stores/user'
 import useToast from '~/stores/toast'
 const toast = useToast()
 // import ImageCropper from './ImageCropper.vue'
 const ImageCropper = defineAsyncComponent(() => import('./ImageCropper.vue'))
 const user = useUser()
-const username = ref(user.username)
+const username = ref('')
+const bio = ref('')
+onMounted(() => {
+    username.value = user.username
+    bio.value = user.bio
+    console.log(user.bio)
+})
+// validate the username, if the username is not valid, show the error message
+function handleUsername() {
+    username.value = username.value.slice(0, 30)
+
+    if (username.value !== user.username) {
+        formData.set('username', username.value)
+    } else {
+        formData.delete('username')
+    }
+    return true
+}
 let email = ''
 const showImageCropper = ref(false)
-const bio = ref('')
+
+function handleBio() {
+    bio.value = bio.value.slice(0, 80)
+    if (bio.value !== user.bio) {
+        formData.set('bio', bio.value)
+    } else {
+        formData.delete('bio')
+    }
+    return true
+}
 const imageFile = ref<File | null>(null)
 onMounted(() => {
     email = user.email
@@ -275,35 +316,60 @@ function closeCroppedImage() {
     showImageCropper.value = false
     showEditProfile.value = true
 }
+
+const avatarPath = ref<string | null>(null)
 function handleCroppedImage(file: File) {
     /**
      * use set method to avoid user to repeat upload
      */
     formData.set('imageFile', file)
+
+    const fileReader = new FileReader()
+    fileReader.readAsDataURL(file)
+    fileReader.onload = () => {
+        avatarPath.value = fileReader.result as string
+    }
     console.log(formData.entries)
     console.log(formData.get('imageFile'))
 }
 async function uploadProfile() {
     // Perform the file upload using an HTTP request
     console.log('Uploading file...')
-    console.log(username.value)
-    console.log(user.username)
+    // for (let key of formData.keys()) {
+    //     console.log(formData.get(key))
+    // }
+    if (
+        formData.get('imageFile') === null &&
+        formData.get('username') === null &&
+        formData.get('bio') === null
+    ) {
+        toast.addToast({
+            message: 'Nothing changed',
+            type: 'warning'
+        })
+        return
+    }
+    // return
     fetch(`${appConfig.backend_url}/update_profile`, {
         method: 'POST',
         body: formData,
         credentials: 'include'
     })
         .then((response) => response.json())
-        .then((result) => {
+        .then(async (result) => {
             console.log('Success:', result)
             if (result.status) {
                 toast.addToast({
                     message: result.message,
                     type: 'success'
                 })
-                // user.username = username.value
-                // user.bio = bio.value
-                // user.profileImage = result.profileImage
+
+                user.$patch({
+                    username: result.user.username,
+                    bio: result.user.bio,
+                    avatar_path: result.user.avatar_path
+                })
+                console.log(user)
                 closeEditProfile()
             } else {
                 toast.addToast({

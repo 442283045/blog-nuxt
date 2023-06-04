@@ -227,7 +227,8 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                         email: newUser.email,
                         avatar_path: newUser.avatar_path,
                         username: newUser.username,
-                        userId: newUser.user_id
+                        userId: newUser.user_id,
+                        userBio: newUser.user_bio
                     }
                 })
             })
@@ -273,15 +274,16 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                 })
             }
             instance.log.info(user)
-            const { user_id, username, email, avatar_path } = user
+
             return reply.send({
                 message: 'Logged in',
                 login: true,
                 user: {
-                    email,
-                    avatar_path,
-                    username,
-                    user_id
+                    email: user.email,
+                    avatar_path: user.avatar_path,
+                    username: user.username,
+                    userId: user.user_id,
+                    userBio: user.user_bio
                 }
             })
         } catch (err) {

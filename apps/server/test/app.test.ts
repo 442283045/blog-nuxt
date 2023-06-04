@@ -2,7 +2,7 @@ import { afterAll, expect, test } from 'vitest'
 import supertest from 'supertest'
 import axios from 'axios'
 
-import app from '../index.js'
+import app from '../src/index.js'
 import { usersData } from './mockData.js'
 
 test('with HTTP injection', async () => {
