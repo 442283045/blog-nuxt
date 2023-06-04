@@ -118,6 +118,13 @@ interface Favorite {
     favorite_date: string
     articles: Article
 }
+
+// router guard
+watch(user, () => {
+    if (user.isLogin === false) {
+        navigateTo('/login')
+    }
+})
 const favorites_data: Ref<Array<Favorite>> = ref([])
 const combinedFavorite: Ref<Array<Favorite>> = ref([])
 useFetch('/favorites', {

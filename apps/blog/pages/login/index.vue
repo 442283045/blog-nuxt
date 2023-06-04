@@ -99,10 +99,19 @@
 
 <script setup lang="ts">
 import useToast from '~/stores/toast'
+import useUser from '../../stores/user'
 
+const user = useUser()
 const toastStore = useToast()
 definePageMeta({
     layout: false
+})
+
+// router guard
+watch(user, () => {
+    if (user.isLogin === true) {
+        navigateTo('/')
+    }
 })
 import { useField } from 'vee-validate'
 const appConfig = useAppConfig()
@@ -140,9 +149,6 @@ function passwordValidateField(value: string) {
     return true
 }
 
-import useUser from '../../stores/user'
-
-const user = useUser()
 const router = useRouter()
 
 const {

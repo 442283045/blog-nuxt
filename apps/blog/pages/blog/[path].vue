@@ -94,12 +94,12 @@ const user = useUser()
 if (route.path === '/') {
     router.push('/')
 }
-// const isFavorite = ref(false)
+
 const { data } = useFetch<{ status: boolean }>('/is_favorite', {
     baseURL: apiConfig.backend_url,
     method: 'GET',
     server: false,
-    lazy: false,
+    lazy: true,
     credentials: 'include',
     query: {
         article_id: route.query.id

@@ -185,6 +185,14 @@ enum sendState {
     sending = 'Sending',
     resend = 'Resend'
 }
+console.log(user.isLogin)
+
+// router guard
+watch(user, () => {
+    if (user.isLogin === true) {
+        navigateTo('/')
+    }
+})
 const messageState = ref<sendState>(sendState.sendCode)
 const resendTime = ref(120)
 watch(messageState, () => {

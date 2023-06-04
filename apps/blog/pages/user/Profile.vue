@@ -356,28 +356,34 @@ async function uploadProfile() {
         credentials: 'include'
     })
         .then((response) => response.json())
-        .then(async (result) => {
-            console.log('Success:', result)
-            if (result.status) {
-                toast.addToast({
-                    message: result.message,
-                    type: 'success'
-                })
+        .then(
+            async (result: {
+                status: boolean
+                message: string
+                user: { username: string; bio: string; avatar_path: string }
+            }) => {
+                console.log('Success:', result)
+                if (result.status) {
+                    toast.addToast({
+                        message: result.message,
+                        type: 'success'
+                    })
 
-                user.$patch({
-                    username: result.user.username,
-                    bio: result.user.bio,
-                    avatar_path: result.user.avatar_path
-                })
-                console.log(user)
-                closeEditProfile()
-            } else {
-                toast.addToast({
-                    message: result.message,
-                    type: 'warning'
-                })
+                    user.$patch({
+                        username: result.user.username,
+                        bio: result.user.bio,
+                        avatar_path: result.user.avatar_path
+                    })
+                    console.log(user)
+                    closeEditProfile()
+                } else {
+                    toast.addToast({
+                        message: result.message,
+                        type: 'warning'
+                    })
+                }
             }
-        })
+        )
         .catch((error) => {
             console.error('Error:', error)
         })
