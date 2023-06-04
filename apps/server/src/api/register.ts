@@ -145,13 +145,16 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                 instance.log.error('the verification information is invalid')
 
                 instance.log.info({ email, password, code })
-                return reply
-                    .code(400)
-                    .send('the verification information is invalid')
+                return reply.code(400).send({
+                    message: 'the verification information is invalid',
+                    status: false
+                })
             }
             let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
             if (!emailRegex.test(email)) {
-                reply.code(400).send('The email is illegal')
+                reply
+                    .code(400)
+                    .send({ message: 'The email is illegal', status: false })
             }
 
             let passwordRegex =

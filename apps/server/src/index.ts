@@ -23,7 +23,7 @@ server.listen({ port: 3001 }, function (err, address) {
         process.exit(1)
     }
 
-    // server.logger.info(`server started`)
+    server.logger.info(`server started`, { address: server.addresses() })
 })
 
-export default server
+// export default server
