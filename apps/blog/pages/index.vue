@@ -170,7 +170,8 @@ const {
     baseURL: appConfig.backend_url,
     server: false,
     key: 'articles',
-    lazy: false
+    lazy: false,
+    immediate: false
 })
 watch(articleData, () => {
     if (articles && articleData.value) {

@@ -44,7 +44,6 @@ if (process.client) {
         })
         .then((data) => {
             if (data) {
-                console.log(data)
                 if (data.login === true) {
                     user.$patch({
                         avatar_path: data.user.avatar_path,
@@ -59,37 +58,6 @@ if (process.client) {
             }
         })
 }
-// const { data, error } = await useFetch<{
-//     user: {
-//         avatar_path: string
-//         email: string
-//         username: string
-//         user_id: number
-//         userBio: string
-//     }
-//     login: boolean
-// }>('/api/check_login', {
-//     baseURL: appConfig.backend_url,
-//     credentials: 'include',
-//     mode: 'cors',
-//     server: false,
-//     lazy: false
-// })
-
-// watch(data, () => {
-//     if (data.value) {
-//         if (data.value.login === true) {
-//             user.$patch({
-//                 avatar_path: data.value.user.avatar_path,
-//                 email: data.value.user.email,
-//                 username: data.value.user.username,
-//                 id: data.value.user.user_id,
-//                 isLogin: true,
-//                 bio: data.value.user.userBio ?? ''
-//             })
-//         }
-//     }
-// })
 </script>
 <style scoped>
 /* .v-leave-active {

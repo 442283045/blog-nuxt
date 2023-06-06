@@ -162,9 +162,10 @@ const comments = computed(() => data.value?.data)
 onBeforeMount(() => {
     refresh()
 })
-onMounted(() => {
+onMounted(async () => {
     if (error.value) {
         console.log(error)
+        await nextTick()
         toastStore.addToast({
             message: 'Something went wrong',
             type: 'warning'
@@ -196,10 +197,6 @@ async function submitComment() {
             isDisableButton()
             showComment.value = false
             refreshNuxtData('comments')
-            toastStore.addToast({
-                message: 'Comment added successfully',
-                type: 'warning'
-            })
         },
         onResponseError: (res) => {
             if (!res.response.ok) {

@@ -1,22 +1,27 @@
 <template>
     <div>
-        <div text-white bg-blue rounded-md shadow-lg px-3 py-2>
+        <div
+            ref="toast_container"
+            text-white
+            bg-blue
+            rounded-md
+            shadow-2xl
+            px-3
+            py-2
+        >
             <div flex items-center gap-2 leading-6 max-w-80>
                 <div
                     v-show="props.toast.type === 'info'"
-                    text-blue-600
                     text-6
                     i-tabler-info-circle
                 ></div>
                 <div
                     v-show="props.toast.type === 'success'"
-                    text-green
                     text-6
                     i-tabler-circle-check
                 ></div>
                 <div
                     v-show="props.toast.type === 'warning'"
-                    text-red
                     text-6
                     i-tabler-exclamation-circle
                 ></div>
@@ -31,6 +36,7 @@
 <script lang="ts" setup>
 import useToast from '~/stores/toast'
 const toastStore = useToast()
+const toast_container = ref<HTMLElement>()
 const props = defineProps({
     toast: {
         type: Object,
@@ -40,6 +46,20 @@ const props = defineProps({
 setTimeout(() => {
     toastStore.clearToast(props.toast.id)
 }, 3000)
+onMounted(() => {
+    if (!toast_container.value) {
+        return
+    }
+    switch (props.toast.type) {
+        case 'warning':
+            toast_container.value.style.backgroundColor = '#F59E0B'
+            break
+        case 'success':
+            toast_container.value.style.backgroundColor = '#10B981'
+        default:
+            break
+    }
+})
 </script>
 
 <style scoped>

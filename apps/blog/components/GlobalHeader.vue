@@ -280,7 +280,7 @@ function logout() {
         credentials: 'include'
     })
         .then((res) => res.json())
-        .then((res) => {
+        .then(async (res) => {
             user.logout()
         })
         .catch((err) => {

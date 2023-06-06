@@ -121,7 +121,7 @@ function emailValidateField(value: string) {
     }
     let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
     if (!emailPattern.test(value)) {
-        return 'this email is invalid'
+        return 'This email is invalid'
     }
 
     return true
@@ -161,20 +161,17 @@ async function signIn() {
     await Promise.all([emailValidate(), passwordValidate()]).catch((err) => {
         console.log(err)
     })
-    if (!email.value || !password.value) {
-        toastStore.addToast({
-            message: 'Please input the email and password',
-            type: 'warning'
-        })
+    // if (!email.value || !password.value) {
+    //     toastStore.addToast({
+    //         message: 'Please input the email and password',
+    //         type: 'warning'
+    //     })
 
-        return
-    }
+    //     return
+    // }
     if (emailErrorMessage.value || passwordErrorMessage.value) {
         return toastStore.addToast({
-            message:
-                emailErrorMessage.value ||
-                passwordErrorMessage.value ||
-                'Please input the email and password',
+            message: 'Please input correct email and password',
             type: 'warning'
         })
     }
@@ -201,11 +198,8 @@ async function signIn() {
             user.username = res.response._data.user.username
             user.avatar_path = res.response._data.user.avatar_path
             user.id = res.response._data.user.userId
-            await navigateTo('/')
-            toastStore.addToast({
-                message: 'Login successfully',
-                type: 'success'
-            })
+
+            navigateTo('/')
         },
         onResponseError: () => {
             return toastStore.addToast({
