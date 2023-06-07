@@ -4,13 +4,11 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "lint": "turbo run lint"
   },
   "devDependencies": {
-    "eslint": "^8.41.0",
-    "prettier": "^2.8.8",
-    "turbo": "^1.10.1"
+    "eslint": "latest",
+    "turbo": "latest"
   },
   "packageManager": "pnpm@7.15.0"
 }

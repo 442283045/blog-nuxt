@@ -24,10 +24,9 @@ const authPlugin: FastifyPluginAsync = fp(async (server, options) => {
                 server.log.info({ message: 'the token is invalid', err })
                 reply.setCookie('token', '', {
                     httpOnly: true,
-                    secure: true, // Set to true if using HTTPS
                     path: '/',
                     maxAge: 0, // 7 days in seconds
-                    sameSite: 'none'
+                
                 })
                 server.log.warn(err)
             }

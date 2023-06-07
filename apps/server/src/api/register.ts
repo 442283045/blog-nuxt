@@ -220,8 +220,7 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                     httpOnly: true,
                     path: '/',
                     maxAge: 60 * 60 * 24 * 7, // 7 days in seconds
-                    sameSite: 'none',
-                    secure: true
+                
                 })
                 return reply.send({
                     status: true,
@@ -268,8 +267,7 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
 
                     path: '/',
                     maxAge: 0, // 7 days in seconds
-                    sameSite: 'none',
-                    secure: true
+                  
                 })
                 return reply.code(200).send({
                     message: 'user is not logged in',
@@ -296,8 +294,7 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
 
                 path: '/',
                 maxAge: 0, // 7 days in seconds
-                sameSite: 'none',
-                secure: true
+              
             })
             return reply
                 .code(200)

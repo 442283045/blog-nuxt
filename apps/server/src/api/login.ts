@@ -84,8 +84,7 @@ const plugin: FastifyPluginAsync = async function (instance, options) {
                 httpOnly: true,
                 path: '/',
                 maxAge: 60 * 60 * 24 * 7, // 7 days in seconds
-                sameSite: 'none',
-                secure: true
+             
             })
 
             return reply.send({
