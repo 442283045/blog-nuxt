@@ -14,10 +14,7 @@ import multipartPlugin from './plugins/multipart.js'
 
 import api from './api/index.js'
 
-const server = fastify({
-    logger: logger,
-    disableRequestLogging: true
-})
+const server = fastify()
 // const server = fastify({
 //     logger: false
 // })
@@ -34,7 +31,7 @@ server.register(staticPlugin)
 
 server.addHook('onRequest', async (req, reply) => {
     server.logger.info('request received', {
-        address: req.routerPath ?? '404',
+        path: req.routerPath ?? '404',
         method: req.routerMethod
     })
 })
@@ -48,4 +45,5 @@ server.addHook('onResponse', async (req, reply) => {
 server.register(api, {
     prefix: '/fastify'
 })
+
 export default server
