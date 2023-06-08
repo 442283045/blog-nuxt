@@ -100,7 +100,7 @@
 <script setup lang="ts">
 import useToast from '~/stores/toast'
 import useUser from '../../stores/user'
-
+import { useField } from 'vee-validate'
 const user = useUser()
 const toastStore = useToast()
 definePageMeta({
@@ -113,7 +113,7 @@ watch(user, () => {
         navigateTo('/')
     }
 })
-import { useField } from 'vee-validate'
+
 const appConfig = useAppConfig()
 function emailValidateField(value: string) {
     if (!value) {

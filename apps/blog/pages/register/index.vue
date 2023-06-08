@@ -170,6 +170,8 @@
 
 <script setup lang="ts">
 // import Toast from '../../components/Toast.vue'
+import { useField, validate } from 'vee-validate'
+
 import usePage from '../../stores/page'
 import useUser from '../../stores/user'
 import useToast from '~/stores/toast'
@@ -209,7 +211,6 @@ watch(messageState, () => {
     }
 })
 
-import { useField } from 'vee-validate'
 const appConfig = useAppConfig()
 async function sendCode() {
     await emailValidate()
@@ -232,7 +233,7 @@ async function sendCode() {
         .then(async (response) => {
             console.log(response)
             if (!response.ok) {
-                const { msg: errorMessage } = await response.json()
+                const { message: errorMessage } = await response.json()
                 messageState.value = sendState.sendCode
                 return toastStore.addToast({
                     message: errorMessage,
@@ -278,10 +279,11 @@ function veriCodeValidateField(value: string) {
     }
     return true
 }
-const { value: veriCode, errorMessage: veriCodeErrorMessage } = useField(
-    'veriCode',
-    veriCodeValidateField
-)
+const {
+    value: veriCode,
+    errorMessage: veriCodeErrorMessage,
+    validate: veriValidate
+} = useField('veriCode', veriCodeValidateField)
 
 function passwordValidateField(value: string) {
     if (!value) {
@@ -300,23 +302,24 @@ function passwordValidateField(value: string) {
     return true
 }
 
-const { value: password, errorMessage: passwordErrorMessage } = useField(
-    'password',
-    passwordValidateField
-)
+const {
+    value: password,
+    errorMessage: passwordErrorMessage,
+    validate: passwordValidate
+} = useField('password', passwordValidateField)
 const router = useRouter()
 async function singUp() {
-    if (!email.value || !veriCode.value || !password.value) {
-        return toastStore.addToast({
-            message: 'email is empty',
-            type: 'warning'
-        })
-    }
+    await Promise.all([emailValidate(), veriValidate(), passwordValidate()])
+
     if (
         emailErrorMessage.value ||
         veriCodeErrorMessage.value ||
         passwordErrorMessage.value
     ) {
+        return toastStore.addToast({
+            message: 'Email, verification code or password is invalid',
+            type: 'warning'
+        })
         return
     }
     fetch(`${appConfig.backend_url}/register`, {
@@ -334,7 +337,8 @@ async function singUp() {
         .then(async (response) => {
             console.log(response)
             if (!response.ok) {
-                const { msg: errorMessage } = await response.json()
+                const { message: errorMessage } = await response.json()
+                console.log(errorMessage)
                 return toastStore.addToast({
                     message: errorMessage,
                     type: 'warning'

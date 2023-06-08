@@ -81,7 +81,7 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                 if (cooldownActive) {
                     return reply.status(400).send({
                         status: 'no',
-                        msg: `Email has been sent, if you want to resend, please wait ${
+                        message: `Email has been sent, if you want to resend, please wait ${
                             120 - waitSeconds
                         } seconds`
                     })
@@ -96,13 +96,13 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                         code,
                         function (error: Error | null, info: any) {
                             if (error) {
-                                instance.log.error(error)
-
-                                instance.log.error('email sending failed')
                                 resolve('')
-                                return reply
-                                    .code(400)
-                                    .send('Email sending failed')
+                                instance.logger.error(error.message, { error })
+                                return reply.code(400).send({
+                                    message:
+                                        'Sending code failed, please try it again',
+                                    status: false
+                                })
                             }
 
                             emailAndCodeMessages.set(email, {
@@ -115,8 +115,6 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                                 instance.log.info('email has expired：', email)
                             }, 120000)
 
-                            instance.log.info('email sending successful')
-                            instance.log.info(`the code is ${code}`)
                             resolve('')
                             return reply.code(200).send({
                                 status: true,
@@ -160,17 +158,19 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
             let passwordRegex =
                 /^[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,20}$/
             if (!passwordRegex.test(password)) {
-                reply
-                    .code(400)
-                    .send('The password does not meet the requirements')
+                reply.code(400).send({
+                    message: 'The password does not meet the requirements',
+                    status: false
+                })
                 return
             }
 
             let codeRegex = /^\d{6}$/
             if (!codeRegex.test(code)) {
-                reply
-                    .code(400)
-                    .send('The verification code should consist of 6 digits')
+                reply.code(400).send({
+                    message: 'The verification code should consist of 6 digits',
+                    status: false
+                })
                 return
             }
 
@@ -178,22 +178,18 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                 !emailAndCodeMessages.has(email) ||
                 emailAndCodeMessages.get(email)?.code != code
             ) {
-                instance.log.error('the verification code is invalid')
-                instance.log.info({
-                    right: emailAndCodeMessages.get(email),
-                    error: code
-                })
                 return reply.code(400).send({
-                    status: 'no',
-                    msg: 'the verification code is invalid'
+                    status: false,
+                    message: 'The verification code is invalid'
                 })
             }
             const hashedPassword = await bcrypt
                 .hash(password, 5)
                 .catch((err) => {
-                    return reply
-                        .code(500)
-                        .send({ msg: 'Internal Server Error' })
+                    return reply.code(500).send({
+                        message: 'Internal Server Error',
+                        status: false
+                    })
                 })
 
             await new Promise(async (resolve, reject) => {
@@ -219,8 +215,7 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                 reply.setCookie('token', token, {
                     httpOnly: true,
                     path: '/',
-                    maxAge: 60 * 60 * 24 * 7, // 7 days in seconds
-                
+                    maxAge: 60 * 60 * 24 * 7 // 7 days in seconds
                 })
                 return reply.send({
                     status: true,
@@ -236,7 +231,8 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
             })
         } catch (err) {
             reply.code(500).send({
-                msg: 'Internal Server Error'
+                message: 'Internal Server Error',
+                status: false
             })
         }
     })
@@ -266,8 +262,7 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                     httpOnly: true,
 
                     path: '/',
-                    maxAge: 0, // 7 days in seconds
-                  
+                    maxAge: 0 // 7 days in seconds
                 })
                 return reply.code(200).send({
                     message: 'user is not logged in',
@@ -293,8 +288,7 @@ const plugin: FastifyPluginCallback<{}> = async function (instance, options) {
                 httpOnly: true,
 
                 path: '/',
-                maxAge: 0, // 7 days in seconds
-              
+                maxAge: 0 // 7 days in seconds
             })
             return reply
                 .code(200)
