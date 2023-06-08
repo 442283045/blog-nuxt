@@ -2,6 +2,7 @@
 title: 'Vim tutorial'
 description: 'meta description of the page'
 article_id: 4
+article_cover: 'article-4.png'
 ---
 
 ### 1. 配置快捷键

@@ -2,6 +2,7 @@
 title: 'Linux commands'
 description: 'meta description of the page'
 article_id: 3
+article_cover: 'article-3.png'
 ---
 
 ### 命令行快捷键

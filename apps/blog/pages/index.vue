@@ -17,7 +17,8 @@
                         article_published_date,
                         article_comments_count,
                         article_favorites_count,
-                        article_view_count
+                        article_view_count,
+                        article_cover
                     } in combinedInfo"
                     :key="article_id"
                     h-36
@@ -31,7 +32,7 @@
                 >
                     <div h-full flex items-center>
                         <NuxtImg
-                            src="/linux.png"
+                            :src="`/article-covers/${article_cover}`"
                             alt="Discover Nuxt 3"
                             width="128"
                             height="128"
@@ -92,6 +93,8 @@
 }
 </style>
 <script setup lang="ts">
+import formatChineseTime from '~/utils/formatChineseTime'
+import useToast from '~/stores/toast'
 useHead({
     title: 'Cows and Horses',
     meta: [
@@ -107,8 +110,7 @@ useHead({
         }
     ]
 })
-import formatChineseTime from '~/utils/formatChineseTime'
-import useToast from '~/stores/toast'
+
 interface Article {
     article_id: number
     article_title: string
@@ -122,6 +124,7 @@ interface Article {
     description: string
     title: string
     _path: string
+    article_cover: string
 }
 interface ArticleData {
     article_id: number
@@ -139,6 +142,7 @@ interface ContentType {
     title: string
     _path: string
     article_id: number
+    article_cover: string
 }
 const toastStore = useToast()
 const appConfig = useAppConfig()
@@ -146,11 +150,12 @@ const appConfig = useAppConfig()
 const combinedInfo: Ref<Record<number, Article>> = ref([])
 
 const articles = await queryContent<ContentType>()
-    .only<['article_id', 'title', 'description', '_path']>([
+    .only<['article_id', 'title', 'description', '_path', 'article_cover']>([
         'article_id',
         'title',
         'description',
-        '_path'
+        '_path',
+        'article_cover'
     ])
     .sort({ article_id: 1 })
     .find()
@@ -199,7 +204,7 @@ interface CustomCSSStyleDeclaration extends CSSStyleDeclaration {
     ['-webkit-box-orient']?: string
     ['text-overflow']?: string
 }
-
+// multiline ellipsis
 onMounted(() => {
     if (description.value) {
         ;(description.value as Array<HTMLElement>).forEach((element) => {

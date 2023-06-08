@@ -2,6 +2,7 @@
 title: 'CSS property'
 description: 'meta description of the page'
 article_id: 2
+article_cover: 'article-2.png'
 ---
 
 #### 1. text-decoration
