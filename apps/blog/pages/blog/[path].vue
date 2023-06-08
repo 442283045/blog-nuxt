@@ -84,40 +84,46 @@
 <script setup lang="ts">
 import '../../styles/markdown.css'
 import useToast from '~/stores/toast'
+import useUser from '~/stores/user'
+
 const toastStore = useToast()
 const route = useRoute()
 const router = useRouter()
 const path = route.params.path
 const apiConfig = useAppConfig()
-import useUser from '~/stores/user'
 const user = useUser()
 if (route.path === '/') {
     router.push('/')
 }
-
-const { data } = useFetch<{ status: boolean }>('/is_favorite', {
-    baseURL: apiConfig.backend_url,
-    method: 'GET',
-    server: false,
-    lazy: true,
-    credentials: 'include',
-    query: {
-        article_id: route.query.id
-    }
-})
 const isFavorite = ref(false)
-watch(data, () => {
-    if (data.value) {
-        isFavorite.value = data.value.status
-    }
-})
 
+if (user.isLogin) {
+    const { data } = useFetch<{ status: boolean }>('/is_favorite', {
+        baseURL: apiConfig.backend_url,
+        method: 'GET',
+        server: false,
+        lazy: true,
+        credentials: 'include',
+        query: {
+            article_id: route.query.id
+        }
+    })
+
+    watch(data, () => {
+        if (data.value) {
+            isFavorite.value = data.value.status
+        }
+    })
+}
 function addToFavorites() {
     if (!route.query.id || !user.id) {
         console.log(route.query.id)
         console.log(user.id)
         console.log('no id')
-        return
+        return toastStore.addToast({
+            message: 'Please login first',
+            type: 'warning'
+        })
     }
 
     useFetch('/add_favorite', {
