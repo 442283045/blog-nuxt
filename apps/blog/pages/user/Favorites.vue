@@ -22,7 +22,8 @@
                             article_view_count,
                             _path,
                             description,
-                            title
+                            title,
+                            article_cover
                         },
                         favorite_article_id,
                         favorite_date,
@@ -41,7 +42,8 @@
                 >
                     <div h-full flex items-center>
                         <NuxtImg
-                            src="/linux.png"
+                            v-if="article_cover"
+                            :src="`/article-covers/${article_cover}`"
                             alt="Discover Nuxt 3"
                             width="128"
                             height="128"
@@ -122,10 +124,11 @@
 <script lang="ts" setup>
 // const slider = ref()
 // const page = ref('')
+import useToast from '~/stores/toast'
 const appConfig = useAppConfig()
 // const user = useUser()
 // const initialFocus = ref()
-import useToast from '~/stores/toast'
+
 const toast = useToast()
 interface Article {
     article_id: number
@@ -140,6 +143,7 @@ interface Article {
     description: string
     title: string
     _path: string
+    article_cover: string
 }
 
 interface Favorite {
@@ -150,7 +154,7 @@ interface Favorite {
     articles: Article
 }
 const favorites_data: Ref<Array<Favorite>> = ref([])
-const combinedFavorite: Ref<Array<Favorite>> = ref([])
+
 useFetch('/favorites', {
     baseURL: appConfig.backend_url,
     credentials: 'include',
@@ -170,7 +174,9 @@ useFetch('/favorites', {
             .where({
                 article_id: { $in: articles_id }
             })
-            .only(['article_id', 'title', 'description', '_path'])
+            .only<
+                ['article_id', 'title', 'description', '_path', 'article_cover']
+            >(['article_id', 'title', 'description', '_path', 'article_cover'])
             .sort({ article_id: 1 })
             .find()
             .catch((err) => {
