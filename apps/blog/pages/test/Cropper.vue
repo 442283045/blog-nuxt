@@ -9,7 +9,7 @@
         <div class="edit_photo" h-130 bg-dark-700 flex flex-col justify-between>
             <div text-6 h-12 bg-black flex items-center text-white w-150>
                 <div cursor-pointer mx-5 i-carbon-chevron-left></div>
-                Edit photo
+                编辑照片
             </div>
             <div ref="cropper_container" class="cropper-container"></div>
             <div h-12 gap-4 bg-black flex items-center justify-end text-white>
@@ -23,13 +23,10 @@
 </template>
 <script setup lang="ts">
 import Cropper from 'cropperjs'
+import { CropperSelection, CropperCanvas } from 'cropperjs'
 
 const cropper_container = ref<Element>()
-import { CropperElement, CropperSelection, CropperCanvas } from 'cropperjs'
-// const image = document.createElement('img')
 const appConfig = useAppConfig()
-// image.src = appConfig.backend_url + '/photo.png'
-// image.alt = 'Picture'
 
 const image = document.createElement('img')
 image.src = appConfig.backend_url + '/photo.png'
@@ -55,11 +52,7 @@ selection.addEventListener('wheel', (e) => {
 })
 function cropImage() {
     selection.$toCanvas().then((canvas) => {
-        // const imageDataURL = canvas.toDataURL('image/png')
-        // const downloadLink = document.createElement('a')
-        // downloadLink.href = imageDataURL
-        // downloadLink.download = 'image.png'
-        // downloadLink.click()
+    
         canvas.toBlob((blob) => {
             if (blob === null) {
                 return

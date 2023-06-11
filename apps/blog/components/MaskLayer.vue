@@ -67,7 +67,7 @@
                                 items-center
                             >
                                 <div pr-10 text-4 i-tabler-home></div>
-                                Home
+                                主页
                             </div>
                         </NuxtLink>
                         <div flex flex-col>
@@ -109,10 +109,7 @@
                                         dark:i-carbon-moon
                                         ref="theme"
                                     ></div>
-                                    {{
-                                        String(mode).charAt(0).toUpperCase() +
-                                        String(mode).slice(1)
-                                    }}
+                                    {{ themeColor }}
                                 </div>
                                 <svg
                                     aria-hidden="true"
@@ -173,7 +170,7 @@
                                                     text-gray-6
                                                     class="i-carbon-sun"
                                                 ></div>
-                                                Light
+                                                明亮
                                             </div>
                                         </button>
                                     </li>
@@ -196,7 +193,7 @@
                                                     text-gray-6
                                                     class="i-carbon-moon"
                                                 ></div>
-                                                Dark
+                                                黑暗
                                             </div>
                                         </button>
                                     </li>
@@ -219,7 +216,7 @@
                                                     text-gray-6
                                                     class="i-carbon-screen"
                                                 ></div>
-                                                Auto
+                                                自动
                                             </div>
                                         </button>
                                     </li>
@@ -241,15 +238,47 @@ const isDropdownOpen = ref(false)
 const theme = ref()
 let changeTheme: Function
 let mode: any
+let themeColor = ref('')
 onMounted(() => {
     mode = useColorMode({
         emitAuto: true
     })
-
+    console.log(mode.value)
+    changeThemeColor(mode.value)
     changeTheme = function (theme: 'light' | 'dark' | 'auto') {
         mode.value = theme
+        // switch (theme) {
+        //     case 'light':
+        //         themeColor.value = '明亮'
+        //         break
+
+        //     case 'dark':
+        //         themeColor.value = '黑暗'
+        //         break
+
+        //     case 'auto':
+        //         themeColor.value = '自动'
+        //         break
+        // }
+        changeThemeColor(theme)
 
         isDropdownOpen.value = false
+    }
+    function changeThemeColor(theme: 'light' | 'dark' | 'auto') {
+        console.log(theme)
+        switch (theme) {
+            case 'light':
+                themeColor.value = '明亮'
+                break
+
+            case 'dark':
+                themeColor.value = '黑暗'
+                break
+
+            case 'auto':
+                themeColor.value = '自动'
+                break
+        }
     }
 })
 </script>

@@ -37,7 +37,7 @@
                     <NuxtImg w-16 src="/logo.png"></NuxtImg>
                 </NuxtLink>
                 <nav class="<lg:hidden" lg:flex gap-8 items-center>
-                    <NuxtLink ml-30 hover:text-sky-500 to="/">Home</NuxtLink>
+                    <NuxtLink ml-30 hover:text-sky-500 to="/">主页</NuxtLink>
                 </nav>
             </div>
 
@@ -99,7 +99,7 @@
                                 text-gray-6
                                 class="i-carbon-sun"
                             ></div>
-                            Light
+                            明亮
                         </div>
                         <div
                             b-b-1
@@ -119,7 +119,7 @@
                                 text-gray-6
                                 class="i-carbon-moon"
                             ></div>
-                            Dark
+                            黑暗
                         </div>
                         <div
                             @click="changeTheme('auto')"
@@ -136,7 +136,7 @@
                                 text-gray-6
                                 class="i-carbon-screen"
                             ></div>
-                            Auto
+                            自动
                         </div>
                     </div>
                 </div>
@@ -200,7 +200,7 @@
                                     cursor-pointer
                                     dark:hover:bg-gray-400
                                 >
-                                    Profile
+                                    个人主页
                                 </div>
                             </NuxtLink>
                             <div
@@ -213,12 +213,12 @@
                                 @click="logout"
                                 dark:hover:bg-gray-400
                             >
-                                Log out
+                                退出登录
                             </div>
                         </div>
                     </div>
                     <div v-show="!user.isLogin" dark:text-white>
-                        <NuxtLink to="/login">Log in</NuxtLink>
+                        <NuxtLink to="/login">登录</NuxtLink>
                     </div>
                 </div>
             </div>

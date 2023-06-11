@@ -25,7 +25,7 @@
                     mx-5
                     i-carbon-chevron-left
                 ></div>
-                Edit photo
+                编辑照片
             </div>
             <div ref="cropper_container" class="cropper-container"></div>
             <div h-12 gap-4 bg-black flex items-center justify-end text-white>
@@ -47,9 +47,9 @@
 </template>
 <script setup lang="ts">
 import Cropper from 'cropperjs'
+import { CropperSelection, CropperCanvas } from 'cropperjs'
 
 const cropper_container = ref<Element>()
-import { CropperSelection, CropperCanvas } from 'cropperjs'
 const props = defineProps<{ imageFile: File | null }>()
 const appConfig = useAppConfig()
 

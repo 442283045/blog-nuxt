@@ -8,7 +8,7 @@
                     dark:text-white
                     class="mt-6 text-center text-3xl font-extrabold text-gray-900"
                 >
-                    Sign up
+                    注册
                 </h2>
             </div>
             <form novalidate class="mt-8 space-y-6" @submit.prevent="singUp">
@@ -42,7 +42,7 @@
                                 focus:ring-indigo-500
                                 focus:border-indigo-500
                                 focus:z-10
-                                placeholder="Email address"
+                                placeholder="邮箱"
                             />
                             <div
                                 dark:caret-white
@@ -68,13 +68,13 @@
                                     bg-transparent
                                     v-if="messageState === sendState.sendCode"
                                 >
-                                    Send Code
+                                    发送
                                 </button>
                                 <div v-if="messageState === sendState.sending">
                                     <LottieLoading w-6 h-6></LottieLoading>
                                 </div>
                                 <div v-if="messageState === sendState.resend">
-                                    Resend {{ resendTime }}
+                                    重新发送 {{ resendTime }}
                                 </div>
                             </div>
                         </div>
@@ -103,7 +103,7 @@
                             dark:bg-gray-800
                             dark:c
                             class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
-                            placeholder="verification code"
+                            placeholder="验证码"
                         />
                         <div
                             pl-2
@@ -126,7 +126,7 @@
                             dark:c
                             required
                             class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
-                            placeholder="Password"
+                            placeholder="密码"
                         />
                         <div
                             pl-2
@@ -144,7 +144,7 @@
                         type="submit"
                         class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                        Sign up
+                        注册
                     </button>
                 </div>
             </form>
@@ -155,12 +155,12 @@
                     text-indigo-600
                     hover:text-indigo-800
                 >
-                    Go home
+                    主页
                 </NuxtLink>
                 <div float-right>
-                    Already have an account,
+                    已经有账号了,
                     <NuxtLink to="/login" cursor-pointer text-indigo-600>
-                        log in
+                        登录
                     </NuxtLink>
                 </div>
             </div>
@@ -217,7 +217,7 @@ async function sendCode() {
 
     if (emailErrorMessage.value) {
         toastStore.addToast({
-            message: 'Please enter a valid email address',
+            message: '请输入一个合法的邮箱',
             type: 'warning'
         })
 
@@ -316,10 +316,6 @@ async function singUp() {
         veriCodeErrorMessage.value ||
         passwordErrorMessage.value
     ) {
-        return toastStore.addToast({
-            message: 'Email, verification code or password is invalid',
-            type: 'warning'
-        })
         return
     }
     fetch(`${appConfig.backend_url}/register`, {

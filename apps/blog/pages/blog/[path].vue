@@ -121,7 +121,7 @@ function addToFavorites() {
         console.log(user.id)
         console.log('no id')
         return toastStore.addToast({
-            message: 'Please login first',
+            message: '请登录后再试',
             type: 'warning'
         })
     }
@@ -139,16 +139,12 @@ function addToFavorites() {
                 return
             }
             isFavorite.value = true
-            toastStore.addToast({
-                message: 'Favorite it successfully',
-                type: 'success'
-            })
         },
         onResponseError(opt) {
             isFavorite.value = false
             console.log(opt.response._data.message)
             toastStore.addToast({
-                message: 'Favorite it unsuccessfully',
+                message: '评论失败，请稍后再试',
                 type: 'warning'
             })
         }
@@ -177,7 +173,7 @@ function removeFromFavorites() {
             isFavorite.value = false
             console.log(opt.response._data.message)
             toastStore.addToast({
-                message: 'remove it from favorites successfully',
+                message: '操作失败，请稍后再试',
                 type: 'warning'
             })
         }

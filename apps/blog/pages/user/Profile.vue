@@ -25,7 +25,7 @@
             @click="showEditProfile = true"
         >
             <div mr-2 i-carbon-edit></div>
-            Edit profile
+            修改资料
         </div>
 
         <div
@@ -52,7 +52,7 @@
                 font-normal
                 text-6
             >
-                <div>Edit profile</div>
+                <div>修改资料</div>
                 <div
                     @click="closeEditProfile"
                     right-5
@@ -71,7 +71,7 @@
                     border-b-1
                     pt-5
                 >
-                    <div>Profile photo</div>
+                    <div>头像</div>
                     <div
                         absolute
                         class="top-50% left-50% -translate-x-10 -translate-y-10"
@@ -116,7 +116,7 @@
                     font-normal
                     h-15
                 >
-                    <div w-30 text-left>Email</div>
+                    <div w-30 text-left>邮箱</div>
                     <div
                         absolute
                         leading-10
@@ -141,7 +141,7 @@
                     dark:border-gray-500
                     font-normal
                 >
-                    <div w-30 text-left>Username</div>
+                    <div w-30 text-left>昵称</div>
                     <div relative class="mr-20%" w-100>
                         <input
                             w-full
@@ -175,7 +175,7 @@
                     items-center
                     dark:border-gray-500
                 >
-                    <div text-left w-30>Bio</div>
+                    <div text-left w-30>描述</div>
                     <div w-100 class="mr-20%" relative>
                         <textarea
                             dark:bg-gray-500
@@ -222,7 +222,7 @@
                         hover:bg-gray-100
                         @click="closeEditProfile"
                     >
-                        Cancel
+                        退出
                     </div>
                     <div
                         dark:bg-gray-300
@@ -236,7 +236,7 @@
                         hover:bg-gray-100
                         @click="uploadProfile"
                     >
-                        Save
+                        保存
                     </div>
                 </div>
             </div>
@@ -244,6 +244,8 @@
     </div>
 </template>
 <script lang="ts" setup>
+import useUser from '~/stores/user'
+import useToast from '~/stores/toast'
 const showEditProfile = ref(false)
 
 // create a function to close the EditProfile and clear the formData
@@ -254,8 +256,7 @@ function closeEditProfile() {
     }
 }
 const appConfig = useAppConfig()
-import useUser from '~/stores/user'
-import useToast from '~/stores/toast'
+
 const toast = useToast()
 // import ImageCropper from './ImageCropper.vue'
 const ImageCropper = defineAsyncComponent(() => import('./ImageCropper.vue'))

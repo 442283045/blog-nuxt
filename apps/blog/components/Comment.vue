@@ -167,7 +167,7 @@ onMounted(async () => {
         console.log(error)
         await nextTick()
         toastStore.addToast({
-            message: 'Something went wrong',
+            message: '网络错误，请稍后再试',
             type: 'warning'
         })
     }
@@ -176,7 +176,7 @@ onMounted(async () => {
 async function submitComment() {
     if (!(comment.value !== '' && user.id && route.query.id)) {
         toastStore.addToast({
-            message: 'Something went wrong',
+            message: '你还不能评论',
             type: 'warning'
         })
     }
@@ -201,7 +201,7 @@ async function submitComment() {
         onResponseError: (res) => {
             if (!res.response.ok) {
                 toastStore.addToast({
-                    message: 'fail to publish comment',
+                    message: '发表评论失败，请稍后再试',
                     type: 'warning'
                 })
             }

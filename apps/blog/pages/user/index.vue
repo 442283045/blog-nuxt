@@ -47,7 +47,7 @@
                         aria-current="page"
                         ref="initialFocus"
                     >
-                        Favorites
+                        收藏
                     </a>
                 </li>
                 <li class="mr-2">
@@ -55,7 +55,7 @@
                         href="#"
                         class="inline-block p-4 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                     >
-                        Profile
+                        个人资料
                     </a>
                 </li>
             </ul>
@@ -88,13 +88,14 @@ import Profile from './Profile.vue'
 import Favorites from './Favorites.vue'
 // const Profile = resolveComponent('./Profile')
 import useUser from '~/stores/user'
+import useToast from '~/stores/toast'
 const pageTab = ref('Favorites')
 const slider = ref()
 const page = ref('')
 const appConfig = useAppConfig()
 const user = useUser()
 const initialFocus = ref()
-import useToast from '~/stores/toast'
+
 const toast = useToast()
 interface Article {
     article_id: number
@@ -196,9 +197,17 @@ function changeTab(e: MouseEvent) {
     if ((e.target as HTMLElement).tagName !== 'A') {
         return
     }
-    const content = (e.target as HTMLElement).textContent
+    const content = (e.target as HTMLElement).textContent?.trim()
+
     if (content) {
-        pageTab.value = content.trim()
+        switch (content) {
+            case '收藏':
+                pageTab.value = 'Favorites'
+                break
+            case '个人资料':
+                pageTab.value = 'Profile'
+                break
+        }
     }
     console.log((e.target as HTMLElement).textContent?.trim())
     slider.value.style.width =

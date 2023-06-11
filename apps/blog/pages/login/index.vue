@@ -9,7 +9,7 @@
                     dark:text-white
                     class="mt-6 text-center text-3xl font-extrabold text-gray-900"
                 >
-                    Log in
+                    登录
                 </h2>
             </div>
             <form @submit.prevent="" novalidate class="mt-8 space-y-6">
@@ -27,7 +27,7 @@
                             v-model="email"
                             required
                             class="rounded-md appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                            placeholder="Email address"
+                            placeholder="邮箱"
                         />
                         <div
                             pl-2
@@ -49,7 +49,7 @@
                             v-model="password"
                             required
                             class="rounded-md appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                            placeholder="Password"
+                            placeholder="密码"
                         />
                         <div
                             pl-2
@@ -68,7 +68,7 @@
                         @click="signIn"
                         class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                        Sign in
+                        登录
                     </button>
                 </div>
             </form>
@@ -79,17 +79,17 @@
                     text-indigo-600
                     hover:text-indigo-800
                 >
-                    Go home
+                    主页
                 </NuxtLink>
                 <div float-right>
-                    Don't have an account,
+                    还没有账户,
                     <NuxtLink
                         to="/register"
                         hover:text-indigo-800
                         cursor-pointer
                         text-indigo-600
                     >
-                        sign up
+                        注册
                     </NuxtLink>
                 </div>
             </div>
@@ -161,17 +161,10 @@ async function signIn() {
     await Promise.all([emailValidate(), passwordValidate()]).catch((err) => {
         console.log(err)
     })
-    // if (!email.value || !password.value) {
-    //     toastStore.addToast({
-    //         message: 'Please input the email and password',
-    //         type: 'warning'
-    //     })
 
-    //     return
-    // }
     if (emailErrorMessage.value || passwordErrorMessage.value) {
         return toastStore.addToast({
-            message: 'Please input correct email and password',
+            message: '请输入合法的账号和密码',
             type: 'warning'
         })
     }
@@ -203,7 +196,7 @@ async function signIn() {
         },
         onResponseError: () => {
             return toastStore.addToast({
-                message: 'Email or password is incorrect',
+                message: '邮箱或密码不正确',
                 type: 'warning'
             })
         }
