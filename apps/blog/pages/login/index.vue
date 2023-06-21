@@ -131,7 +131,7 @@ const {
     errorMessage: emailErrorMessage,
     validate: emailValidate
 } = useField('email', emailValidateField)
-
+email.value = 'dangweizhai@gmail.com'
 function passwordValidateField(value: string) {
     if (!value) {
         return 'Password is required'
@@ -156,7 +156,7 @@ const {
     errorMessage: passwordErrorMessage,
     validate: passwordValidate
 } = useField('fullName', passwordValidateField)
-
+password.value = 'qq121274182'
 async function signIn() {
     await Promise.all([emailValidate(), passwordValidate()]).catch((err) => {
         console.log(err)
