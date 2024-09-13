@@ -1,8 +1,8 @@
-import { FastifyPluginAsync } from 'fastify'
+import type { FastifyPluginAsync } from 'fastify'
 
-const plugin: FastifyPluginAsync = async function (instance, options) {
-    instance.get('/test', (request, reply) => {
-        reply.send('test')
-    })
+const plugin: FastifyPluginAsync = async function (instance) {
+  instance.get('/test', (request, reply) => {
+    reply.send('test')
+  })
 }
 export default plugin

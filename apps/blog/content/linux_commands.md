@@ -559,9 +559,9 @@ tar --exclude scf/service -zcvf scf.tar.gz scf/*
 
 **其实最简单的使用 tar 就只要记忆底下的方式即可：**
 
-压　缩：tar -jcv -f filename.tar.bz2 要被压缩的文件或目录名称
+压缩：tar -jcv -f filename.tar.bz2 要被压缩的文件或目录名称
 
-查　询：tar -jtv -f filename.tar.bz2
+查询：tar -jtv -f filename.tar.bz2
 
 解压缩：tar -jxv -f filename.tar.bz2 -C 欲解压缩的目录
 

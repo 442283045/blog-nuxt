@@ -1,3 +1,3 @@
 export default defineAppConfig({
-    backend_url: 'http://localhost/fastify'
+  backend_url: 'http://localhost/fastify',
 })
